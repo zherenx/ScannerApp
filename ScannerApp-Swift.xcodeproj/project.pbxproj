@@ -13,6 +13,7 @@
 		FE09456823AD7061003A1CA5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FE09456623AD7061003A1CA5 /* Main.storyboard */; };
 		FE09456A23AD7066003A1CA5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FE09456923AD7066003A1CA5 /* Assets.xcassets */; };
 		FE09456D23AD7066003A1CA5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FE09456B23AD7066003A1CA5 /* LaunchScreen.storyboard */; };
+		FE09457523ADFAAF003A1CA5 /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09457423ADFAAF003A1CA5 /* CameraViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		FE09456923AD7066003A1CA5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FE09456C23AD7066003A1CA5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FE09456E23AD7066003A1CA5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FE09457423ADFAAF003A1CA5 /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 				FE09456223AD7061003A1CA5 /* SceneDelegate.swift */,
 				FE09456423AD7061003A1CA5 /* ViewController.swift */,
 				FE09456623AD7061003A1CA5 /* Main.storyboard */,
+				FE09457423ADFAAF003A1CA5 /* CameraViewController.swift */,
 				FE09456923AD7066003A1CA5 /* Assets.xcassets */,
 				FE09456B23AD7066003A1CA5 /* LaunchScreen.storyboard */,
 				FE09456E23AD7066003A1CA5 /* Info.plist */,
@@ -139,6 +142,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FE09456523AD7061003A1CA5 /* ViewController.swift in Sources */,
+				FE09457523ADFAAF003A1CA5 /* CameraViewController.swift in Sources */,
 				FE09456123AD7061003A1CA5 /* AppDelegate.swift in Sources */,
 				FE09456323AD7061003A1CA5 /* SceneDelegate.swift in Sources */,
 			);
