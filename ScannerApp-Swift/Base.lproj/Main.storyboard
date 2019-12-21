@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="L1p-2W-pSb">
-    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <device id="retina6_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -16,7 +16,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="21" translatesAutoresizingMaskIntoConstraints="NO" id="Aa6-uh-Bj2">
-                                <rect key="frame" x="180" y="407.5" width="54" height="81"/>
+                                <rect key="frame" x="180" y="407.66666666666669" width="54" height="81"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N9K-PD-rNb">
                                         <rect key="frame" x="0.0" y="0.0" width="54" height="30"/>
@@ -71,14 +71,34 @@
                     <view key="view" contentMode="scaleToFill" id="Xwx-G2-6Vz">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zed-oU-Xh6" userLabel="Preview" customClass="PreviewView" customModule="ScannerApp_Swift" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="88" width="414" height="774"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            </view>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rCc-Ay-x0X">
+                                <rect key="frame" x="184" y="433" width="46" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                            </button>
+                        </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="Zed-oU-Xh6" firstAttribute="trailing" secondItem="xMd-t2-1b9" secondAttribute="trailing" id="KnE-nZ-Ao5"/>
+                            <constraint firstItem="Zed-oU-Xh6" firstAttribute="top" secondItem="xMd-t2-1b9" secondAttribute="top" id="VL6-ho-zbK"/>
+                            <constraint firstItem="Zed-oU-Xh6" firstAttribute="leading" secondItem="xMd-t2-1b9" secondAttribute="leading" id="WFF-nW-gAa"/>
+                            <constraint firstItem="xMd-t2-1b9" firstAttribute="bottom" secondItem="Zed-oU-Xh6" secondAttribute="bottom" id="WG8-j8-wiz"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="xMd-t2-1b9"/>
                     </view>
                     <navigationItem key="navigationItem" title="Camera" id="jz7-xy-EeB"/>
+                    <connections>
+                        <outlet property="previewView" destination="Zed-oU-Xh6" id="5OQ-Wg-o2N"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QBY-kt-XpX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2197" y="-301"/>
+            <point key="canvasLocation" x="2195.6521739130435" y="-301.33928571428572"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Sg1-fR-fC3">
