@@ -76,24 +76,42 @@
                                 <rect key="frame" x="0.0" y="88" width="414" height="774"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rCc-Ay-x0X">
-                                <rect key="frame" x="184" y="433" width="46" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
-                            </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="49" translatesAutoresizingMaskIntoConstraints="NO" id="pwO-zI-GEi">
+                                <rect key="frame" x="142" y="822" width="130" height="30"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rCc-Ay-x0X">
+                                        <rect key="frame" x="0.0" y="0.0" width="49" height="30"/>
+                                        <state key="normal" title="Record"/>
+                                        <connections>
+                                            <action selector="recordButtonTapped:" destination="iQQ-Hf-ehR" eventType="touchUpInside" id="bwG-9C-INI"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e0Q-he-rN3">
+                                        <rect key="frame" x="98" y="0.0" width="32" height="30"/>
+                                        <state key="normal" title="Stop"/>
+                                        <connections>
+                                            <action selector="stopButtonTapped:" destination="iQQ-Hf-ehR" eventType="touchUpInside" id="E6T-et-QHD"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
+                            <constraint firstItem="xMd-t2-1b9" firstAttribute="bottom" secondItem="pwO-zI-GEi" secondAttribute="bottom" constant="10" id="C4m-3B-H7d"/>
                             <constraint firstItem="Zed-oU-Xh6" firstAttribute="trailing" secondItem="xMd-t2-1b9" secondAttribute="trailing" id="KnE-nZ-Ao5"/>
                             <constraint firstItem="Zed-oU-Xh6" firstAttribute="top" secondItem="xMd-t2-1b9" secondAttribute="top" id="VL6-ho-zbK"/>
                             <constraint firstItem="Zed-oU-Xh6" firstAttribute="leading" secondItem="xMd-t2-1b9" secondAttribute="leading" id="WFF-nW-gAa"/>
                             <constraint firstItem="xMd-t2-1b9" firstAttribute="bottom" secondItem="Zed-oU-Xh6" secondAttribute="bottom" id="WG8-j8-wiz"/>
+                            <constraint firstItem="pwO-zI-GEi" firstAttribute="centerX" secondItem="Xwx-G2-6Vz" secondAttribute="centerX" id="ZSK-ji-NmL"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="xMd-t2-1b9"/>
                     </view>
                     <navigationItem key="navigationItem" title="Camera" id="jz7-xy-EeB"/>
                     <connections>
                         <outlet property="previewView" destination="Zed-oU-Xh6" id="5OQ-Wg-o2N"/>
+                        <outlet property="recordButton" destination="rCc-Ay-x0X" id="hou-O2-ef6"/>
+                        <outlet property="stopButton" destination="e0Q-he-rN3" id="j7d-q4-hOA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QBY-kt-XpX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
