@@ -51,7 +51,7 @@
         <!--Library View Controller-->
         <scene sceneID="Mel-yP-Uit">
             <objects>
-                <viewController id="WDK-ge-CR7" userLabel="Library View Controller" sceneMemberID="viewController">
+                <viewController id="WDK-ge-CR7" userLabel="Library View Controller" customClass="LibraryViewController" customModule="ScannerApp_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="DPv-21-rfh">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

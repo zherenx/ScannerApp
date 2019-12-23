@@ -15,6 +15,7 @@
 		FE09456D23AD7066003A1CA5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FE09456B23AD7066003A1CA5 /* LaunchScreen.storyboard */; };
 		FE09457523ADFAAF003A1CA5 /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09457423ADFAAF003A1CA5 /* CameraViewController.swift */; };
 		FE09457723AE05C3003A1CA5 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09457623AE05C3003A1CA5 /* PreviewView.swift */; };
+		FE09457923B0ACBD003A1CA5 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09457823B0ACBD003A1CA5 /* LibraryViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		FE09456E23AD7066003A1CA5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FE09457423ADFAAF003A1CA5 /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		FE09457623AE05C3003A1CA5 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
+		FE09457823B0ACBD003A1CA5 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,13 +64,14 @@
 			children = (
 				FE09456023AD7061003A1CA5 /* AppDelegate.swift */,
 				FE09456223AD7061003A1CA5 /* SceneDelegate.swift */,
-				FE09456423AD7061003A1CA5 /* ViewController.swift */,
 				FE09456623AD7061003A1CA5 /* Main.storyboard */,
+				FE09456423AD7061003A1CA5 /* ViewController.swift */,
 				FE09457423ADFAAF003A1CA5 /* CameraViewController.swift */,
+				FE09457823B0ACBD003A1CA5 /* LibraryViewController.swift */,
+				FE09457623AE05C3003A1CA5 /* PreviewView.swift */,
 				FE09456923AD7066003A1CA5 /* Assets.xcassets */,
 				FE09456B23AD7066003A1CA5 /* LaunchScreen.storyboard */,
 				FE09456E23AD7066003A1CA5 /* Info.plist */,
-				FE09457623AE05C3003A1CA5 /* PreviewView.swift */,
 			);
 			path = "ScannerApp-Swift";
 			sourceTree = "<group>";
@@ -148,6 +151,7 @@
 				FE09456523AD7061003A1CA5 /* ViewController.swift in Sources */,
 				FE09457523ADFAAF003A1CA5 /* CameraViewController.swift in Sources */,
 				FE09456123AD7061003A1CA5 /* AppDelegate.swift in Sources */,
+				FE09457923B0ACBD003A1CA5 /* LibraryViewController.swift in Sources */,
 				FE09456323AD7061003A1CA5 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
