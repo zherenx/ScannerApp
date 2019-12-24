@@ -7,21 +7,32 @@
 //
 
 import AVFoundation
+import CoreMotion
 import UIKit
 
 class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
-
+    
+    private let sessionQueue = DispatchQueue(label: "session queue")
+    private let session = AVCaptureSession()
+//    private let photoOutput = AVCapturePhotoOutput()
+    private let movieFileOutput = AVCaptureMovieFileOutput()
+    private let motion = CMMotionManager()
+    
+    private var backgroundRecordingID: UIBackgroundTaskIdentifier?
+    
+    @IBOutlet private weak var previewView: PreviewView!
+    @IBOutlet private weak var recordButton: UIButton!
+    @IBOutlet private weak var stopButton: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
         
-//        previewView.session = session
         self.previewView.videoPreviewLayer.session = self.session
         
         // TODO: authorization check
         
         self.configurateSession()
+        self.setupIMU()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -40,7 +51,6 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         
         super.viewWillDisappear(animated)
     }
-    
 
     /*
     // MARK: - Navigation
@@ -51,22 +61,6 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         // Pass the selected object to the new view controller.
     }
     */
-    
-    private let sessionQueue = DispatchQueue(label: "session queue")
-    
-    private let session = AVCaptureSession()
-    
-//    private let photoOutput = AVCapturePhotoOutput()
-    private let movieFileOutput = AVCaptureMovieFileOutput()
-    
-    private var backgroundRecordingID: UIBackgroundTaskIdentifier?
-    
-    @IBOutlet private weak var previewView: PreviewView!
-    
-    @IBOutlet private weak var recordButton: UIButton!
-    
-    @IBOutlet private weak var stopButton: UIButton!
-    
     
     private func configurateSession() {
         self.session.beginConfiguration()
@@ -155,8 +149,23 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         
         self.session.commitConfiguration()
         
+    }
+    
+    private func setupIMU() {
+        self.motion.deviceMotionUpdateInterval = 1.0 / 60.0
+        self.motion.startDeviceMotionUpdates(to: OperationQueue.current!) { (rawData, error) in
+            if let data = rawData {
+                print(data)
+            } else {
+                print("there is some problem with motion data")
+            }
+        }
+    }
+    
+    private func processDeviceMotion() {
         
     }
+    
     
     @IBAction private func recordButtonTapped(_ sender: Any) {
     
@@ -213,6 +222,11 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     @IBAction private func stopButtonTapped(_ sender: Any) {
         // TODO
         // I probably do not need this
+        
+        
+        // testing for motion
+        self.motion.stopDeviceMotionUpdates()
+        
     }
     
     /// - Tag: DidStartRecording
