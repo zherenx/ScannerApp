@@ -8,26 +8,57 @@
 
 import UIKit
 
-class LibraryViewController: UIViewController {
-
+class LibraryViewController: UITableViewController {
+    
+    private let fileManager = FileManager.default
+    private let cellIdentifier = "scanTableViewCell"
+    
+    private var fileURLs: [URL] = []
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
         
-        print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true))
         
-        let fileManager = FileManager.default
+        // test code
+//        print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true))
+        
         let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
         do {
-            let fileURLs = try fileManager.contentsOfDirectory(at: documentsURL, includingPropertiesForKeys: nil)
+            fileURLs = try fileManager.contentsOfDirectory(at: documentsURL, includingPropertiesForKeys: nil)
             
-            print(fileURLs)
+            // test code
+//            print(fileURLs)
             
         } catch {
             print("Error while enumerating files \(documentsURL.path): \(error.localizedDescription)")
         }
+        
+//        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellId)
+        
+        let scanTableViewCell = UINib(nibName: "ScanTableViewCell", bundle: nil)
+        tableView.register(scanTableViewCell, forCellReuseIdentifier: cellIdentifier)
+        
     }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return fileURLs.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! ScanTableViewCell
+//        cell.textLabel?.text = fileURLs[indexPath.item].lastPathComponent
+//        cell.textLabel?.text = fileURLs[indexPath.item].absoluteString
+        
+        cell.setupCellWithURL(url: fileURLs[indexPath.item])
+        return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 150
+    }
+    
+    
+    
     
 
     /*

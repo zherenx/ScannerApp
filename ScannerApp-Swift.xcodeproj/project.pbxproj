@@ -16,6 +16,8 @@
 		FE09457523ADFAAF003A1CA5 /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09457423ADFAAF003A1CA5 /* CameraViewController.swift */; };
 		FE09457723AE05C3003A1CA5 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09457623AE05C3003A1CA5 /* PreviewView.swift */; };
 		FE09457923B0ACBD003A1CA5 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09457823B0ACBD003A1CA5 /* LibraryViewController.swift */; };
+		FE09457E23B19A6F003A1CA5 /* ScanTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09457C23B19A6F003A1CA5 /* ScanTableViewCell.swift */; };
+		FE09457F23B19A6F003A1CA5 /* ScanTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FE09457D23B19A6F003A1CA5 /* ScanTableViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +32,8 @@
 		FE09457423ADFAAF003A1CA5 /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
 		FE09457623AE05C3003A1CA5 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		FE09457823B0ACBD003A1CA5 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryViewController.swift; sourceTree = "<group>"; };
+		FE09457C23B19A6F003A1CA5 /* ScanTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanTableViewCell.swift; sourceTree = "<group>"; };
+		FE09457D23B19A6F003A1CA5 /* ScanTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScanTableViewCell.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +66,7 @@
 		FE09455F23AD7061003A1CA5 /* ScannerApp-Swift */ = {
 			isa = PBXGroup;
 			children = (
+				FE09457B23B19A2C003A1CA5 /* View */,
 				FE09456023AD7061003A1CA5 /* AppDelegate.swift */,
 				FE09456223AD7061003A1CA5 /* SceneDelegate.swift */,
 				FE09456623AD7061003A1CA5 /* Main.storyboard */,
@@ -74,6 +79,15 @@
 				FE09456E23AD7066003A1CA5 /* Info.plist */,
 			);
 			path = "ScannerApp-Swift";
+			sourceTree = "<group>";
+		};
+		FE09457B23B19A2C003A1CA5 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				FE09457C23B19A6F003A1CA5 /* ScanTableViewCell.swift */,
+				FE09457D23B19A6F003A1CA5 /* ScanTableViewCell.xib */,
+			);
+			path = View;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -136,6 +150,7 @@
 			files = (
 				FE09456D23AD7066003A1CA5 /* LaunchScreen.storyboard in Resources */,
 				FE09456A23AD7066003A1CA5 /* Assets.xcassets in Resources */,
+				FE09457F23B19A6F003A1CA5 /* ScanTableViewCell.xib in Resources */,
 				FE09456823AD7061003A1CA5 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -148,6 +163,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FE09457723AE05C3003A1CA5 /* PreviewView.swift in Sources */,
+				FE09457E23B19A6F003A1CA5 /* ScanTableViewCell.swift in Sources */,
 				FE09456523AD7061003A1CA5 /* ViewController.swift in Sources */,
 				FE09457523ADFAAF003A1CA5 /* CameraViewController.swift in Sources */,
 				FE09456123AD7061003A1CA5 /* AppDelegate.swift in Sources */,
