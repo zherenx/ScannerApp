@@ -66,14 +66,12 @@
 		FE09455F23AD7061003A1CA5 /* ScannerApp-Swift */ = {
 			isa = PBXGroup;
 			children = (
+				FE09458223B1B318003A1CA5 /* Model */,
 				FE09457B23B19A2C003A1CA5 /* View */,
+				FE09458323B1B321003A1CA5 /* Controller */,
+				FE09456623AD7061003A1CA5 /* Main.storyboard */,
 				FE09456023AD7061003A1CA5 /* AppDelegate.swift */,
 				FE09456223AD7061003A1CA5 /* SceneDelegate.swift */,
-				FE09456623AD7061003A1CA5 /* Main.storyboard */,
-				FE09456423AD7061003A1CA5 /* ViewController.swift */,
-				FE09457423ADFAAF003A1CA5 /* CameraViewController.swift */,
-				FE09457823B0ACBD003A1CA5 /* LibraryViewController.swift */,
-				FE09457623AE05C3003A1CA5 /* PreviewView.swift */,
 				FE09456923AD7066003A1CA5 /* Assets.xcassets */,
 				FE09456B23AD7066003A1CA5 /* LaunchScreen.storyboard */,
 				FE09456E23AD7066003A1CA5 /* Info.plist */,
@@ -84,10 +82,28 @@
 		FE09457B23B19A2C003A1CA5 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				FE09457623AE05C3003A1CA5 /* PreviewView.swift */,
 				FE09457C23B19A6F003A1CA5 /* ScanTableViewCell.swift */,
 				FE09457D23B19A6F003A1CA5 /* ScanTableViewCell.xib */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		FE09458223B1B318003A1CA5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		FE09458323B1B321003A1CA5 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				FE09456423AD7061003A1CA5 /* ViewController.swift */,
+				FE09457423ADFAAF003A1CA5 /* CameraViewController.swift */,
+				FE09457823B0ACBD003A1CA5 /* LibraryViewController.swift */,
+			);
+			path = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
