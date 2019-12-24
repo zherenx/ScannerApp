@@ -18,6 +18,7 @@
 		FE09457923B0ACBD003A1CA5 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09457823B0ACBD003A1CA5 /* LibraryViewController.swift */; };
 		FE09457E23B19A6F003A1CA5 /* ScanTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09457C23B19A6F003A1CA5 /* ScanTableViewCell.swift */; };
 		FE09457F23B19A6F003A1CA5 /* ScanTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FE09457D23B19A6F003A1CA5 /* ScanTableViewCell.xib */; };
+		FE09458523B1C020003A1CA5 /* DualCameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09458423B1C020003A1CA5 /* DualCameraViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +35,7 @@
 		FE09457823B0ACBD003A1CA5 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryViewController.swift; sourceTree = "<group>"; };
 		FE09457C23B19A6F003A1CA5 /* ScanTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanTableViewCell.swift; sourceTree = "<group>"; };
 		FE09457D23B19A6F003A1CA5 /* ScanTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScanTableViewCell.xib; sourceTree = "<group>"; };
+		FE09458423B1C020003A1CA5 /* DualCameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DualCameraViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +103,7 @@
 			children = (
 				FE09456423AD7061003A1CA5 /* ViewController.swift */,
 				FE09457423ADFAAF003A1CA5 /* CameraViewController.swift */,
+				FE09458423B1C020003A1CA5 /* DualCameraViewController.swift */,
 				FE09457823B0ACBD003A1CA5 /* LibraryViewController.swift */,
 			);
 			path = Controller;
@@ -185,6 +188,7 @@
 				FE09456123AD7061003A1CA5 /* AppDelegate.swift in Sources */,
 				FE09457923B0ACBD003A1CA5 /* LibraryViewController.swift in Sources */,
 				FE09456323AD7061003A1CA5 /* SceneDelegate.swift in Sources */,
+				FE09458523B1C020003A1CA5 /* DualCameraViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

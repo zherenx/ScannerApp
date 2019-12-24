@@ -7,12 +7,19 @@
 //
 
 import UIKit
+import AVFoundation
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var dualCamButton: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        dualCamButton.isEnabled = false
+        if #available(iOS 13.0, *), AVCaptureMultiCamSession.isMultiCamSupported {
+            dualCamButton.isEnabled = true
+        }
     }
 
 

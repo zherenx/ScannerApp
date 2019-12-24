@@ -17,17 +17,24 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="21" translatesAutoresizingMaskIntoConstraints="NO" id="Aa6-uh-Bj2">
-                                <rect key="frame" x="180" y="407.66666666666669" width="54" height="81"/>
+                                <rect key="frame" x="175.66666666666666" y="382" width="63" height="132"/>
                                 <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KLC-Ov-bZB">
+                                        <rect key="frame" x="0.0" y="0.0" width="63" height="30"/>
+                                        <state key="normal" title="DualCam"/>
+                                        <connections>
+                                            <segue destination="hbE-un-H6B" kind="show" id="ANJ-GO-kC7"/>
+                                        </connections>
+                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N9K-PD-rNb">
-                                        <rect key="frame" x="0.0" y="0.0" width="54" height="30"/>
+                                        <rect key="frame" x="0.0" y="51" width="63" height="30"/>
                                         <state key="normal" title="Camera"/>
                                         <connections>
                                             <segue destination="iQQ-Hf-ehR" kind="show" id="ETW-fh-zis"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZgB-2w-6UE">
-                                        <rect key="frame" x="0.0" y="51" width="54" height="30"/>
+                                        <rect key="frame" x="0.0" y="102" width="63" height="30"/>
                                         <state key="normal" title="Library"/>
                                         <connections>
                                             <segue destination="WDK-ge-CR7" kind="show" id="9lu-Hj-Rdd"/>
@@ -44,10 +51,29 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="Kxv-gW-vtj"/>
+                    <connections>
+                        <outlet property="dualCamButton" destination="KLC-Ov-bZB" id="rHq-lQ-32f"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1047.8260869565217" y="116.51785714285714"/>
+        </scene>
+        <!--Dual Camera-->
+        <scene sceneID="8Oo-lX-QQw">
+            <objects>
+                <viewController id="hbE-un-H6B" customClass="DualCameraViewController" customModule="ScannerApp_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="g7U-dC-Uu8">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="qTb-Lo-Lel"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Dual Camera" id="P1h-g5-MKQ"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ho4-KC-jbu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2196" y="555"/>
         </scene>
         <!--Library View Controller-->
         <scene sceneID="Mel-yP-Uit">
@@ -57,7 +83,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Bnd-tW-akx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2196" y="495"/>
+            <point key="canvasLocation" x="1048" y="942"/>
         </scene>
         <!--Camera View Controller-->
         <scene sceneID="BxD-mn-6TA">
