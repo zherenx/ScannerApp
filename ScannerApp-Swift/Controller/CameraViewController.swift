@@ -13,10 +13,13 @@ import UIKit
 class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     
     private let sessionQueue = DispatchQueue(label: "session queue")
+//    private let motionQueue = DispatchQueue(label: "motion queue")
+    private let motionQueue = OperationQueue()
+    
     private let session = AVCaptureSession()
 //    private let photoOutput = AVCapturePhotoOutput()
     private let movieFileOutput = AVCaptureMovieFileOutput()
-    private let motion = CMMotionManager()
+    private let motionManager = CMMotionManager()
     
     private var backgroundRecordingID: UIBackgroundTaskIdentifier?
     
@@ -152,19 +155,22 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     }
     
     private func setupIMU() {
-        self.motion.deviceMotionUpdateInterval = 1.0 / 60.0
-        self.motion.startDeviceMotionUpdates(to: OperationQueue.current!) { (rawData, error) in
-            if let data = rawData {
-                print(data)
-            } else {
-                print("there is some problem with motion data")
-            }
-        }
+        self.motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
+        self.motionQueue.maxConcurrentOperationCount = 1
+        
+//        self.motionManager.startDeviceMotionUpdates(to: OperationQueue.current!) { (rawData, error) in
+//            if let data = rawData {
+////                print(data)
+//                MotionDataProcessor.processDeviceMotion(deviceMotion: data)
+//            } else {
+//                print("there is some problem with motion data")
+//            }
+//        }
     }
     
-    private func processDeviceMotion() {
-        
-    }
+//    private func processDeviceMotion() {
+//
+//    }
     
     
     @IBAction private func recordButtonTapped(_ sender: Any) {
@@ -177,7 +183,22 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         self.stopButton.isEnabled = true
         
         let videoPreviewLayerOrientation = previewView.videoPreviewLayer.connection?.videoOrientation
-
+        
+        
+        
+        
+        self.motionManager.startDeviceMotionUpdates(to: OperationQueue.current!) { (rawData, error) in
+            if let data = rawData {
+                print(data)
+//                MotionDataProcessor.processDeviceMotion(deviceMotion: data)
+            } else {
+                print("there is some problem with motion data")
+            }
+        }
+        
+        
+        
+        
         self.sessionQueue.async {
             if !self.movieFileOutput.isRecording {
                 if UIDevice.current.isMultitaskingSupported {
@@ -194,26 +215,23 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                     self.movieFileOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: movieFileOutputConnection!)
                 }
                 
-                // Start recording video to a temporary file.
-//                let outputFileName = NSUUID().uuidString
-//                let outputFilePath = (NSTemporaryDirectory() as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension("mov")!)
-                
-                
-                
-                
                 let outputFileName = NSUUID().uuidString
                 let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-//                if let documentsPathString = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first {
-//                    //This gives you the string formed path
-//                }
                 let outputFilePath = (documentsPath as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension("mov")!)
                 
-                
-                
+                self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (rawData, error) in
+                    if let data = rawData {
+//                        print(data)
+                        MotionDataProcessor.processDeviceMotion(deviceMotion: data)
+                    } else {
+                        print("there is some problem with motion data")
+                    }
+                }
                 
                 self.movieFileOutput.startRecording(to: URL(fileURLWithPath: outputFilePath), recordingDelegate: self)
             } else {
                 self.movieFileOutput.stopRecording()
+                self.motionManager.stopDeviceMotionUpdates()
             }
         }
         
@@ -223,9 +241,8 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         // TODO
         // I probably do not need this
         
-        
         // testing for motion
-        self.motion.stopDeviceMotionUpdates()
+        self.motionManager.stopDeviceMotionUpdates()
         
     }
     
