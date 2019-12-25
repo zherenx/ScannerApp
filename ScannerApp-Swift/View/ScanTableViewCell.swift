@@ -32,7 +32,7 @@ class ScanTableViewCell: UITableViewCell {
         
         self.titleLabel.text = url.lastPathComponent
         
-        self.infoLabel.text = "Some more info to show"
+        self.infoLabel.text = url.pathExtension
         self.infoLabel.textColor = .darkGray
     }
     

@@ -22,6 +22,7 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     private let motionManager = CMMotionManager()
     
     private var backgroundRecordingID: UIBackgroundTaskIdentifier?
+    private var imuFilePointer: UnsafeMutablePointer<FILE>?
     
     @IBOutlet private weak var previewView: PreviewView!
     @IBOutlet private weak var recordButton: UIButton!
@@ -157,21 +158,7 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     private func setupIMU() {
         self.motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
         self.motionQueue.maxConcurrentOperationCount = 1
-        
-//        self.motionManager.startDeviceMotionUpdates(to: OperationQueue.current!) { (rawData, error) in
-//            if let data = rawData {
-////                print(data)
-//                MotionDataProcessor.processDeviceMotion(deviceMotion: data)
-//            } else {
-//                print("there is some problem with motion data")
-//            }
-//        }
     }
-    
-//    private func processDeviceMotion() {
-//
-//    }
-    
     
     @IBAction private func recordButtonTapped(_ sender: Any) {
     
@@ -183,21 +170,6 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         self.stopButton.isEnabled = true
         
         let videoPreviewLayerOrientation = previewView.videoPreviewLayer.connection?.videoOrientation
-        
-        
-        
-        
-        self.motionManager.startDeviceMotionUpdates(to: OperationQueue.current!) { (rawData, error) in
-            if let data = rawData {
-                print(data)
-//                MotionDataProcessor.processDeviceMotion(deviceMotion: data)
-            } else {
-                print("there is some problem with motion data")
-            }
-        }
-        
-        
-        
         
         self.sessionQueue.async {
             if !self.movieFileOutput.isRecording {
@@ -216,22 +188,27 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                 }
                 
                 let outputFileName = NSUUID().uuidString
-                let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-                let outputFilePath = (documentsPath as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension("mov")!)
+                let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+                let movieFilePath = (documentsDirectory as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension("mov")!)
+                let imuFilePath = (documentsDirectory as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension("imu")!)
                 
-                self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (rawData, error) in
-                    if let data = rawData {
+                self.imuFilePointer = fopen(imuFilePath, "w")
+                self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
+                    if let validData = data {
 //                        print(data)
-                        MotionDataProcessor.processDeviceMotion(deviceMotion: data)
+//                        MotionDataProcessor.processDeviceMotion(deviceMotion: validData)
+                        MotionDataProcessor.processDeviceMotionAndWriteToFile(deviceMotion: validData, filePointer: self.imuFilePointer!)
                     } else {
                         print("there is some problem with motion data")
                     }
                 }
                 
-                self.movieFileOutput.startRecording(to: URL(fileURLWithPath: outputFilePath), recordingDelegate: self)
+                self.movieFileOutput.startRecording(to: URL(fileURLWithPath: movieFilePath), recordingDelegate: self)
             } else {
                 self.movieFileOutput.stopRecording()
+                
                 self.motionManager.stopDeviceMotionUpdates()
+                fclose(self.imuFilePointer)
             }
         }
         
@@ -243,7 +220,7 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         
         // testing for motion
         self.motionManager.stopDeviceMotionUpdates()
-        
+        fclose(self.imuFilePointer)
     }
     
     /// - Tag: DidStartRecording
