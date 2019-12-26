@@ -66,14 +66,39 @@
                     <view key="view" contentMode="scaleToFill" id="g7U-dC-Uu8">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Oes-xv-Faf">
+                                <rect key="frame" x="0.0" y="88" width="414" height="774"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LzI-Xo-0h7" customClass="PreviewView" customModule="ScannerApp_Swift" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="383"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lZy-yN-Bd6" customClass="PreviewView" customModule="ScannerApp_Swift" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="391" width="414" height="383"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                                    </view>
+                                </subviews>
+                            </stackView>
+                        </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="qTb-Lo-Lel" firstAttribute="trailing" secondItem="Oes-xv-Faf" secondAttribute="trailing" id="8RS-8R-KMh"/>
+                            <constraint firstItem="Oes-xv-Faf" firstAttribute="top" secondItem="qTb-Lo-Lel" secondAttribute="top" id="pCw-v4-qiL"/>
+                            <constraint firstItem="Oes-xv-Faf" firstAttribute="leading" secondItem="qTb-Lo-Lel" secondAttribute="leading" id="sca-Pv-1qq"/>
+                            <constraint firstItem="qTb-Lo-Lel" firstAttribute="bottom" secondItem="Oes-xv-Faf" secondAttribute="bottom" id="urQ-2S-XQn"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="qTb-Lo-Lel"/>
                     </view>
                     <navigationItem key="navigationItem" title="Dual Camera" id="P1h-g5-MKQ"/>
+                    <connections>
+                        <outlet property="telephotoCameraPreviewView" destination="lZy-yN-Bd6" id="un3-dc-LvE"/>
+                        <outlet property="wideAngleCameraPreviewView" destination="LzI-Xo-0h7" id="TBy-1K-LKR"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ho4-KC-jbu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2196" y="555"/>
+            <point key="canvasLocation" x="2195.6521739130435" y="554.46428571428567"/>
         </scene>
         <!--Library View Controller-->
         <scene sceneID="Mel-yP-Uit">

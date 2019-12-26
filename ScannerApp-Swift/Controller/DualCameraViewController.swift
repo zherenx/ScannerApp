@@ -24,27 +24,43 @@ class DualCameraViewController: UIViewController {
     
     private let wideAngleCameraOutput = AVCaptureMovieFileOutput()
     
-    private weak var cameraVideoPreviewLayer1: AVCaptureVideoPreviewLayer?
+    private weak var wideAngleCameraPreviewLayer: AVCaptureVideoPreviewLayer?
     
-//    private var cameraInput2: AVCaptureDeviceInput?
+    @IBOutlet weak var wideAngleCameraPreviewView: PreviewView!
+    
+    //    private var cameraInput2: AVCaptureDeviceInput?
 
     private let telephotoCameraOutput = AVCaptureMovieFileOutput()
     
-    private weak var cameraVideoPreviewLayer2: AVCaptureVideoPreviewLayer?
+    private weak var telephotoCameraPreviewLayer: AVCaptureVideoPreviewLayer?
+    
+    @IBOutlet weak var telephotoCameraPreviewView: PreviewView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Do any additional setup after loading the view.
+        wideAngleCameraPreviewView.videoPreviewLayer.setSessionWithNoConnection(session)
+        telephotoCameraPreviewView.videoPreviewLayer.setSessionWithNoConnection(session)
+        
+        wideAngleCameraPreviewLayer = wideAngleCameraPreviewView.videoPreviewLayer
+        telephotoCameraPreviewLayer = telephotoCameraPreviewView.videoPreviewLayer
+        
+        sessionQueue.async {
+            self.configureSession()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        // TODO:
+        
+        self.addObservers()
+        self.session.startRunning()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        // TODO:
+        self.session.stopRunning()
+        self.removeObservers()
+        
         super.viewWillDisappear(animated)
     }
     
@@ -57,7 +73,6 @@ class DualCameraViewController: UIViewController {
         //            return
         //        }
         
-        // When using AVCaptureMultiCamSession, it is best to manually add connections from AVCaptureInputs to AVCaptureOutputs
         session.beginConfiguration()
         defer {
             session.commitConfiguration()
@@ -116,10 +131,10 @@ class DualCameraViewController: UIViewController {
                 return
         }
         
-        let wideAngelCameraConnection = AVCaptureConnection(inputPorts: [widePort], output: wideAngleCameraOutput)
+        let wideAngleCameraConnection = AVCaptureConnection(inputPorts: [widePort], output: wideAngleCameraOutput)
         let telephotoCameraConnection = AVCaptureConnection(inputPorts: [telePort], output: telephotoCameraOutput)
         
-        guard session.canAddConnection(wideAngelCameraConnection) else {
+        guard session.canAddConnection(wideAngleCameraConnection) else {
             print("Cannot add wide-angle input to output")
             return
         }
@@ -129,9 +144,38 @@ class DualCameraViewController: UIViewController {
             return
         }
         
-        session.addConnection(wideAngelCameraConnection)
+        session.addConnection(wideAngleCameraConnection)
         session.addConnection(telephotoCameraConnection)
         
+        // connect to preview layers
+        guard let wideAngleCameraPreviewLayer = wideAngleCameraPreviewLayer else {
+            return
+        }
+        let wideAngleCameraPreviewLayerConnection = AVCaptureConnection(inputPort: widePort, videoPreviewLayer: wideAngleCameraPreviewLayer)
+        guard session.canAddConnection(wideAngleCameraPreviewLayerConnection) else {
+            print("Could not add a connection to the wide-angle camera video preview layer")
+            return
+        }
+        session.addConnection(wideAngleCameraPreviewLayerConnection)
+        
+        guard let telephotoCameraPreviewLayer = telephotoCameraPreviewLayer else {
+            return
+        }
+        let telephotoCameraPreviewLayerConnection = AVCaptureConnection(inputPort: widePort, videoPreviewLayer: telephotoCameraPreviewLayer)
+        guard session.canAddConnection(telephotoCameraPreviewLayerConnection) else {
+            print("Could not add a connection to the telephoto camera video preview layer")
+            return
+        }
+        session.addConnection(telephotoCameraPreviewLayerConnection)
+        
+    }
+    
+    private func addObservers() {
+        // TODO: observing system pressure etc.
+    }
+    
+    private func removeObservers() {
+        // TODO:
     }
         
 }
