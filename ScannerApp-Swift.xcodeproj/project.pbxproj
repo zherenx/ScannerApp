@@ -20,6 +20,7 @@
 		FE09457F23B19A6F003A1CA5 /* ScanTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FE09457D23B19A6F003A1CA5 /* ScanTableViewCell.xib */; };
 		FE09458523B1C020003A1CA5 /* DualCameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09458423B1C020003A1CA5 /* DualCameraViewController.swift */; };
 		FE19F8B423B2B40E00CF174E /* MotionDataProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE19F8B323B2B40E00CF174E /* MotionDataProcessor.swift */; };
+		FE19F8BA23B6070F00CF174E /* Metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE19F8B923B6070F00CF174E /* Metadata.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		FE09457D23B19A6F003A1CA5 /* ScanTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScanTableViewCell.xib; sourceTree = "<group>"; };
 		FE09458423B1C020003A1CA5 /* DualCameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DualCameraViewController.swift; sourceTree = "<group>"; };
 		FE19F8B323B2B40E00CF174E /* MotionDataProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionDataProcessor.swift; sourceTree = "<group>"; };
+		FE19F8B923B6070F00CF174E /* Metadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metadata.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				FE19F8B323B2B40E00CF174E /* MotionDataProcessor.swift */,
+				FE19F8B923B6070F00CF174E /* Metadata.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -186,6 +189,7 @@
 			files = (
 				FE09457723AE05C3003A1CA5 /* PreviewView.swift in Sources */,
 				FE09457E23B19A6F003A1CA5 /* ScanTableViewCell.swift in Sources */,
+				FE19F8BA23B6070F00CF174E /* Metadata.swift in Sources */,
 				FE19F8B423B2B40E00CF174E /* MotionDataProcessor.swift in Sources */,
 				FE09456523AD7061003A1CA5 /* ViewController.swift in Sources */,
 				FE09457523ADFAAF003A1CA5 /* CameraViewController.swift in Sources */,
