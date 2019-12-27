@@ -18,6 +18,15 @@ class DualCameraViewController: UIViewController {
     
     private let dataOutputQueue = DispatchQueue(label: "data output queue")
     
+    private enum SessionSetupResult {
+        case success
+        case notAuthorized
+        case configurationFailed
+        case multiCamNotSupported
+    }
+    
+    private var setupResult: SessionSetupResult = .success
+    
     private var dualCameraInput: AVCaptureDeviceInput?
     
 //    private var cameraInput1: AVCaptureDeviceInput?
@@ -53,25 +62,33 @@ class DualCameraViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        self.addObservers()
-        self.session.startRunning()
+        sessionQueue.async {
+            if self.setupResult == .success {
+                self.addObservers()
+                self.session.startRunning()
+            }
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        self.session.stopRunning()
-        self.removeObservers()
+        sessionQueue.async {
+            if self.setupResult == .success {
+                self.session.stopRunning()
+                self.removeObservers()
+            }
+        }
         
         super.viewWillDisappear(animated)
     }
     
     private func configureSession() {
-        //        guard setupResult == .success else { return }
-        
-        //        guard AVCaptureMultiCamSession.isMultiCamSupported else {
-        //            print("MultiCam not supported on this device")
-        //            setupResult = .multiCamNotSupported
-        //            return
-        //        }
+//        guard setupResult == .success else { return }
+//
+//        guard AVCaptureMultiCamSession.isMultiCamSupported else {
+//            print("MultiCam not supported on this device")
+//            setupResult = .multiCamNotSupported
+//            return
+//        }
         
         session.beginConfiguration()
         defer {
@@ -85,6 +102,7 @@ class DualCameraViewController: UIViewController {
         // Use back dual camera (virtual camera, with two constituent camera)
         guard let dualCameraDevice = AVCaptureDevice.default(.builtInDualCamera, for: .video, position: .back) else {
             print("Could not find the dual camera")
+            setupResult = .configurationFailed
             return
         }
         
@@ -92,20 +110,22 @@ class DualCameraViewController: UIViewController {
             dualCameraInput = try AVCaptureDeviceInput(device: dualCameraDevice)
             
             guard let dualCameraInput = dualCameraInput, session.canAddInput(dualCameraInput) else {
-                    print("Could not add dual camera device input")
-                    return
+                print("Could not add dual camera device input")
+                setupResult = .configurationFailed
+                return
             }
             
             session.addInputWithNoConnections(dualCameraInput)
         } catch {
             print("Couldn't create dual camera device input: \(error)")
-//            setupResult = .configurationFailed
+            setupResult = .configurationFailed
             return
         }
         
         // setup output
         guard session.canAddOutput(wideAngleCameraOutput) else {
             print("Could not add wide-angle camera output")
+            setupResult = .configurationFailed
             return
         }
         session.addOutputWithNoConnections(wideAngleCameraOutput)
@@ -115,6 +135,7 @@ class DualCameraViewController: UIViewController {
         
         guard session.canAddOutput(telephotoCameraOutput) else {
             print("Could not add telephoto camera output")
+            setupResult = .configurationFailed
             return
         }
         session.addOutputWithNoConnections(telephotoCameraOutput)
@@ -128,6 +149,7 @@ class DualCameraViewController: UIViewController {
                                                  sourceDevicePosition: dualCameraDevice.position).first
             else {
                 print("Could not obtain wide and telephoto camera input ports")
+                setupResult = .configurationFailed
                 return
         }
         
@@ -136,11 +158,13 @@ class DualCameraViewController: UIViewController {
         
         guard session.canAddConnection(wideAngleCameraConnection) else {
             print("Cannot add wide-angle input to output")
+            setupResult = .configurationFailed
             return
         }
         
         guard session.canAddConnection(telephotoCameraConnection) else {
             print("Cannot add telephoto input to output")
+            setupResult = .configurationFailed
             return
         }
         
@@ -149,21 +173,25 @@ class DualCameraViewController: UIViewController {
         
         // connect to preview layers
         guard let wideAngleCameraPreviewLayer = wideAngleCameraPreviewLayer else {
+            setupResult = .configurationFailed
             return
         }
         let wideAngleCameraPreviewLayerConnection = AVCaptureConnection(inputPort: widePort, videoPreviewLayer: wideAngleCameraPreviewLayer)
         guard session.canAddConnection(wideAngleCameraPreviewLayerConnection) else {
             print("Could not add a connection to the wide-angle camera video preview layer")
+            setupResult = .configurationFailed
             return
         }
         session.addConnection(wideAngleCameraPreviewLayerConnection)
         
         guard let telephotoCameraPreviewLayer = telephotoCameraPreviewLayer else {
+            setupResult = .configurationFailed
             return
         }
         let telephotoCameraPreviewLayerConnection = AVCaptureConnection(inputPort: widePort, videoPreviewLayer: telephotoCameraPreviewLayer)
         guard session.canAddConnection(telephotoCameraPreviewLayerConnection) else {
             print("Could not add a connection to the telephoto camera video preview layer")
+            setupResult = .configurationFailed
             return
         }
         session.addConnection(telephotoCameraPreviewLayerConnection)
