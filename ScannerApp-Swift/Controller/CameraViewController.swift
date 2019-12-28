@@ -195,9 +195,9 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                 self.imuFilePointer = fopen(imuFilePath, "w")
                 self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
                     if let validData = data {
-//                        print(data)
-//                        MotionDataProcessor.processDeviceMotion(deviceMotion: validData)
-                        MotionDataProcessor.processDeviceMotionAndWriteToFile(deviceMotion: validData, filePointer: self.imuFilePointer!)
+                        let motionData = MotionData(deviceMotion: validData)
+//                        motionData.display()
+                        motionData.writeToFile(filePointer: self.imuFilePointer!)
                     } else {
                         print("there is some problem with motion data")
                     }
