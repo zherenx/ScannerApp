@@ -32,25 +32,75 @@ import Foundation
     numIMUmeasurements = 4185
  */
 
-class Metadata {
-    var colorWidth: Int?
-    var colorHeight: Int?
+class Metadata: CustomData {
+    
+    var colorWidth: Int
+    var colorHeight: Int
     var depthWidth: Int?
     var depthHeight: Int?
-    var fx_color: Double? // TODO: check if these should be float or double
-    var fy_color: Double?
-    var mx_color: Double?
-    var my_color: Double?
+    var fx_color: Double // TODO: check if these should be float or double
+    var fy_color: Double
+    var mx_color: Double
+    var my_color: Double
     var fx_depth: Double?
     var fy_depth: Double?
     var mx_depth: Double?
     var my_depth: Double?
-    var colorToDepthExtrinsics: [Double]?
-    var deviceId: String?
-    var deviceName: String?
-    var sceneLabel: String? // Should this be Int?
-    var sceneType: String?
-    var numDepthFrames: Int?
-    var numColorFrames: Int?
-    var numIMUmeasurements: Int?
+    var colorToDepthExtrinsics: [Double]
+    var deviceId: String
+    var deviceName: String
+    var sceneLabel: String // Should this be Int?
+    var sceneType: String
+    var numDepthFrames: Int = 0
+    var numColorFrames: Int = 0
+    var numIMUmeasurements: Int = 0
+
+//    init(colorWidth: Int, colorHeight: Int,
+//         deviceId: String, deviceName: String, sceneLabel: String, sceneType: String) {
+//        self.colorWidth = colorWidth
+//        self.colorHeight = colorHeight
+//        self.deviceId = deviceId
+//        self.deviceName = deviceName
+//        self.sceneLabel = sceneLabel
+//        self.sceneType = sceneType
+//
+//        self.colorToDepthExtrinsics = []
+//
+//        self.fx_color = 0
+//        self.fy_color = 0
+//        self.mx_color = 0
+//        self.my_color = 0
+//    }
+    
+    init(colorWidth: Int, colorHeight: Int, depthWidth: Int, depthHeight: Int,
+         deviceId: String, deviceName: String, sceneLabel: String, sceneType: String) {
+        self.colorWidth = colorWidth
+        self.colorHeight = colorHeight
+        self.depthWidth = depthWidth
+        self.depthHeight = depthHeight
+        self.deviceId = deviceId
+        self.deviceName = deviceName
+        self.sceneLabel = sceneLabel
+        self.sceneType = sceneType
+        
+        self.colorToDepthExtrinsics = []
+        
+        // TODO:
+        self.fx_color = 0
+        self.fy_color = 0
+        self.mx_color = 0
+        self.my_color = 0
+        self.fx_depth = 0
+        self.fy_depth = 0
+        self.mx_depth = 0
+        self.my_depth = 0
+    }
+    
+    func display() {
+        // TODO:
+    }
+    
+    func writeToFile(filePointer: UnsafeMutablePointer<FILE>) {
+        // TODO:
+    }
 }
