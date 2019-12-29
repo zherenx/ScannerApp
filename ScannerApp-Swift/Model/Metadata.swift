@@ -131,38 +131,29 @@ class Metadata: CustomData {
 //        print("appVersionId = \(APP_VERSION_ID.c_str())")
     }
     
-    func writeToFile(filePointer: UnsafeMutablePointer<FILE>) {
-        // TODO:
-        //
+    func writeToFile(filepath: String) {
+        let strToWrite: String =
+        "colorWidth = \(self.colorWidth)\n" +
+        "colorHeight = \(self.colorHeight)\n" +
+//        "depthWidth = \(self.depthWidth)\n" +
+//        "depthHeight = \(self.depthHeight)\n" +
+        "fx_color = \(self.colorFocalX)\n" +
+        "fy_color = \(self.colorFocalY)\n" +
+        "mx_color = \(self.colorCenterX)\n" +
+        "my_color = \(self.colorCenterY)\n" +
+//        "fx_depth = \(self.depthFocalX)\n" +
+//        "fy_depth = \(self.depthFocalY)\n" +
+//        "mx_depth = \(self.depthCenterX)\n" +
+//        "my_depth = \(self.depthCenterY)\n" +
+        "deviceId = \(self.deviceId)\n" +
+        "deviceName = \(self.deviceName)\n" +
+        "sceneLabel = \(self.sceneLabel)\n" +
+        "sceneType = \(self.sceneType)\n" +
+        "username = \(self.username)\n"
         
-        vfprintf(filePointer, "colorWidth = %d\r\n", getVaList([self.colorWidth]))
-        vfprintf(filePointer, "colorHeight = %d\r\n", getVaList([self.colorHeight]))
-//        vfprintf(filePointer, "depthWidth = %d\r\n", getVaList([self.depthWidth]))
-//        vfprintf(filePointer, "depthHeight = %d\r\n", getVaList([self.depthHeight]))
+//        "appVersionId = \(APP_VERSION_ID.c_str())"
         
-        vfprintf(filePointer, "fx_color = %f\r\n", getVaList([self.colorFocalX]))
-        vfprintf(filePointer, "fy_color = %f\r\n", getVaList([self.colorFocalY]))
-        vfprintf(filePointer, "mx_color = %f\r\n", getVaList([self.colorCenterX]))
-        vfprintf(filePointer, "my_color = %f\r\n", getVaList([self.colorCenterY]))
-        
-//        vfprintf(filePointer, "fx_depth = %f\r\n", getVaList([self.depthFocalX]))
-//        vfprintf(filePointer, "fy_depth = %f\r\n", getVaList([self.depthFocalY]))
-//        vfprintf(filePointer, "mx_depth = %f\r\n", getVaList([self.depthCenterX]))
-//        vfprintf(filePointer, "my_depth = %f\r\n", getVaList([self.depthCenterY]))
-        
-//        std::string colorToDepthExt = ""
-//        for(int i = 0; i < 16; i++) {
-//            colorToDepthExt += std::to_string(options.colorToDepthExtrinsics[i]) + " ")
-//        }
-//        fprintf(filePointer, "colorToDepthExtrinsics = %s\r\n", self.colorToDepthExt)
-        
-        vfprintf(filePointer, "deviceId = %s\r\n", getVaList([self.deviceId]))
-        vfprintf(filePointer, "deviceName = %s\r\n", getVaList([self.deviceName]))
-        vfprintf(filePointer, "sceneLabel = %s\r\n", getVaList([self.sceneLabel]))
-        vfprintf(filePointer, "sceneType = %s\r\n", getVaList([self.sceneType]))
-        vfprintf(filePointer, "userName = %s\r\n", getVaList([self.username]))
-//        vfprintf(filePointer, "appVersionId = %s\r\n", getVaList([APP_VERSION_ID.c_str()]))
-        fflush(filePointer)
+        try! strToWrite.write(toFile: filepath, atomically: true, encoding: .utf8)
     }
 }
 

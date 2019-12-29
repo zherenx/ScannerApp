@@ -63,6 +63,12 @@ class MotionData: CustomData {
         print("Gravity: \(self.gravX), \(self.gravY), \(self.gravZ)")
     }
     
+    func writeToFile(filepath: String) {
+        let filePointer = fopen(filepath, "w")
+        writeToFile(filePointer: filePointer!)
+        fclose(filePointer)
+    }
+    
     func writeToFile(filePointer: UnsafeMutablePointer<FILE>) {
         fwrite(UnsafePointer<Double>(&self.systemUptime), 8, 1, filePointer)
         fwrite(UnsafePointer<Double>(&self.rotX), 8, 1, filePointer)

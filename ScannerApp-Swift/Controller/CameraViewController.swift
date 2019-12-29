@@ -189,10 +189,19 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                 
                 let outputFileName = NSUUID().uuidString
                 let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-                let movieFilePath = (documentsDirectory as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension("mov")!)
-                let imuFilePath = (documentsDirectory as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension("imu")!)
                 
-                self.imuFilePointer = fopen(imuFilePath, "w")
+                // Metadata
+                let metadataPath = (documentsDirectory as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension("txt")!)
+                let metadata = Metadata(colorWidth: 16, colorHeight: 9, depthWidth: 16, depthHeight: 9, deviceId: "0001", deviceName: "device", sceneLabel: "?", sceneType: "?", username: "Hello world")
+//                metadata.display()
+                metadata.writeToFile(filepath: metadataPath)
+                
+                // TODO:
+                // Camera data
+                
+                // Motion data
+                let motionDataPath = (documentsDirectory as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension("imu")!)
+                self.imuFilePointer = fopen(motionDataPath, "w")
                 self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
                     if let validData = data {
                         let motionData = MotionData(deviceMotion: validData)
@@ -203,6 +212,8 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                     }
                 }
                 
+                // Video
+                let movieFilePath = (documentsDirectory as NSString).appendingPathComponent((outputFileName as NSString).appendingPathExtension("mov")!)
                 self.movieFileOutput.startRecording(to: URL(fileURLWithPath: movieFilePath), recordingDelegate: self)
             } else {
                 self.movieFileOutput.stopRecording()

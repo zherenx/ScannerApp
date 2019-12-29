@@ -14,7 +14,7 @@ class CameraData: CustomData {
         // TODO:
     }
     
-    func writeToFile(filePointer: UnsafeMutablePointer<FILE>) {
+    func writeToFile(filepath: String) {
         // TODO:
     }
 }
