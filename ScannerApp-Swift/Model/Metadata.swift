@@ -38,42 +38,32 @@ class Metadata: CustomData {
     var colorHeight: Int
     var depthWidth: Int?
     var depthHeight: Int?
-    var fx_color: Double // TODO: check if these should be float or double
-    var fy_color: Double
-    var mx_color: Double
-    var my_color: Double
-    var fx_depth: Double?
-    var fy_depth: Double?
-    var mx_depth: Double?
-    var my_depth: Double?
+    var colorFocalX: Double // TODO: check if these should be float or double
+    var colorFocalY: Double
+    var colorCenterX: Double
+    var colorCenterY: Double
+    var depthFocalX: Double?
+    var depthFocalY: Double?
+    var depthCenterX: Double?
+    var depthCenterY: Double?
     var colorToDepthExtrinsics: [Double]
     var deviceId: String
     var deviceName: String
     var sceneLabel: String // Should this be Int?
     var sceneType: String
+    var username: String
+    
     var numDepthFrames: Int = 0
     var numColorFrames: Int = 0
     var numIMUmeasurements: Int = 0
 
 //    init(colorWidth: Int, colorHeight: Int,
 //         deviceId: String, deviceName: String, sceneLabel: String, sceneType: String) {
-//        self.colorWidth = colorWidth
-//        self.colorHeight = colorHeight
-//        self.deviceId = deviceId
-//        self.deviceName = deviceName
-//        self.sceneLabel = sceneLabel
-//        self.sceneType = sceneType
-//
-//        self.colorToDepthExtrinsics = []
-//
-//        self.fx_color = 0
-//        self.fy_color = 0
-//        self.mx_color = 0
-//        self.my_color = 0
+//        // TODO:
 //    }
     
     init(colorWidth: Int, colorHeight: Int, depthWidth: Int, depthHeight: Int,
-         deviceId: String, deviceName: String, sceneLabel: String, sceneType: String) {
+         deviceId: String, deviceName: String, sceneLabel: String, sceneType: String, username: String) {
         self.colorWidth = colorWidth
         self.colorHeight = colorHeight
         self.depthWidth = depthWidth
@@ -82,25 +72,165 @@ class Metadata: CustomData {
         self.deviceName = deviceName
         self.sceneLabel = sceneLabel
         self.sceneType = sceneType
+        self.username = username
         
         self.colorToDepthExtrinsics = []
         
         // TODO:
-        self.fx_color = 0
-        self.fy_color = 0
-        self.mx_color = 0
-        self.my_color = 0
-        self.fx_depth = 0
-        self.fy_depth = 0
-        self.mx_depth = 0
-        self.my_depth = 0
+        self.colorFocalX = 0
+        self.colorFocalY = 0
+        self.colorCenterX = 0
+        self.colorCenterY = 0
+        self.depthFocalX = 0
+        self.depthFocalY = 0
+        self.depthCenterX = 0
+        self.depthCenterY = 0
+        
+//        GLKVector4 getIntrinsicsFromGlProj(const GLKMatrix4& matrix, unsigned int width, unsigned int height, bool useHalf)
+//        {
+//            float fov = 2.0f * atan(1.0f / matrix.m00);
+//            float aspect = (float)width / height;
+//            float t = tan(0.5f * fov);
+//            float fx = 0.5f * width / t;
+//            float fy = 0.5f * height / t * aspect;
+//
+//            float mx = (float)(width - 1.0f) / 2.0f;
+//            float my = (float)(height - 1.0f) / 2.0f;
+//
+//            if (useHalf) {
+//                fx *= 0.5f; fy *= 0.5f;
+//                mx *= 0.5f; my *= 0.5f;
+//            }
+//            GLKVector4 ret = GLKVector4Make(fx, fy, mx, my);
+//            return ret;
+//        }
     }
     
     func display() {
         // TODO:
+        // need to check if depth related info is available
+        // info is not complete
+        
+        print("colorWidth = \(self.colorWidth)")
+        print("colorHeight = \(self.colorHeight)")
+//        print("depthWidth = \(self.depthWidth)")
+//        print("depthHeight = \(self.depthHeight)")
+        print("fx_color = \(self.colorFocalX)")
+        print("fy_color = \(self.colorFocalY)")
+        print("mx_color = \(self.colorCenterX)")
+        print("my_color = \(self.colorCenterY)")
+//        print("fx_depth = \(self.depthFocalX)")
+//        print("fy_depth = \(self.depthFocalY)")
+//        print("mx_depth = \(self.depthCenterX)")
+//        print("my_depth = \(self.depthCenterY)")
+        print("deviceId = \(self.deviceId)")
+        print("deviceName = \(self.deviceName)")
+        print("sceneLabel = \(self.sceneLabel)")
+        print("sceneType = \(self.sceneType)")
+        print("username = \(self.username)")
+//        print("appVersionId = \(APP_VERSION_ID.c_str())")
     }
     
     func writeToFile(filePointer: UnsafeMutablePointer<FILE>) {
         // TODO:
+        //
+        
+        vfprintf(filePointer, "colorWidth = %d\r\n", getVaList([self.colorWidth]))
+        vfprintf(filePointer, "colorHeight = %d\r\n", getVaList([self.colorHeight]))
+//        vfprintf(filePointer, "depthWidth = %d\r\n", getVaList([self.depthWidth]))
+//        vfprintf(filePointer, "depthHeight = %d\r\n", getVaList([self.depthHeight]))
+        
+        vfprintf(filePointer, "fx_color = %f\r\n", getVaList([self.colorFocalX]))
+        vfprintf(filePointer, "fy_color = %f\r\n", getVaList([self.colorFocalY]))
+        vfprintf(filePointer, "mx_color = %f\r\n", getVaList([self.colorCenterX]))
+        vfprintf(filePointer, "my_color = %f\r\n", getVaList([self.colorCenterY]))
+        
+//        vfprintf(filePointer, "fx_depth = %f\r\n", getVaList([self.depthFocalX]))
+//        vfprintf(filePointer, "fy_depth = %f\r\n", getVaList([self.depthFocalY]))
+//        vfprintf(filePointer, "mx_depth = %f\r\n", getVaList([self.depthCenterX]))
+//        vfprintf(filePointer, "my_depth = %f\r\n", getVaList([self.depthCenterY]))
+        
+//        std::string colorToDepthExt = ""
+//        for(int i = 0; i < 16; i++) {
+//            colorToDepthExt += std::to_string(options.colorToDepthExtrinsics[i]) + " ")
+//        }
+//        fprintf(filePointer, "colorToDepthExtrinsics = %s\r\n", self.colorToDepthExt)
+        
+        vfprintf(filePointer, "deviceId = %s\r\n", getVaList([self.deviceId]))
+        vfprintf(filePointer, "deviceName = %s\r\n", getVaList([self.deviceName]))
+        vfprintf(filePointer, "sceneLabel = %s\r\n", getVaList([self.sceneLabel]))
+        vfprintf(filePointer, "sceneType = %s\r\n", getVaList([self.sceneType]))
+        vfprintf(filePointer, "userName = %s\r\n", getVaList([self.username]))
+//        vfprintf(filePointer, "appVersionId = %s\r\n", getVaList([APP_VERSION_ID.c_str()]))
+        fflush(filePointer)
     }
 }
+
+//void writeIntrinsics(const Options& options)
+//{
+//    unsigned int colorWidth = options.useHalfResColor ? options.colorWidth / 2 : options.colorWidth;
+//    unsigned int colorHeight = options.useHalfResColor ? options.colorHeight / 2 : options.colorHeight;
+//    fprintf(g_metaFile, "colorWidth = %d\r\n", colorWidth);
+//    fprintf(g_metaFile, "colorHeight = %d\r\n", colorHeight);
+//    fprintf(g_metaFile, "depthWidth = %d\r\n", options.depthWidth);
+//    fprintf(g_metaFile, "depthHeight = %d\r\n", options.depthHeight);
+//
+//    fprintf(g_metaFile, "fx_color = %f\r\n", options.colorFocalX);
+//    fprintf(g_metaFile, "fy_color = %f\r\n", options.colorFocalY);
+//    fprintf(g_metaFile, "mx_color = %f\r\n", options.colorCenterX);
+//    fprintf(g_metaFile, "my_color = %f\r\n", options.colorCenterY);
+//
+//    fprintf(g_metaFile, "fx_depth = %f\r\n", options.depthFocalX);
+//    fprintf(g_metaFile, "fy_depth = %f\r\n", options.depthFocalY);
+//    fprintf(g_metaFile, "mx_depth = %f\r\n", options.depthCenterX);
+//    fprintf(g_metaFile, "my_depth = %f\r\n", options.depthCenterY);
+//
+//    std::string colorToDepthExt = "";
+//    for(int i = 0; i < 16; i++) {
+//        colorToDepthExt += std::to_string(options.colorToDepthExtrinsics[i]) + " ";
+//    }
+//
+//    fprintf(g_metaFile, "colorToDepthExtrinsics = %s\r\n", colorToDepthExt.c_str());
+//
+//    fprintf(g_metaFile, "deviceId = %s\r\n", options.deviceId.c_str());
+//    fprintf(g_metaFile, "deviceName = %s\r\n", options.deviceName.c_str());
+//    fprintf(g_metaFile, "sceneLabel = %s\r\n", options.sceneLabel.c_str());
+//    fprintf(g_metaFile, "sceneType = %s\r\n", options.specifiedSceneType.c_str());
+//    fprintf(g_metaFile, "userName = %s\r\n", options.userName.c_str());
+//    fprintf(g_metaFile, "appVersionId = %s\r\n", APP_VERSION_ID.c_str());
+//    fflush(g_metaFile);
+//}
+
+//struct Options //TODO get rid of mesh view/tracking params
+//{
+//    // Whether we should use depth aligned to the color viewpoint when Structure Sensor was calibrated.
+//    // This setting may get overwritten to false if no color camera can be used.
+//
+//    bool useHardwareRegisteredDepth = false;
+//
+//    // Focus position for the color camera (between 0 and 1). Must remain fixed one depth streaming
+//    // has started when using hardware registered depth.
+//    const float lensPosition = 0.75f;
+//
+//    unsigned int colorEncodeBitrate = 5000;
+//
+//    //meta-data (res, intrinsics)
+//    unsigned int colorWidth = 640;
+//    unsigned int colorHeight = 480;
+//    unsigned int depthWidth = 640;
+//    unsigned int depthHeight = 480;
+//    float colorFocalX = 578.0f; float colorFocalY = 578.0f; float colorCenterX = 320.0f; float colorCenterY = 240.0f; //default for VGA
+//    float depthFocalX = 570.5f; float depthFocalY = 570.5f; float depthCenterX = 320.0f; float depthCenterY = 240.0f; //default for VGA
+//    bool useHalfResColor = false;
+//
+//    float colorToDepthExtrinsics[16];
+//
+//    std::string sceneLabel = "";
+//
+//    std::string deviceId = "";
+//    std::string deviceName = "";
+//
+//    std::string specifiedSceneType = "";
+//
+//    std::string userName = "";
+//};
