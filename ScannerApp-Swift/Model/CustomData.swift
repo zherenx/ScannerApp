@@ -11,4 +11,13 @@ import Foundation
 protocol CustomData {
     func display()
     func writeToFile(filePointer: UnsafeMutablePointer<FILE>)
+    func writeToFile(filepath: String, mode: String)
+}
+
+extension CustomData {
+    func writeToFile(filepath: String, mode: String) {
+        let filePointer = fopen(filepath, mode)
+        writeToFile(filePointer: filePointer!)
+        fclose(filePointer)
+    }
 }
