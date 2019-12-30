@@ -18,13 +18,7 @@ class LibraryViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        do {
-            fileURLs = try fileManager.contentsOfDirectory(at: documentsURL, includingPropertiesForKeys: nil)
-            
-        } catch {
-            print("Error while enumerating files \(documentsURL.path): \(error.localizedDescription)")
-        }
+        loadFiles()
         
         let scanTableViewCell = UINib(nibName: "ScanTableViewCell", bundle: nil)
         tableView.register(scanTableViewCell, forCellReuseIdentifier: cellIdentifier)
@@ -41,11 +35,28 @@ class LibraryViewController: UITableViewController {
 //        cell.textLabel?.text = fileURLs[indexPath.item].absoluteString
         
         cell.setupCellWithURL(url: fileURLs[indexPath.item])
+        cell.scanTableViewCellDelegate = self
         return cell
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 150
     }
+    
+    private func loadFiles() {
+        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        do {
+            fileURLs = try fileManager.contentsOfDirectory(at: documentsURL, includingPropertiesForKeys: nil)
+            
+        } catch {
+            print("Error while enumerating files \(documentsURL.path): \(error.localizedDescription)")
+        }
+    }
+}
 
+extension LibraryViewController: ScanTableViewCellDelegate {
+    func didTappedDelete() {
+        loadFiles()
+        tableView.reloadData()
+    }
 }

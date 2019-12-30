@@ -8,9 +8,14 @@
 
 import UIKit
 
+protocol ScanTableViewCellDelegate {
+    func didTappedDelete()
+}
+
 class ScanTableViewCell: UITableViewCell {
 
     private var url: URL!
+    var scanTableViewCellDelegate: ScanTableViewCellDelegate!
     
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var infoLabel: UILabel!
@@ -43,5 +48,11 @@ class ScanTableViewCell: UITableViewCell {
     
     @IBAction func deleteButtonTapped(_ sender: Any) {
         // TODO
+        do {
+            try FileManager.default.removeItem(at: url)
+        } catch {
+            print("Remove file failed")
+        }
+        scanTableViewCellDelegate.didTappedDelete()
     }
 }
