@@ -18,22 +18,13 @@ class LibraryViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        // test code
-//        print(NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true))
-        
         let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
         do {
             fileURLs = try fileManager.contentsOfDirectory(at: documentsURL, includingPropertiesForKeys: nil)
             
-            // test code
-//            print(fileURLs)
-            
         } catch {
             print("Error while enumerating files \(documentsURL.path): \(error.localizedDescription)")
         }
-        
-//        tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellId)
         
         let scanTableViewCell = UINib(nibName: "ScanTableViewCell", bundle: nil)
         tableView.register(scanTableViewCell, forCellReuseIdentifier: cellIdentifier)
@@ -56,19 +47,5 @@ class LibraryViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 150
     }
-    
-    
-    
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

@@ -15,7 +15,6 @@ class ScanTableViewCell: UITableViewCell {
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var infoLabel: UILabel!
     
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -36,8 +35,10 @@ class ScanTableViewCell: UITableViewCell {
         self.infoLabel.textColor = .darkGray
     }
     
+    // TODO: behavior related stuff probably should be in a controller class
     @IBAction func uploadButtonTapped(_ sender: Any) {
         // TODO
+        HttpRequestHandlerAPI.upload(toUpload: url)
     }
     
     @IBAction func deleteButtonTapped(_ sender: Any) {
