@@ -8,13 +8,14 @@
 
 import Foundation
 
-protocol HttpRequestHandlerAPIDelegate {
-    func onUploadStarted()
+protocol HttpRequestHandlerDelegate {
+    func didReceiveUploadProgressUpdate(progress: Float)
 }
 
 class HttpRequestHandler: NSObject {
     
     let host = URL(string: "http://192.168.1.69:5000/upload")!
+    var httpRequestHandlerDelegate: HttpRequestHandlerDelegate?
     
     // TODO: return type should be whatever http response code type is
     func upload(toUpload fileUrl: URL) -> Int {
@@ -84,7 +85,11 @@ extension HttpRequestHandler: URLSessionTaskDelegate {
     }
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
-        var uploadProgress: Float = Float(totalBytesSent) / Float(totalBytesExpectedToSend)
-        print(uploadProgress)
+        let uploadProgress: Float = Float(totalBytesSent) / Float(totalBytesExpectedToSend)
+        if let delegate = httpRequestHandlerDelegate {
+            delegate.didReceiveUploadProgressUpdate(progress: uploadProgress)
+        } else {
+            print(uploadProgress)
+        }
     }
 }

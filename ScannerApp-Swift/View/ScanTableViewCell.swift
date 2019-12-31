@@ -42,8 +42,12 @@ class ScanTableViewCell: UITableViewCell {
     
     // TODO: behavior related stuff probably should be in a controller class
     @IBAction func uploadButtonTapped(_ sender: Any) {
-        // TODO
-        HttpRequestHandler().upload(toUpload: url)
+        // TODO:
+        // Setup UI
+        
+        let requestHandler = HttpRequestHandler()
+        requestHandler.httpRequestHandlerDelegate = self
+        requestHandler.upload(toUpload: url)
     }
     
     @IBAction func deleteButtonTapped(_ sender: Any) {
@@ -54,5 +58,11 @@ class ScanTableViewCell: UITableViewCell {
             print("Remove file failed")
         }
         scanTableViewCellDelegate.didTappedDelete()
+    }
+}
+
+extension ScanTableViewCell: HttpRequestHandlerDelegate {
+    func didReceiveUploadProgressUpdate(progress: Float) {
+        print(progress)
     }
 }

@@ -104,11 +104,11 @@
 		FE09458223B1B318003A1CA5 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				FE82409523BB42C500ADB6CC /* HttpRequestHandler.swift */,
 				FE19F8BF23B75BCC00CF174E /* CustomData.swift */,
 				FE19F8B923B6070F00CF174E /* Metadata.swift */,
 				FE19F8BB23B7544C00CF174E /* CameraData.swift */,
 				FE19F8BD23B754BD00CF174E /* MotionData.swift */,
+				FE82409523BB42C500ADB6CC /* HttpRequestHandler.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
