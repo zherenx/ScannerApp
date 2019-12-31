@@ -43,7 +43,7 @@ class ScanTableViewCell: UITableViewCell {
     // TODO: behavior related stuff probably should be in a controller class
     @IBAction func uploadButtonTapped(_ sender: Any) {
         // TODO
-        HttpRequestHandlerAPI.upload(toUpload: url)
+        HttpRequestHandler().upload(toUpload: url)
     }
     
     @IBAction func deleteButtonTapped(_ sender: Any) {
