@@ -188,7 +188,7 @@ class DualCameraViewController: UIViewController {
             setupResult = .configurationFailed
             return
         }
-        let telephotoCameraPreviewLayerConnection = AVCaptureConnection(inputPort: widePort, videoPreviewLayer: telephotoCameraPreviewLayer)
+        let telephotoCameraPreviewLayerConnection = AVCaptureConnection(inputPort: telePort, videoPreviewLayer: telephotoCameraPreviewLayer)
         guard session.canAddConnection(telephotoCameraPreviewLayerConnection) else {
             print("Could not add a connection to the telephoto camera video preview layer")
             setupResult = .configurationFailed
