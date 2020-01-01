@@ -19,6 +19,9 @@ class ScanTableViewCell: UITableViewCell {
     
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var infoLabel: UILabel!
+    @IBOutlet weak var uploadButton: UIButton!
+    @IBOutlet weak var deleteButton: UIButton!
+    @IBOutlet weak var uploadProgressView: UIProgressView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -38,12 +41,17 @@ class ScanTableViewCell: UITableViewCell {
         
         self.infoLabel.text = url.pathExtension
         self.infoLabel.textColor = .darkGray
+        
+        self.uploadProgressView.isHidden = true
     }
     
     // TODO: behavior related stuff probably should be in a controller class
     @IBAction func uploadButtonTapped(_ sender: Any) {
-        // TODO:
-        // Setup UI
+        DispatchQueue.main.async {
+            self.uploadButton.isEnabled = false
+            self.deleteButton.isEnabled = false
+            self.uploadProgressView.isHidden = false
+        }
         
         let requestHandler = HttpRequestHandler()
         requestHandler.httpRequestHandlerDelegate = self
@@ -62,7 +70,38 @@ class ScanTableViewCell: UITableViewCell {
 }
 
 extension ScanTableViewCell: HttpRequestHandlerDelegate {
+    
     func didReceiveUploadProgressUpdate(progress: Float) {
-        print(progress)
+//        print(progress)
+        DispatchQueue.main.async {
+            self.uploadProgressView.progress = progress
+        }
+    }
+    
+    func didCompleteUpload(data: Data?, response: URLResponse?, error: Error?) {
+
+        DispatchQueue.main.async {
+            self.uploadButton.isEnabled = true
+            self.deleteButton.isEnabled = true
+            self.uploadProgressView.isHidden = true
+        }
+        
+        print("test code")
+        
+        if let error = error {
+            print ("error: \(error)")
+            return
+        }
+        guard let response = response as? HTTPURLResponse,
+            (200...299).contains(response.statusCode) else {
+                print ("server error")
+                return
+        }
+        if let mimeType = response.mimeType,
+            mimeType == "application/json",
+            let data = data,
+            let dataString = String(data: data, encoding: .utf8) {
+            print ("got data: \(dataString)")
+        }
     }
 }
