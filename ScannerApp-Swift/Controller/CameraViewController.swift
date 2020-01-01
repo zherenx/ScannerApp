@@ -84,13 +84,18 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                 session.commitConfiguration()
                 return
             }
+            
+            
+//            videoDevice.
+            
+            
             let videoDeviceInput = try AVCaptureDeviceInput(device: videoDevice)
 
             if self.session.canAddInput(videoDeviceInput) {
                 self.session.addInput(videoDeviceInput)
 //                self.videoDeviceInput = videoDeviceInput
 
-//                DispatchQueue.main.async {
+                DispatchQueue.main.async {
 //                    /*
 //                     Dispatch video streaming to the main queue because AVCaptureVideoPreviewLayer is the backing layer for PreviewView.
 //                     You can manipulate UIView only on the main thread.
@@ -108,7 +113,8 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
 //                    }
 //
 //                    self.previewView.videoPreviewLayer.connection?.videoOrientation = initialVideoOrientation
-//                }
+                    self.previewView.videoPreviewLayer.connection?.videoOrientation = .portrait
+                }
             } else {
                 print("Couldn't add video device input to the session.")
 //                setupResult = .configurationFailed
@@ -125,7 +131,14 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         if self.session.canAddOutput(self.movieFileOutput) {
 //            self.session.beginConfiguration()
             self.session.addOutput(self.movieFileOutput)
-            self.session.sessionPreset = .high
+            
+            
+            
+//            self.session.sessionPreset = .high
+            self.session.sessionPreset = .photo
+            
+            
+            
             if let connection = self.movieFileOutput.connection(with: .video) {
                 if connection.isVideoStabilizationSupported {
                     connection.preferredVideoStabilizationMode = .auto
@@ -179,7 +192,8 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                 
                 // Update the orientation on the movie file output video connection before recording.
                 let movieFileOutputConnection = self.movieFileOutput.connection(with: .video)
-                movieFileOutputConnection?.videoOrientation = videoPreviewLayerOrientation!
+//                movieFileOutputConnection?.videoOrientation = videoPreviewLayerOrientation!
+                movieFileOutputConnection?.videoOrientation = .landscapeRight
                 
                 let availableVideoCodecTypes = self.movieFileOutput.availableVideoCodecTypes
                 
