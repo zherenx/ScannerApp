@@ -38,7 +38,7 @@ class DualCameraViewController: UIViewController {
     @IBOutlet weak var wideAngleCameraPreviewView: PreviewView!
     
     //    private var cameraInput2: AVCaptureDeviceInput?
-
+    
     private let telephotoCameraOutput = AVCaptureMovieFileOutput()
     
     private weak var telephotoCameraPreviewLayer: AVCaptureVideoPreviewLayer?
@@ -107,6 +107,14 @@ class DualCameraViewController: UIViewController {
         }
         
         do {
+            try dualCameraDevice.lockForConfiguration()
+            dualCameraDevice.videoZoomFactor = 1.0
+            dualCameraDevice.unlockForConfiguration()
+        } catch {
+            print("Error")
+        }
+        
+        do {
             dualCameraInput = try AVCaptureDeviceInput(device: dualCameraDevice)
             
             guard let dualCameraInput = dualCameraInput, session.canAddInput(dualCameraInput) else {
@@ -154,22 +162,24 @@ class DualCameraViewController: UIViewController {
         }
         
         let wideAngleCameraConnection = AVCaptureConnection(inputPorts: [widePort], output: wideAngleCameraOutput)
-        let telephotoCameraConnection = AVCaptureConnection(inputPorts: [telePort], output: telephotoCameraOutput)
-        
         guard session.canAddConnection(wideAngleCameraConnection) else {
             print("Cannot add wide-angle input to output")
             setupResult = .configurationFailed
             return
         }
+        session.addConnection(wideAngleCameraConnection)
+//        wideAngleCameraConnection.videoOrientation = .portrait
+        wideAngleCameraConnection.videoOrientation = .landscapeRight
         
+        let telephotoCameraConnection = AVCaptureConnection(inputPorts: [telePort], output: telephotoCameraOutput)
         guard session.canAddConnection(telephotoCameraConnection) else {
             print("Cannot add telephoto input to output")
             setupResult = .configurationFailed
             return
         }
-        
-        session.addConnection(wideAngleCameraConnection)
         session.addConnection(telephotoCameraConnection)
+//        telephotoCameraConnection.videoOrientation = .portrait
+        telephotoCameraConnection.videoOrientation = .landscapeRight
         
         // connect to preview layers
         guard let wideAngleCameraPreviewLayer = wideAngleCameraPreviewLayer else {

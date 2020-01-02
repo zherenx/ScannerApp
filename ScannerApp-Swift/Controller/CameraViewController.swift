@@ -85,17 +85,13 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                 return
             }
             
-            
-//            videoDevice.
-            
-            
             let videoDeviceInput = try AVCaptureDeviceInput(device: videoDevice)
 
             if self.session.canAddInput(videoDeviceInput) {
                 self.session.addInput(videoDeviceInput)
 //                self.videoDeviceInput = videoDeviceInput
 
-                DispatchQueue.main.async {
+//                DispatchQueue.main.async {
 //                    /*
 //                     Dispatch video streaming to the main queue because AVCaptureVideoPreviewLayer is the backing layer for PreviewView.
 //                     You can manipulate UIView only on the main thread.
@@ -113,8 +109,8 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
 //                    }
 //
 //                    self.previewView.videoPreviewLayer.connection?.videoOrientation = initialVideoOrientation
-                    self.previewView.videoPreviewLayer.connection?.videoOrientation = .portrait
-                }
+//                    self.previewView.videoPreviewLayer.connection?.videoOrientation = .portrait
+//                }
             } else {
                 print("Couldn't add video device input to the session.")
 //                setupResult = .configurationFailed
@@ -182,7 +178,7 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         self.recordButton.isEnabled = false
         self.stopButton.isEnabled = true
         
-        let videoPreviewLayerOrientation = previewView.videoPreviewLayer.connection?.videoOrientation
+//        let videoPreviewLayerOrientation = previewView.videoPreviewLayer.connection?.videoOrientation
         
         self.sessionQueue.async {
             if !self.movieFileOutput.isRecording {
