@@ -27,6 +27,8 @@ class DualCameraViewController: UIViewController {
     
     private var setupResult: SessionSetupResult = .success
     
+    @IBOutlet weak var recordButton: UIButton!
+    
     private var dualCameraInput: AVCaptureDeviceInput?
     
 //    private var cameraInput1: AVCaptureDeviceInput?
@@ -216,4 +218,7 @@ class DualCameraViewController: UIViewController {
         // TODO:
     }
         
+    @IBAction func recordButtonTapped(_ sender: Any) {
+        
+    }
 }
