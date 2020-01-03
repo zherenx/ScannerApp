@@ -80,10 +80,9 @@
                                     </view>
                                 </subviews>
                             </stackView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uWv-7G-hYQ">
-                                <rect key="frame" x="184" y="433" width="46" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Button"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uWv-7G-hYQ">
+                                <rect key="frame" x="182.66666666666666" y="433" width="49" height="30"/>
+                                <state key="normal" title="Record"/>
                                 <connections>
                                     <action selector="recordButtonTapped:" destination="hbE-un-H6B" eventType="touchUpInside" id="Fvo-m5-qUR"/>
                                 </connections>
@@ -91,7 +90,9 @@
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
+                            <constraint firstItem="uWv-7G-hYQ" firstAttribute="centerX" secondItem="g7U-dC-Uu8" secondAttribute="centerX" id="0Ii-Qb-LyX"/>
                             <constraint firstItem="qTb-Lo-Lel" firstAttribute="trailing" secondItem="Oes-xv-Faf" secondAttribute="trailing" id="8RS-8R-KMh"/>
+                            <constraint firstItem="uWv-7G-hYQ" firstAttribute="centerY" secondItem="g7U-dC-Uu8" secondAttribute="centerY" id="GXf-iv-tD1"/>
                             <constraint firstItem="Oes-xv-Faf" firstAttribute="top" secondItem="qTb-Lo-Lel" secondAttribute="top" id="pCw-v4-qiL"/>
                             <constraint firstItem="Oes-xv-Faf" firstAttribute="leading" secondItem="qTb-Lo-Lel" secondAttribute="leading" id="sca-Pv-1qq"/>
                             <constraint firstItem="qTb-Lo-Lel" firstAttribute="bottom" secondItem="Oes-xv-Faf" secondAttribute="bottom" id="urQ-2S-XQn"/>

@@ -27,24 +27,20 @@ class DualCameraViewController: UIViewController {
     
     private var setupResult: SessionSetupResult = .success
     
-    @IBOutlet weak var recordButton: UIButton!
+    @IBOutlet private weak var recordButton: UIButton!
+    private var isRecording = false
+    private var backgroundRecordingID: UIBackgroundTaskIdentifier?
     
     private var dualCameraInput: AVCaptureDeviceInput?
     
 //    private var cameraInput1: AVCaptureDeviceInput?
-    
     private let wideAngleCameraOutput = AVCaptureMovieFileOutput()
-    
     private weak var wideAngleCameraPreviewLayer: AVCaptureVideoPreviewLayer?
-    
     @IBOutlet weak var wideAngleCameraPreviewView: PreviewView!
     
     //    private var cameraInput2: AVCaptureDeviceInput?
-    
     private let telephotoCameraOutput = AVCaptureMovieFileOutput()
-    
     private weak var telephotoCameraPreviewLayer: AVCaptureVideoPreviewLayer?
-    
     @IBOutlet weak var telephotoCameraPreviewView: PreviewView!
     
     override func viewDidLoad() {
@@ -220,5 +216,133 @@ class DualCameraViewController: UIViewController {
         
     @IBAction func recordButtonTapped(_ sender: Any) {
         
+        self.sessionQueue.async {
+            if self.isRecording {
+                
+//                if !self.wideAngleCameraOutput.isRecording {
+//                    print("Error, wide-angle camera should be recording but it is not")
+//                }
+//                if !self.telephotoCameraOutput.isRecording {
+//                    print("Error, telephoto camera should be recording but it is not")
+//                }
+                
+                self.wideAngleCameraOutput.stopRecording()
+                self.telephotoCameraOutput.stopRecording()
+                
+//                self.motionManager.stopDeviceMotionUpdates()
+//                fclose(self.imuFilePointer)
+            } else {
+                
+//                if self.wideAngleCameraOutput.isRecording {
+//                    print("Error, wide-angle camera should not be recording at the moment")
+//                }
+//                if self.telephotoCameraOutput.isRecording {
+//                    print("Error, telephoto camera should not be recording at the moment")
+//                }
+                
+                if UIDevice.current.isMultitaskingSupported {
+                    self.backgroundRecordingID = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
+                }
+                
+                let wideAngleOutputConnection = self.wideAngleCameraOutput.connection(with: .video)
+//                wideAngleOutputConnection?.videoOrientation = .landscapeRight
+                let wideAngleAvailableVideoCodecTypes = self.wideAngleCameraOutput.availableVideoCodecTypes
+                if wideAngleAvailableVideoCodecTypes.contains(.hevc) {
+                    self.wideAngleCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: wideAngleOutputConnection!)
+                }
+                
+                let telephoteOutputConnection = self.telephotoCameraOutput.connection(with: .video)
+//                telephoteOutputConnection?.videoOrientation = .landscapeRight
+                let telephotoAvailableVideoCodecTypes = self.telephotoCameraOutput.availableVideoCodecTypes
+                if telephotoAvailableVideoCodecTypes.contains(.hevc) {
+                    self.telephotoCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: telephoteOutputConnection!)
+                }
+                
+                let fileId = NSUUID().uuidString
+                let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+                
+                // Metadata
+//                let metadataPath = (documentsDirectory as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("txt")!)
+//                let metadata = Metadata(colorWidth: 16, colorHeight: 9, depthWidth: 16, depthHeight: 9, deviceId: "0001", deviceName: "device", sceneLabel: "?", sceneType: "?", username: "Hello world")
+//                //                metadata.display()
+//                metadata.writeToFile(filepath: metadataPath)
+                
+                // TODO:
+                // Camera data
+                
+                // Motion data
+//                let motionDataPath = (documentsDirectory as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("imu")!)
+//                self.imuFilePointer = fopen(motionDataPath, "w")
+//                self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
+//                    if let validData = data {
+//                        let motionData = MotionData(deviceMotion: validData)
+//                        //                        motionData.display()
+//                        motionData.writeToFile(filePointer: self.imuFilePointer!)
+//                    } else {
+//                        print("there is some problem with motion data")
+//                    }
+//                }
+                
+                // Video
+                let wideAngleFilename = fileId + "wide"
+                let wideAnglePath = (documentsDirectory as NSString).appendingPathComponent((wideAngleFilename as NSString).appendingPathExtension("mov")!)
+                
+                let telephotoFilename = fileId + "tele"
+                let telephotoPath = (documentsDirectory as NSString).appendingPathComponent((telephotoFilename as NSString).appendingPathExtension("mov")!)
+                
+                self.wideAngleCameraOutput.startRecording(to: URL(fileURLWithPath: wideAnglePath), recordingDelegate: self)
+                self.telephotoCameraOutput.startRecording(to: URL(fileURLWithPath: telephotoPath), recordingDelegate: self)
+                
+                self.isRecording = true
+            }
+        }
     }
+}
+
+@available(iOS 13.0, *)
+extension DualCameraViewController: AVCaptureFileOutputRecordingDelegate {
+    func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
+        // Enable the Record button to let the user stop recording.
+        DispatchQueue.main.async {
+            self.recordButton.setTitle("Stop", for: .normal)
+            self.recordButton.isEnabled = true
+        }
+    }
+    
+    func fileOutput(_ output: AVCaptureFileOutput,
+                    didFinishRecordingTo outputFileURL: URL,
+                    from connections: [AVCaptureConnection],
+                    error: Error?) {
+
+        func cleanup() {
+            if let currentBackgroundRecordingID = backgroundRecordingID {
+                backgroundRecordingID = UIBackgroundTaskIdentifier.invalid
+                
+                if currentBackgroundRecordingID != UIBackgroundTaskIdentifier.invalid {
+                    UIApplication.shared.endBackgroundTask(currentBackgroundRecordingID)
+                }
+            }
+        }
+        
+        var success = true
+        
+        if error != nil {
+            print("Movie file finishing error: \(String(describing: error))")
+            success = (((error! as NSError).userInfo[AVErrorRecordingSuccessfullyFinishedKey] as AnyObject).boolValue)!
+        }
+        
+        if success {
+            
+        } else {
+            // TODO: delete file
+        }
+        
+        cleanup()
+        
+        DispatchQueue.main.async {
+            self.recordButton.setTitle("Record", for: .normal)
+            self.recordButton.isEnabled = true
+        }
+    }
+    
 }
