@@ -31,6 +31,8 @@ class DualCameraViewController: UIViewController {
     private var isRecording = false
     private var backgroundRecordingID: UIBackgroundTaskIdentifier?
     
+    private var extrinsics: Data?
+    
     private var dualCameraInput: AVCaptureDeviceInput?
     
 //    private var cameraInput1: AVCaptureDeviceInput?
@@ -110,6 +112,16 @@ class DualCameraViewController: UIViewController {
             dualCameraDevice.unlockForConfiguration()
         } catch {
             print("Error")
+        }
+        
+        if let wide = AVCaptureDevice.default(.builtInWideAngleCamera, for: nil, position: .back), let tele = AVCaptureDevice.default(.builtInTelephotoCamera, for: nil, position: .back) {
+            self.extrinsics = AVCaptureDevice.extrinsicMatrix(from: tele, to: wide)
+            
+            let matrix: matrix_float4x3 = self.extrinsics!.withUnsafeBytes { $0.pointee }
+            
+            print(matrix)
+            
+            
         }
         
         do {
