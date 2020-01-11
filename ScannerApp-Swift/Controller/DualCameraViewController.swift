@@ -317,6 +317,7 @@ extension DualCameraViewController: AVCaptureFileOutputRecordingDelegate {
         // Enable the Record button to let the user stop recording.
         DispatchQueue.main.async {
             self.recordButton.setTitle("Stop", for: .normal)
+            self.recordButton.backgroundColor = .systemRed
             self.recordButton.isEnabled = true
         }
     }
@@ -353,6 +354,7 @@ extension DualCameraViewController: AVCaptureFileOutputRecordingDelegate {
         
         DispatchQueue.main.async {
             self.recordButton.setTitle("Record", for: .normal)
+            self.recordButton.backgroundColor = .systemBlue
             self.recordButton.isEnabled = true
         }
     }

@@ -26,7 +26,6 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     
     @IBOutlet private weak var previewView: PreviewView!
     @IBOutlet private weak var recordButton: UIButton!
-    @IBOutlet private weak var stopButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -176,7 +175,6 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
 //        }
         
         self.recordButton.isEnabled = false
-        self.stopButton.isEnabled = true
         
 //        let videoPreviewLayerOrientation = previewView.videoPreviewLayer.connection?.videoOrientation
         
@@ -235,22 +233,13 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         
     }
     
-    @IBAction private func stopButtonTapped(_ sender: Any) {
-        // TODO
-        // I probably do not need this
-        
-        // testing for motion
-        self.motionManager.stopDeviceMotionUpdates()
-        fclose(self.imuFilePointer)
-    }
-    
     /// - Tag: DidStartRecording
     func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
         // Enable the Record button to let the user stop recording.
         DispatchQueue.main.async {
             self.recordButton.setTitle("Stop", for: .normal)
+            self.recordButton.backgroundColor = .systemRed
             self.recordButton.isEnabled = true
-//            self.recordButton.setImage(#imageLiteral(resourceName: "CaptureStop"), for: [])
         }
     }
     
@@ -311,6 +300,12 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
 //            cleanup()
 //        }
         
+        if success {
+            
+        } else {
+            // TODO: delete file
+        }
+        
         cleanup()
         
         // Enable the Camera and Record buttons to let the user switch camera and start another recording.
@@ -319,6 +314,7 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
 //            self.cameraButton.isEnabled = self.videoDeviceDiscoverySession.uniqueDevicePositionsCount > 1
             
             self.recordButton.setTitle("Record", for: .normal)
+            self.recordButton.backgroundColor = .systemBlue
             self.recordButton.isEnabled = true
             
 //            self.captureModeControl.isEnabled = true

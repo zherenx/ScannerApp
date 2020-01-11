@@ -81,7 +81,10 @@
                                 </subviews>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uWv-7G-hYQ">
-                                <rect key="frame" x="182.66666666666666" y="433" width="49" height="30"/>
+                                <rect key="frame" x="179.66666666666666" y="809" width="55" height="33"/>
+                                <color key="backgroundColor" systemColor="systemBlueColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="tintColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <state key="normal" title="Record"/>
                                 <connections>
                                     <action selector="recordButtonTapped:" destination="hbE-un-H6B" eventType="touchUpInside" id="Fvo-m5-qUR"/>
@@ -92,7 +95,7 @@
                         <constraints>
                             <constraint firstItem="uWv-7G-hYQ" firstAttribute="centerX" secondItem="g7U-dC-Uu8" secondAttribute="centerX" id="0Ii-Qb-LyX"/>
                             <constraint firstItem="qTb-Lo-Lel" firstAttribute="trailing" secondItem="Oes-xv-Faf" secondAttribute="trailing" id="8RS-8R-KMh"/>
-                            <constraint firstItem="uWv-7G-hYQ" firstAttribute="centerY" secondItem="g7U-dC-Uu8" secondAttribute="centerY" id="GXf-iv-tD1"/>
+                            <constraint firstItem="qTb-Lo-Lel" firstAttribute="bottom" secondItem="uWv-7G-hYQ" secondAttribute="bottom" constant="20" id="FKu-Dw-M6W"/>
                             <constraint firstItem="Oes-xv-Faf" firstAttribute="top" secondItem="qTb-Lo-Lel" secondAttribute="top" id="pCw-v4-qiL"/>
                             <constraint firstItem="Oes-xv-Faf" firstAttribute="leading" secondItem="qTb-Lo-Lel" secondAttribute="leading" id="sca-Pv-1qq"/>
                             <constraint firstItem="qTb-Lo-Lel" firstAttribute="bottom" secondItem="Oes-xv-Faf" secondAttribute="bottom" id="urQ-2S-XQn"/>
@@ -132,34 +135,25 @@
                                 <rect key="frame" x="0.0" y="88" width="414" height="774"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                             </view>
-                            <stackView opaque="NO" contentMode="scaleToFill" spacing="49" translatesAutoresizingMaskIntoConstraints="NO" id="pwO-zI-GEi">
-                                <rect key="frame" x="142" y="822" width="130" height="30"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rCc-Ay-x0X">
-                                        <rect key="frame" x="0.0" y="0.0" width="49" height="30"/>
-                                        <state key="normal" title="Record"/>
-                                        <connections>
-                                            <action selector="recordButtonTapped:" destination="iQQ-Hf-ehR" eventType="touchUpInside" id="bwG-9C-INI"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e0Q-he-rN3">
-                                        <rect key="frame" x="98" y="0.0" width="32" height="30"/>
-                                        <state key="normal" title="Stop"/>
-                                        <connections>
-                                            <action selector="stopButtonTapped:" destination="iQQ-Hf-ehR" eventType="touchUpInside" id="E6T-et-QHD"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
-                            </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rCc-Ay-x0X">
+                                <rect key="frame" x="181" y="810" width="52" height="32"/>
+                                <color key="backgroundColor" systemColor="systemBlueColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <color key="tintColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                                <state key="normal" title="Record"/>
+                                <connections>
+                                    <action selector="recordButtonTapped:" destination="iQQ-Hf-ehR" eventType="touchUpInside" id="bwG-9C-INI"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="xMd-t2-1b9" firstAttribute="bottom" secondItem="pwO-zI-GEi" secondAttribute="bottom" constant="10" id="C4m-3B-H7d"/>
                             <constraint firstItem="Zed-oU-Xh6" firstAttribute="trailing" secondItem="xMd-t2-1b9" secondAttribute="trailing" id="KnE-nZ-Ao5"/>
                             <constraint firstItem="Zed-oU-Xh6" firstAttribute="top" secondItem="xMd-t2-1b9" secondAttribute="top" id="VL6-ho-zbK"/>
                             <constraint firstItem="Zed-oU-Xh6" firstAttribute="leading" secondItem="xMd-t2-1b9" secondAttribute="leading" id="WFF-nW-gAa"/>
                             <constraint firstItem="xMd-t2-1b9" firstAttribute="bottom" secondItem="Zed-oU-Xh6" secondAttribute="bottom" id="WG8-j8-wiz"/>
-                            <constraint firstItem="pwO-zI-GEi" firstAttribute="centerX" secondItem="Xwx-G2-6Vz" secondAttribute="centerX" id="ZSK-ji-NmL"/>
+                            <constraint firstItem="xMd-t2-1b9" firstAttribute="bottom" secondItem="rCc-Ay-x0X" secondAttribute="bottom" constant="20" id="sZE-fF-qOV"/>
+                            <constraint firstItem="rCc-Ay-x0X" firstAttribute="centerX" secondItem="Xwx-G2-6Vz" secondAttribute="centerX" id="xTE-Lm-Dzd"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="xMd-t2-1b9"/>
                     </view>
@@ -167,7 +161,6 @@
                     <connections>
                         <outlet property="previewView" destination="Zed-oU-Xh6" id="5OQ-Wg-o2N"/>
                         <outlet property="recordButton" destination="rCc-Ay-x0X" id="hou-O2-ef6"/>
-                        <outlet property="stopButton" destination="e0Q-he-rN3" id="j7d-q4-hOA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QBY-kt-XpX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
