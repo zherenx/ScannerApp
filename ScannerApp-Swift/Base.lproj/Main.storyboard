@@ -137,10 +137,25 @@
                     <view key="view" contentMode="scaleToFill" id="Dub-Tk-9fD">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="edA-PJ-b4P" customClass="PreviewView" customModule="ScannerApp_Swift" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="88" width="414" height="774"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            </view>
+                        </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="2pM-MG-Kfx" firstAttribute="trailing" secondItem="edA-PJ-b4P" secondAttribute="trailing" id="2Aa-cC-zwz"/>
+                            <constraint firstItem="edA-PJ-b4P" firstAttribute="leading" secondItem="2pM-MG-Kfx" secondAttribute="leading" id="5HL-A2-Y2H"/>
+                            <constraint firstItem="2pM-MG-Kfx" firstAttribute="bottom" secondItem="edA-PJ-b4P" secondAttribute="bottom" id="Nj9-6w-nsX"/>
+                            <constraint firstItem="edA-PJ-b4P" firstAttribute="top" secondItem="2pM-MG-Kfx" secondAttribute="top" id="R8z-X8-KK6"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="2pM-MG-Kfx"/>
                     </view>
                     <navigationItem key="navigationItem" id="zOw-YX-Tme"/>
+                    <connections>
+                        <outlet property="previewView" destination="edA-PJ-b4P" id="zeQ-YB-mvf"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5qG-ED-1a2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
