@@ -9,6 +9,8 @@
 import UIKit
 import AVFoundation
 
+import CoreImage
+
 class DepthViewController: UIViewController {
     
     
@@ -143,6 +145,15 @@ extension DepthViewController: AVCaptureDepthDataOutputDelegate {
                          timestamp: CMTime,
                          connection: AVCaptureConnection) {
         
+        
+        
+        
+        print("hello world")
+        
+        
+        
+        
+        
         var convertedDepth: AVDepthData
         
         let depthDataType = kCVPixelFormatType_DisparityFloat32
@@ -152,10 +163,38 @@ extension DepthViewController: AVCaptureDepthDataOutputDelegate {
             convertedDepth = depthData
         }
         
+        
         let pixelBuffer = convertedDepth.depthDataMap
 //        pixelBuffer.clamp()
         
+        
         let depthMap = CIImage(cvPixelBuffer: pixelBuffer)
+        
+        
+        
+        
+        
+        // save depthMap for testing
+        let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+        let path = (documentsDirectory as NSString).appendingPathComponent(("test" as NSString).appendingPathExtension("depth")!)
+        
+//        let data = UIImage.pngData(UIImage(ciImage: depthMap))
+        let data = UIImage(ciImage: depthMap).pngData()
+        
+        
+        do {
+            
+            try data?.write(to: URL(fileURLWithPath: path))
+            
+            
+//            try CIContext.init().writePNGRepresentation(of: depthMap, to: URL(fileURLWithPath: path), format: .A8, colorSpace: CGColorSpaceCreateDeviceRGB(), options: [CIImageRepresentationOption : Any]())
+        } catch {
+            print("......")
+        }
+        
+        
+        
+        
         
         
 //        DispatchQueue.main.async { [weak self] in
