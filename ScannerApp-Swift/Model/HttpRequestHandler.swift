@@ -15,7 +15,7 @@ protocol HttpRequestHandlerDelegate {
 
 class HttpRequestHandler: NSObject {
     
-    private let host = URL(string: "http://192.168.1.69:5000/upload")!
+    private let host = URL(string: "http://192.168.1.66:5000/upload")!
     private let uploadQueue = OperationQueue()
     var httpRequestHandlerDelegate: HttpRequestHandlerDelegate?
     
