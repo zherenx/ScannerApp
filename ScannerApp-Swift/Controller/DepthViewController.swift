@@ -28,6 +28,12 @@ class DepthViewController: UIViewController {
     
     
     var scale: CGFloat = 0.0
+
+    
+    
+    private var videoTrackSourceFormatDescription: CMFormatDescription?
+    private var isRecording = false
+    
     
     
     
@@ -80,9 +86,9 @@ extension DepthViewController {
         let videoOutput = AVCaptureVideoDataOutput()
         videoOutput.setSampleBufferDelegate(self, queue: dataOutputQueue)
         videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
-        
+
         session.addOutput(videoOutput)
-        
+
         let videoConnection = videoOutput.connection(with: .video)
         videoConnection?.videoOrientation = .portrait
         
@@ -95,12 +101,12 @@ extension DepthViewController {
         depthConnection?.videoOrientation = .portrait
         
         let outputRect = CGRect(x: 0, y: 0, width: 1, height: 1)
-        let videoRect = videoOutput.outputRectConverted(fromMetadataOutputRect: outputRect)
+//        let videoRect = videoOutput.outputRectConverted(fromMetadataOutputRect: outputRect)
         let depthRect = depthOutput.outputRectConverted(fromMetadataOutputRect: outputRect)
         
-        scale =
-            max(videoRect.width, videoRect.height) /
-            max(depthRect.width, depthRect.height)
+//        scale =
+//            max(videoRect.width, videoRect.height) /
+//            max(depthRect.width, depthRect.height)
         
         do {
             try camera.lockForConfiguration()
@@ -115,6 +121,20 @@ extension DepthViewController {
             fatalError(error.localizedDescription)
         }
     }
+    
+    
+    
+    
+    
+    func startRecording() {
+        
+    }
+    
+    
+    
+    
+    
+    
 }
 
 // MARK: - Capture Video Data Delegate Methods
@@ -122,18 +142,42 @@ extension DepthViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput,
                        didOutput sampleBuffer: CMSampleBuffer,
                        from connection: AVCaptureConnection) {
-        let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
-        let image = CIImage(cvPixelBuffer: pixelBuffer!)
+
+        if let videoDataOutput = output as? AVCaptureVideoDataOutput {
+            processVideoSampleBuffer(sampleBuffer, fromOutput: videoDataOutput)
+        } else {
+            print("Potential error...")
+        }
         
-        let previewImage: CIImage
-        
-        previewImage = image
-//        previewImage = depthMap ?? image
-        
-        
-        let displayImage = UIImage(ciImage: previewImage)
-//        DispatchQueue.main.async { [weak self] in
-//            self?.previewView.image = displayImage
+    }
+    
+    private func processVideoSampleBuffer(_ sampleBuffer: CMSampleBuffer, fromOutput videoDataOutput: AVCaptureVideoDataOutput) {
+        if videoTrackSourceFormatDescription == nil {
+            videoTrackSourceFormatDescription = CMSampleBufferGetFormatDescription( sampleBuffer )
+        }
+
+        // Determine:
+        // - which camera the sample buffer came from
+        // - if the sample buffer is for the PiP
+//        var fullScreenSampleBuffer: CMSampleBuffer?
+//        var pipSampleBuffer: CMSampleBuffer?
+//
+//        if pipDevicePosition == .back && videoDataOutput == backCameraVideoDataOutput {
+//            pipSampleBuffer = sampleBuffer
+//        } else if pipDevicePosition == .back && videoDataOutput == frontCameraVideoDataOutput {
+//            fullScreenSampleBuffer = sampleBuffer
+//        } else if pipDevicePosition == .front && videoDataOutput == backCameraVideoDataOutput {
+//            fullScreenSampleBuffer = sampleBuffer
+//        } else if pipDevicePosition == .front && videoDataOutput == frontCameraVideoDataOutput {
+//            pipSampleBuffer = sampleBuffer
+//        }
+//
+//        if let fullScreenSampleBuffer = fullScreenSampleBuffer {
+//            processFullScreenSampleBuffer(fullScreenSampleBuffer)
+//        }
+//
+//        if let pipSampleBuffer = pipSampleBuffer {
+//            processPiPSampleBuffer(pipSampleBuffer)
 //        }
     }
 }
@@ -145,14 +189,7 @@ extension DepthViewController: AVCaptureDepthDataOutputDelegate {
                          timestamp: CMTime,
                          connection: AVCaptureConnection) {
         
-        
-        
-        
         print("hello world")
-        
-        
-        
-        
         
         var convertedDepth: AVDepthData
         
@@ -164,42 +201,94 @@ extension DepthViewController: AVCaptureDepthDataOutputDelegate {
         }
         
         
+        
+        
         let pixelBuffer = convertedDepth.depthDataMap
 //        pixelBuffer.clamp()
         
         
-        let depthMap = CIImage(cvPixelBuffer: pixelBuffer)
         
+//        let depthMap = CIImage(cvPixelBuffer: pixelBuffer)
         
-        
-        
+
         
         // save depthMap for testing
+//        let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+//        let path = (documentsDirectory as NSString).appendingPathComponent(("test" as NSString).appendingPathExtension("depth")!)
+//
+////        let data = UIImage.pngData(UIImage(ciImage: depthMap))
+//        let data = UIImage(ciImage: depthMap).pngData()
+//
+//        do {
+//            try data?.write(to: URL(fileURLWithPath: path))
+//        } catch {
+//            print("......")
+//        }
+        
+        
+//        DispatchQueue.main.async { [weak self] in
+//            self?.depthMap = depthMap
+//        }
+        
+        
+        
+        
+        
         let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         let path = (documentsDirectory as NSString).appendingPathComponent(("test" as NSString).appendingPathExtension("depth")!)
         
-//        let data = UIImage.pngData(UIImage(ciImage: depthMap))
-        let data = UIImage(ciImage: depthMap).pngData()
         
         
-        do {
+        if isRecording {
+            guard let depthVideoSampleBuffer =
+                createVideoSampleBufferWithPixelBuffer(pixelBuffer, presentationTime: timestamp) else {
+                    print("Error: Unable to create sample buffer from pixelbuffer")
+                    return
+            }
             
-            try data?.write(to: URL(fileURLWithPath: path))
-            
-            
-//            try CIContext.init().writePNGRepresentation(of: depthMap, to: URL(fileURLWithPath: path), format: .A8, colorSpace: CGColorSpaceCreateDeviceRGB(), options: [CIImageRepresentationOption : Any]())
-        } catch {
-            print("......")
+            recordVideo(sampleBuffer: depthVideoSampleBuffer)
         }
         
         
         
         
         
-        
-//        DispatchQueue.main.async { [weak self] in
-//            self?.depthMap = depthMap
-//        }
     }
+    
+    
+    
+    
+    private func recordVideo(sampleBuffer: CMSampleBuffer) {
+        
+    }
+    
+    
+    
+    
+    private func createVideoSampleBufferWithPixelBuffer(_ pixelBuffer: CVPixelBuffer, presentationTime: CMTime) -> CMSampleBuffer? {
+        guard let videoTrackSourceFormatDescription = videoTrackSourceFormatDescription else {
+            return nil
+        }
+        
+        
+        
+        var sampleBuffer: CMSampleBuffer?
+        var timingInfo = CMSampleTimingInfo(duration: .invalid, presentationTimeStamp: presentationTime, decodeTimeStamp: .invalid)
+        
+        let err = CMSampleBufferCreateForImageBuffer(allocator: kCFAllocatorDefault,
+                                                     imageBuffer: pixelBuffer,
+                                                     dataReady: true,
+                                                     makeDataReadyCallback: nil,
+                                                     refcon: nil,
+                                                     formatDescription: videoTrackSourceFormatDescription,
+                                                     sampleTiming: &timingInfo,
+                                                     sampleBufferOut: &sampleBuffer)
+        if sampleBuffer == nil {
+            print("Error: Sample buffer creation failed (error code: \(err))")
+        }
+        
+        return sampleBuffer
+    }
+    
 }
 
