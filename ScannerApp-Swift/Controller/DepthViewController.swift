@@ -31,10 +31,20 @@ class DepthViewController: UIViewController {
 
     
     
+    @IBOutlet weak var btn: UIButton!
+    
+    
+    
+    
     private var videoTrackSourceFormatDescription: CMFormatDescription?
     private var isRecording = false
     
+//    private var videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
     
+    
+    private var assetWriter: AVAssetWriter?
+    private var assetWriterVideoInput: AVAssetWriterInput?
+    private var adaptor: AVAssetWriterInputPixelBufferAdaptor!
     
     
     override func viewDidLoad() {
@@ -65,6 +75,76 @@ class DepthViewController: UIViewController {
         super.viewWillDisappear(animated)
     }
     
+    
+    
+    
+    @IBAction func toggleButton(_ sender: Any) {
+        
+        
+        if isRecording {
+            
+            
+            guard let assetWriter = assetWriter else {
+                return
+            }
+            
+            self.isRecording = false
+            self.assetWriter = nil
+            
+            assetWriter.finishWriting {
+//                completion(assetWriter.outputURL)
+            }
+            
+            
+            
+        } else {
+            
+            
+            let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+            let path = (documentsDirectory as NSString).appendingPathComponent(("testDepthVideo" as NSString).appendingPathExtension("mov")!)
+            
+            let outputFileURL = URL(fileURLWithPath: path)
+            
+//            let outputFileName = NSUUID().uuidString
+//            let outputFileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(outputFileName).appendingPathExtension("MOV")
+            
+            guard let assetWriter = try? AVAssetWriter(url: outputFileURL, fileType: .mov) else {
+                return
+            }
+            
+            // Add a video input
+            
+            
+            
+            let assetWriterVideoInput = AVAssetWriterInput(mediaType: .video, outputSettings: nil)
+            assetWriterVideoInput.expectsMediaDataInRealTime = true
+            assetWriter.add(assetWriterVideoInput)
+            
+            self.assetWriter = assetWriter
+//            self.assetWriterAudioInput = assetWriterAudioInput
+            self.assetWriterVideoInput = assetWriterVideoInput
+            
+            self.adaptor = AVAssetWriterInputPixelBufferAdaptor.init(assetWriterInput: assetWriterVideoInput, sourcePixelBufferAttributes: nil)
+            
+            isRecording = true
+            
+            
+            
+            
+            
+        }
+        
+        
+        
+    }
+    
+    
+    
+    
+    
+    
+    
+    
 }
 
 // MARK: - Helper Methods
@@ -87,6 +167,13 @@ extension DepthViewController {
         videoOutput.setSampleBufferDelegate(self, queue: dataOutputQueue)
         videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
 
+        
+//        guard let videoSettings = videoOutput.recommendedVideoSettingsForAssetWriter(writingTo: .mov) as? [String: NSObject] else {
+//            print("Could not get video settings")
+//            return
+//        }
+//        self.videoSettings = videoSettings
+        
         session.addOutput(videoOutput)
 
         let videoConnection = videoOutput.connection(with: .video)
@@ -96,6 +183,7 @@ extension DepthViewController {
         depthOutput.setDelegate(self, callbackQueue: dataOutputQueue)
         depthOutput.isFilteringEnabled = true
         session.addOutput(depthOutput)
+        
         
         let depthConnection = depthOutput.connection(with: .depthData)
         depthConnection?.videoOrientation = .portrait
@@ -122,13 +210,6 @@ extension DepthViewController {
         }
     }
     
-    
-    
-    
-    
-    func startRecording() {
-        
-    }
     
     
     
@@ -189,11 +270,12 @@ extension DepthViewController: AVCaptureDepthDataOutputDelegate {
                          timestamp: CMTime,
                          connection: AVCaptureConnection) {
         
-        print("hello world")
+//        print("hello world")
         
         var convertedDepth: AVDepthData
         
-        let depthDataType = kCVPixelFormatType_DisparityFloat32
+//        let depthDataType = kCVPixelFormatType_DisparityFloat32
+        let depthDataType = kCVPixelFormatType_DepthFloat32
         if depthData.depthDataType != depthDataType {
             convertedDepth = depthData.converting(toDepthDataType: depthDataType)
         } else {
@@ -234,19 +316,39 @@ extension DepthViewController: AVCaptureDepthDataOutputDelegate {
         
         
         
-        let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-        let path = (documentsDirectory as NSString).appendingPathComponent(("test" as NSString).appendingPathExtension("depth")!)
+        
         
         
         
         if isRecording {
-            guard let depthVideoSampleBuffer =
-                createVideoSampleBufferWithPixelBuffer(pixelBuffer, presentationTime: timestamp) else {
-                    print("Error: Unable to create sample buffer from pixelbuffer")
+//            guard let depthVideoSampleBuffer =
+//                createVideoSampleBufferWithPixelBuffer(pixelBuffer, presentationTime: timestamp) else {
+//                    print("Error: Unable to create sample buffer from pixelbuffer")
+//                    return
+//            }
+            
+//            recordVideo(sampleBuffer: depthVideoSampleBuffer)
+            
+            guard let assetWriter = assetWriter else {
                     return
             }
             
-            recordVideo(sampleBuffer: depthVideoSampleBuffer)
+            
+            
+            if assetWriter.status == .unknown {
+                assetWriter.startWriting()
+//                assetWriter.startSession(atSourceTime: CMSampleBufferGetPresentationTimeStamp(depthVideoSampleBuffer))
+                assetWriter.startSession(atSourceTime: timestamp)
+            } else if assetWriter.status == .writing {
+                if let input = assetWriterVideoInput,
+                    input.isReadyForMoreMediaData {
+                    
+                    print("hello")
+                    
+                    adaptor.append(pixelBuffer, withPresentationTime: timestamp)
+//                    input.append(depthVideoSampleBuffer)
+                }
+            }
         }
         
         
@@ -258,9 +360,27 @@ extension DepthViewController: AVCaptureDepthDataOutputDelegate {
     
     
     
-    private func recordVideo(sampleBuffer: CMSampleBuffer) {
-        
-    }
+    
+    
+    
+    
+//    private func recordVideo(sampleBuffer: CMSampleBuffer) {
+//        guard isRecording,
+//            let assetWriter = assetWriter else {
+//                return
+//        }
+//
+//
+//        if assetWriter.status == .unknown {
+//            assetWriter.startWriting()
+//            assetWriter.startSession(atSourceTime: CMSampleBufferGetPresentationTimeStamp(sampleBuffer))
+//        } else if assetWriter.status == .writing {
+//            if let input = assetWriterVideoInput,
+//                input.isReadyForMoreMediaData {
+//                input.append(sampleBuffer)
+//            }
+//        }
+//    }
     
     
     
@@ -269,8 +389,6 @@ extension DepthViewController: AVCaptureDepthDataOutputDelegate {
         guard let videoTrackSourceFormatDescription = videoTrackSourceFormatDescription else {
             return nil
         }
-        
-        
         
         var sampleBuffer: CMSampleBuffer?
         var timingInfo = CMSampleTimingInfo(duration: .invalid, presentationTimeStamp: presentationTime, decodeTimeStamp: .invalid)
