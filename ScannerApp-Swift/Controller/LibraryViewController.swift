@@ -55,6 +55,10 @@ class LibraryViewController: UITableViewController {
 }
 
 extension LibraryViewController: ScanTableViewCellDelegate {
+//    func didTappedUpload(url: URL) {
+//        
+//    }
+    
     func didTappedDelete() {
         loadFiles()
         tableView.reloadData()

@@ -9,6 +9,7 @@
 import UIKit
 
 protocol ScanTableViewCellDelegate {
+//    func didTappedUpload(url: URL)
     func didTappedDelete()
 }
 
@@ -85,9 +86,7 @@ extension ScanTableViewCell: HttpRequestHandlerDelegate {
             self.deleteButton.isEnabled = true
             self.uploadProgressView.isHidden = true
         }
-        
-        print("test code")
-        
+
         if let error = error {
             print ("error: \(error)")
             return

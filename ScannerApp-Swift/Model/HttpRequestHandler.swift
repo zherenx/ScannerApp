@@ -20,20 +20,41 @@ class HttpRequestHandler: NSObject {
     var httpRequestHandlerDelegate: HttpRequestHandlerDelegate?
     
     // TODO: return type should be whatever http response code type is
-    func upload(toUpload fileUrl: URL) {
+    func upload(toUpload url: URL) {
         
+//        if url.isFileURL {
+//
+//            print("hello")
+//
+//            uploadOneFile(url: url)
+//        } else {
+//
+//            print("world")
+//
+//            uploadAllFilesInDir(dirUrl: url)
+//        }
+        
+        if url.hasDirectoryPath {
+            uploadAllFilesInDir(dirUrl: url)
+        } else {
+            uploadOneFile(url: url)
+        }
+        
+    }
+    
+    func uploadOneFile(url: URL) {
         var request = URLRequest(url: host)
         request.allowsCellularAccess = false
         
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue(fileUrl.lastPathComponent, forHTTPHeaderField: "filename")
+        request.setValue(url.lastPathComponent, forHTTPHeaderField: "filename")
         
-//        var config = URLSessionConfiguration.background(withIdentifier: "url session")
-//        let session = URLSession(configuration: config, delegate: self, delegateQueue: nil)
+        //        var config = URLSessionConfiguration.background(withIdentifier: "url session")
+        //        let session = URLSession(configuration: config, delegate: self, delegateQueue: nil)
         
         let session = URLSession(configuration: .default, delegate: self, delegateQueue: uploadQueue)
-        let task = session.uploadTask(with: request, fromFile: fileUrl, completionHandler: {
+        let task = session.uploadTask(with: request, fromFile: url, completionHandler: {
             data, response, error in
             
             if let delegate = self.httpRequestHandlerDelegate {
@@ -47,8 +68,8 @@ class HttpRequestHandler: NSObject {
                 }
                 guard let response = response as? HTTPURLResponse,
                     (200...299).contains(response.statusCode) else {
-                    print ("server error")
-                    return
+                        print ("server error")
+                        return
                 }
                 if let mimeType = response.mimeType,
                     mimeType == "application/json",
@@ -59,9 +80,30 @@ class HttpRequestHandler: NSObject {
             }
             
         })
-
+        
         task.resume()
     }
+    
+    func uploadAllFilesInDir(dirUrl: URL) {
+        
+        var fileURLs: [URL] = []
+        
+        do {
+            fileURLs = try FileManager.default.contentsOfDirectory(at: dirUrl, includingPropertiesForKeys: nil)
+            
+        } catch {
+            print("Error while enumerating files \(dirUrl.path): \(error.localizedDescription)")
+        }
+        
+//        uploadOneFile(url: fileURLs[0])
+//        print(fileURLs[0])
+        
+        for url in fileURLs {
+            uploadOneFile(url: url)
+        }
+        
+    }
+    
 }
 
 extension HttpRequestHandler: URLSessionTaskDelegate {
@@ -73,11 +115,11 @@ extension HttpRequestHandler: URLSessionTaskDelegate {
             return
         }
     }
-
+    
     func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
         print("All messages enqueued for a session have been delivered")
     }
-
+    
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         print("Task finished transferring data")
         if let error = error {
