@@ -17,6 +17,17 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     private let firstNameKey = "firstName"
     private let lastNameKey = "lastName"
     
+    
+    
+    private var deviceId: String!
+    private var deviceName: String!
+    private var sceneLabel: String!
+    private var sceneType: String!
+    private var firstName: String!
+    private var lastName: String!
+    
+    
+    
     private let sessionQueue = DispatchQueue(label: "session queue")
 //    private let motionQueue = DispatchQueue(label: "motion queue")
     private let motionQueue = OperationQueue()
@@ -45,8 +56,12 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         
         
         
-        print(defaults.string(forKey: firstNameKey) ?? "No value for first name")
-        print(defaults.string(forKey: lastNameKey) ?? "No value for last name")
+        self.loadUserDefaultsAndDeviceInfo()
+        
+        
+//        print(defaults.string(forKey: firstNameKey) ?? "No value for first name")
+//        print(defaults.string(forKey: lastNameKey) ?? "No value for last name")
+        
         
         
     }
@@ -188,6 +203,29 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         self.motionQueue.maxConcurrentOperationCount = 1
     }
     
+    private func loadUserDefaultsAndDeviceInfo() {
+        firstName = defaults.string(forKey: firstNameKey)
+        lastName = defaults.string(forKey: lastNameKey)
+    
+    
+//        deviceId
+        deviceName = UIDevice.current.model
+//        sceneLabel
+//        sceneType
+        
+        
+        
+//        print(UIDevice.current.name)
+//        print(UIDevice.current.systemName)
+//        print(UIDevice.current.systemVersion)
+//        print(UIDevice.current.model)
+//        print(UIDevice.current.localizedModel)
+//        print(UIDevice.current.identifierForVendor)
+        
+        
+    
+    }
+    
     @IBAction private func recordButtonTapped(_ sender: Any) {
     
 //        guard let movieFileOutput = self.movieFileOutput else {
@@ -240,9 +278,10 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                 let dataPathString = dataPath.absoluteString
                 
                 // Metadata
+                let username = self.firstName + " " + self.lastName
                 let metadataPath = (dataPathString as NSString).appendingPathComponent((uuid as NSString).appendingPathExtension("txt")!)
-                let metadata = Metadata(colorWidth: 16, colorHeight: 9, depthWidth: 16, depthHeight: 9, deviceId: "0001", deviceName: "device", sceneLabel: "?", sceneType: "?", username: "Hello world")
-//                metadata.display()
+                let metadata = Metadata(colorWidth: 0, colorHeight: 0, depthWidth: 0, depthHeight: 0, deviceId: "0001", deviceName: self.deviceName, sceneLabel: "?", sceneType: "?", username: username)
+                metadata.display()
                 metadata.writeToFile(filepath: metadataPath)
                 
                 // TODO:
