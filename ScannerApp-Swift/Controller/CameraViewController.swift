@@ -12,6 +12,11 @@ import UIKit
 
 class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
     
+    private let defaults = UserDefaults.standard
+    
+    private let firstNameKey = "firstName"
+    private let lastNameKey = "lastName"
+    
     private let sessionQueue = DispatchQueue(label: "session queue")
 //    private let motionQueue = DispatchQueue(label: "motion queue")
     private let motionQueue = OperationQueue()
@@ -36,6 +41,14 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         
         self.configurateSession()
         self.setupIMU()
+        
+        
+        
+        
+        print(defaults.string(forKey: firstNameKey) ?? "No value for first name")
+        print(defaults.string(forKey: lastNameKey) ?? "No value for last name")
+        
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
