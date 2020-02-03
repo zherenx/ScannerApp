@@ -281,7 +281,7 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                 let username = self.firstName + " " + self.lastName
                 let metadataPath = (dataPathString as NSString).appendingPathComponent((uuid as NSString).appendingPathExtension("txt")!)
                 let metadata = Metadata(colorWidth: 0, colorHeight: 0, depthWidth: 0, depthHeight: 0, deviceId: "0001", deviceName: self.deviceName, sceneLabel: "?", sceneType: "?", username: username)
-                metadata.display()
+//                metadata.display()
                 metadata.writeToFile(filepath: metadataPath)
                 
                 // TODO:
@@ -301,7 +301,7 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                 }
                 
                 // Video
-                let movieFilePath = (dataPathString as NSString).appendingPathComponent((uuid as NSString).appendingPathExtension("mov")!)
+                let movieFilePath = (dataPathString as NSString).appendingPathComponent((uuid as NSString).appendingPathExtension("h264")!)
                 self.movieFileOutput.startRecording(to: URL(fileURLWithPath: movieFilePath), recordingDelegate: self)
             } else {
                 self.movieFileOutput.stopRecording()

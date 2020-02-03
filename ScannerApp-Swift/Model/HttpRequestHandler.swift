@@ -15,7 +15,8 @@ protocol HttpRequestHandlerDelegate {
 
 class HttpRequestHandler: NSObject {
     
-    private let host = URL(string: "http://192.168.1.66:5000/upload")!
+//    private let host = URL(string: "http://192.168.1.66:5000/upload")!
+    private let host = URL(string: "http://aspis.cmpt.sfu.ca/multiscan/upload")!
     private let uploadQueue = OperationQueue()
     var httpRequestHandlerDelegate: HttpRequestHandlerDelegate?
     
@@ -46,9 +47,14 @@ class HttpRequestHandler: NSObject {
         var request = URLRequest(url: host)
         request.allowsCellularAccess = false
         
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue(url.lastPathComponent, forHTTPHeaderField: "filename")
+//        request.httpMethod = "POST"
+//        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+//        request.setValue(url.lastPathComponent, forHTTPHeaderField: "filename")
+        
+        request.httpMethod = "PUT"
+        request.setValue("application/ipad_scanner_data", forHTTPHeaderField: "Content-Type")
+        request.setValue(url.lastPathComponent, forHTTPHeaderField: "FILE_NAME")
+        
         
         //        var config = URLSessionConfiguration.background(withIdentifier: "url session")
         //        let session = URLSession(configuration: config, delegate: self, delegateQueue: nil)
