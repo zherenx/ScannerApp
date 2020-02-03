@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -87,6 +87,7 @@
             <connections>
                 <outlet property="deleteButton" destination="Uxb-mf-hsn" id="8z8-8J-DGt"/>
                 <outlet property="infoLabel" destination="ykZ-tj-JB2" id="viL-fl-bab"/>
+                <outlet property="thumbnail" destination="SBj-fL-1cy" id="dak-BN-Dwq"/>
                 <outlet property="titleLabel" destination="9IQ-GS-0G6" id="e5b-aJ-3TV"/>
                 <outlet property="uploadButton" destination="D50-3p-GoJ" id="6KQ-zN-p2x"/>
                 <outlet property="uploadProgressView" destination="4Km-RE-jmH" id="qz8-yJ-eyX"/>

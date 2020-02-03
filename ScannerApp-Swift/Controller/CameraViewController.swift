@@ -301,7 +301,7 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                 }
                 
                 // Video
-                let movieFilePath = (dataPathString as NSString).appendingPathComponent((uuid as NSString).appendingPathExtension("h264")!)
+                let movieFilePath = (dataPathString as NSString).appendingPathComponent((uuid as NSString).appendingPathExtension("mp4")!)
                 self.movieFileOutput.startRecording(to: URL(fileURLWithPath: movieFilePath), recordingDelegate: self)
             } else {
                 self.movieFileOutput.stopRecording()

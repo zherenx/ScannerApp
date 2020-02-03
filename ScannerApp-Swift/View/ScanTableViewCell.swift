@@ -6,6 +6,7 @@
 //  Copyright © 2019 jx16. All rights reserved.
 //
 
+import AVFoundation
 import UIKit
 
 protocol ScanTableViewCellDelegate {
@@ -18,6 +19,7 @@ class ScanTableViewCell: UITableViewCell {
     private var url: URL!
     var scanTableViewCellDelegate: ScanTableViewCellDelegate!
     
+    @IBOutlet weak var thumbnail: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var infoLabel: UILabel!
     @IBOutlet weak var uploadButton: UIButton!
@@ -40,10 +42,41 @@ class ScanTableViewCell: UITableViewCell {
         
         self.titleLabel.text = url.lastPathComponent
         
-        self.infoLabel.text = url.pathExtension
+        if url.hasDirectoryPath {
+            var fileURLs: [URL] = []
+            do {
+                fileURLs = try FileManager.default.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
+            } catch {
+                print("Error while enumerating files \(url.path): \(error.localizedDescription)")
+            }
+            
+            var infoText = ""
+            for fileUrl in fileURLs {
+                let extention = fileUrl.pathExtension
+                infoText = infoText + extention + " "
+                
+                if extention == "mp4" {
+                    generateThumbnail(videoUrl: fileUrl)
+                }
+            }
+            
+            self.infoLabel.text = infoText
+            
+        } else {
+            self.infoLabel.text = url.pathExtension
+        }
+        
         self.infoLabel.textColor = .darkGray
         
         self.uploadProgressView.isHidden = true
+    }
+    
+    private func generateThumbnail(videoUrl: URL) {
+        let asset = AVAsset(url: videoUrl)
+        let generator = AVAssetImageGenerator.init(asset: asset)
+        let cgImage = try! generator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
+        self.thumbnail.image = UIImage(cgImage: cgImage)
+//        firstFrame.image = UIImage(cgImage: cgImage)
     }
     
     // TODO: behavior related stuff probably should be in a controller class
