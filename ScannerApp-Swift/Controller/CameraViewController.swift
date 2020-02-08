@@ -112,6 +112,25 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                 return
             }
             
+            
+            
+            
+            do {
+                try videoDevice.lockForConfiguration()
+                
+                let targetFrameDuration = CMTimeMake(value: 1, timescale: 30)
+                videoDevice.activeVideoMaxFrameDuration = targetFrameDuration
+                videoDevice.activeVideoMinFrameDuration = targetFrameDuration
+                
+                videoDevice.unlockForConfiguration()
+            } catch {
+                print("Error configurating video device")
+            }
+            
+            
+            
+            
+            
             let videoDeviceInput = try AVCaptureDeviceInput(device: videoDevice)
 
             if self.session.canAddInput(videoDeviceInput) {
@@ -154,8 +173,8 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         
         
         // config output
-//        let outputSettings = NSDictionary(object: <#T##Any#>, forKey: <#T##NSCopying#>)
-//        self.movieFileOutput.setOutputSettings(<#T##outputSettings: [String : Any]?##[String : Any]?#>, for: <#T##AVCaptureConnection#>)
+//        let outputSettings = NSDictionary(object: NSNumber(value: kCVPixelFormatType_420YpCbCr8BiPlanarFullRange), forKey: NSString(string: kCVPixelBufferPixelFormatTypeKey))
+//        self.movieFileOutput.setOutputSettings(outputSettings, for: <#T##AVCaptureConnection#>)
         
         
         if self.session.canAddOutput(self.movieFileOutput) {
@@ -165,7 +184,8 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
             
             
 //            self.session.sessionPreset = .high
-            self.session.sessionPreset = .photo
+//            self.session.sessionPreset = .photo
+            self.session.sessionPreset = .hd1920x1080
             
             
             
