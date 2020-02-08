@@ -20,11 +20,16 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     
     
     private var deviceId: String!
-    private var deviceName: String!
+    private var modelName: String!
     private var sceneLabel: String!
     private var sceneType: String!
+    
+    private var sensorTypes: [String] = ["sensor 1", "sensor 2"]
+//    private var numMeasurements: [String: Int]!
+    
     private var firstName: String!
     private var lastName: String!
+    private var userInputDescription: String!
     
     
     
@@ -224,14 +229,15 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     }
     
     private func loadUserDefaultsAndDeviceInfo() {
+        
+        deviceId = UIDevice.current.identifierForVendor?.uuidString
+        modelName = "model name ???"
+        sceneLabel = "scene label ???"
+        sceneType = "scene type ???"
+        
         firstName = defaults.string(forKey: firstNameKey)
         lastName = defaults.string(forKey: lastNameKey)
-    
-    
-//        deviceId
-        deviceName = UIDevice.current.model
-//        sceneLabel
-//        sceneType
+        userInputDescription = "user input ???"
         
         
         
@@ -300,8 +306,10 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                 // Metadata
                 let username = self.firstName + " " + self.lastName
                 let metadataPath = (dataPathString as NSString).appendingPathComponent((uuid as NSString).appendingPathExtension("txt")!)
-                let metadata = Metadata(colorWidth: 0, colorHeight: 0, depthWidth: 0, depthHeight: 0, deviceId: "0001", deviceName: self.deviceName, sceneLabel: "?", sceneType: "?", username: username)
-//                metadata.display()
+//                let metadata = Metadata(colorWidth: 0, colorHeight: 0, depthWidth: 0, depthHeight: 0, deviceId: "0001", modelName: self.deviceName, sceneLabel: "?", sceneType: "?", username: username)
+                let metadata = Metadata(deviceId: self.deviceId, modelName: self.modelName, sceneLabel: self.sceneLabel, sceneType: self.sceneType, sensorTypes: self.sensorTypes, numMeasurements: ["numColorFrames": 9999, "numImuMeasurements": 9998], username: username, userInputDescription: self.userInputDescription, colorWidth: 16, colorHeight: 9)
+                
+                metadata.display()
                 metadata.writeToFile(filepath: metadataPath)
                 
                 // TODO:

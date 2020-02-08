@@ -8,83 +8,110 @@
 
 import Foundation
 
-/*
-    Metadata.txt example
-    colorWidth = 1296
-    colorHeight = 968
-    depthWidth = 640
-    depthHeight = 480
-    fx_color = 1170.187988
-    fy_color = 1170.187988
-    mx_color = 647.750000
-    my_color = 483.750000
-    fx_depth = 571.623718
-    fy_depth = 571.623718
-    mx_depth = 319.500000
-    my_depth = 239.500000
-    colorToDepthExtrinsics = 0.999977 0.004401 0.005230 -0.037931 -0.004314 0.999852 -0.016630 -0.003321 -0.005303 0.016607 0.999848 -0.021860 -0.000000 0.000000 -0.000000 1.000000
-    deviceId = AA408AE6-80BB-4E45-B6BA-5ECC8C17FB2F
-    deviceName = iPad One
-    sceneLabel = 0001
-    sceneType = Bedroom / Hotel
-    numDepthFrames = 1912
-    numColorFrames = 1912
-    numIMUmeasurements = 4185
- */
+class Metadata: CustomData, Codable {
+    
+    private var deviceId: String
+    private var modelName: String
+    private var sceneLabel: String // Should this be Int?
+    private var sceneType: String
+    
+//    private var numColorFrames: Int
+//    private var numDepthFrames: Int
+//    private var numImuMeasurements: Int
+    
+    private var sensorTypes: [String]
+    private var numMeasurements: [String: Int] // does this make more sense??
+    
+    private var username: String // Do we still need this?
+    private var userInputDescription: String
+    
+    // Camera intrinsics
+    private var colorWidth: Int
+    private var colorHeight: Int
+//    private var depthWidth: Int?
+//    private var depthHeight: Int?
+    private var colorFocalX: Double // TODO: check if these should be float or double
+    private var colorFocalY: Double
+    private var colorCenterX: Double
+    private var colorCenterY: Double
+//    private var depthFocalX: Double?
+//    private var depthFocalY: Double?
+//    private var depthCenterX: Double?
+//    private var depthCenterY: Double?
+//    private var colorToDepthExtrinsics: [Double]
 
-class Metadata: CustomData {
     
-    var colorWidth: Int
-    var colorHeight: Int
-    var depthWidth: Int?
-    var depthHeight: Int?
-    var colorFocalX: Double // TODO: check if these should be float or double
-    var colorFocalY: Double
-    var colorCenterX: Double
-    var colorCenterY: Double
-    var depthFocalX: Double?
-    var depthFocalY: Double?
-    var depthCenterX: Double?
-    var depthCenterY: Double?
-    var colorToDepthExtrinsics: [Double]
-    var deviceId: String
-    var deviceName: String
-    var sceneLabel: String // Should this be Int?
-    var sceneType: String
-    var username: String
-    
-    var numDepthFrames: Int = 0
-    var numColorFrames: Int = 0
-    var numIMUmeasurements: Int = 0
-
-//    init(colorWidth: Int, colorHeight: Int,
-//         deviceId: String, deviceName: String, sceneLabel: String, sceneType: String) {
-//        // TODO:
-//    }
-    
-    init(colorWidth: Int, colorHeight: Int, depthWidth: Int, depthHeight: Int,
-         deviceId: String, deviceName: String, sceneLabel: String, sceneType: String, username: String) {
-        self.colorWidth = colorWidth
-        self.colorHeight = colorHeight
-        self.depthWidth = depthWidth
-        self.depthHeight = depthHeight
+    init(deviceId: String, modelName: String, sceneLabel: String, sceneType: String,
+//         numColorFrames: Int, numImuMeasurements: Int,
+         sensorTypes: [String], numMeasurements: [String: Int],
+         username: String, userInputDescription: String,
+         colorWidth: Int, colorHeight: Int) {
+        
         self.deviceId = deviceId
-        self.deviceName = deviceName
+        self.modelName = modelName
         self.sceneLabel = sceneLabel
         self.sceneType = sceneType
+        
+//        self.numColorFrames = numColorFrames
+//        self.numImuMeasurements = numImuMeasurements
+        self.numMeasurements = numMeasurements
+        
         self.username = username
+        self.userInputDescription = userInputDescription
+        self.sensorTypes = sensorTypes
         
-        self.colorToDepthExtrinsics = []
+        self.colorWidth = colorWidth
+        self.colorHeight = colorHeight
         
-        // TODO:
+        // TODO: calculate these var, might need to pass in camera matrix
         self.colorFocalX = 0
         self.colorFocalY = 0
         self.colorCenterX = 0
         self.colorCenterY = 0
-        self.depthFocalX = 0
-        self.depthFocalY = 0
-        self.depthCenterX = 0
-        self.depthCenterY = 0
+    }
+    
+//    func display() {
+//        // TODO:
+//        // need to check if depth related info is available
+//        // info is not complete
+//
+//        print("colorWidth = \(self.colorWidth)")
+//        print("colorHeight = \(self.colorHeight)")
+////        print("depthWidth = \(self.depthWidth)")
+////        print("depthHeight = \(self.depthHeight)")
+//        print("fx_color = \(self.colorFocalX)")
+//        print("fy_color = \(self.colorFocalY)")
+//        print("mx_color = \(self.colorCenterX)")
+//        print("my_color = \(self.colorCenterY)")
+////        print("fx_depth = \(self.depthFocalX)")
+////        print("fy_depth = \(self.depthFocalY)")
+////        print("mx_depth = \(self.depthCenterX)")
+////        print("my_depth = \(self.depthCenterY)")
+//        print("deviceId = \(self.deviceId)")
+//        print("deviceName = \(self.modelName)")
+//        print("sceneLabel = \(self.sceneLabel)")
+//        print("sceneType = \(self.sceneType)")
+//        print("username = \(self.username)")
+////        print("appVersionId = \(APP_VERSION_ID.c_str())")
+//    }
+    
+    func display() {
+        print(self.getJsonEncoding())
+    }
+    
+    func writeToFile(filepath: String) {
+        try! self.getJsonEncoding().write(toFile: filepath, atomically: true, encoding: .utf8)
+    }
+    
+    func getJsonEncoding() -> String {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        
+        let data = try! encoder.encode(self)
+        return String(data: data, encoding: .utf8)!
+    }
+}
         
 //        GLKVector4 getIntrinsicsFromGlProj(const GLKMatrix4& matrix, unsigned int width, unsigned int height, bool useHalf)
 //        {
@@ -104,58 +131,11 @@ class Metadata: CustomData {
 //            GLKVector4 ret = GLKVector4Make(fx, fy, mx, my);
 //            return ret;
 //        }
-    }
-    
-    func display() {
-        // TODO:
-        // need to check if depth related info is available
-        // info is not complete
-        
-        print("colorWidth = \(self.colorWidth)")
-        print("colorHeight = \(self.colorHeight)")
-//        print("depthWidth = \(self.depthWidth)")
-//        print("depthHeight = \(self.depthHeight)")
-        print("fx_color = \(self.colorFocalX)")
-        print("fy_color = \(self.colorFocalY)")
-        print("mx_color = \(self.colorCenterX)")
-        print("my_color = \(self.colorCenterY)")
-//        print("fx_depth = \(self.depthFocalX)")
-//        print("fy_depth = \(self.depthFocalY)")
-//        print("mx_depth = \(self.depthCenterX)")
-//        print("my_depth = \(self.depthCenterY)")
-        print("deviceId = \(self.deviceId)")
-        print("deviceName = \(self.deviceName)")
-        print("sceneLabel = \(self.sceneLabel)")
-        print("sceneType = \(self.sceneType)")
-        print("username = \(self.username)")
-//        print("appVersionId = \(APP_VERSION_ID.c_str())")
-    }
-    
-    func writeToFile(filepath: String) {
-        let strToWrite: String =
-        "colorWidth = \(self.colorWidth)\n" +
-        "colorHeight = \(self.colorHeight)\n" +
-//        "depthWidth = \(self.depthWidth)\n" +
-//        "depthHeight = \(self.depthHeight)\n" +
-        "fx_color = \(self.colorFocalX)\n" +
-        "fy_color = \(self.colorFocalY)\n" +
-        "mx_color = \(self.colorCenterX)\n" +
-        "my_color = \(self.colorCenterY)\n" +
-//        "fx_depth = \(self.depthFocalX)\n" +
-//        "fy_depth = \(self.depthFocalY)\n" +
-//        "mx_depth = \(self.depthCenterX)\n" +
-//        "my_depth = \(self.depthCenterY)\n" +
-        "deviceId = \(self.deviceId)\n" +
-        "deviceName = \(self.deviceName)\n" +
-        "sceneLabel = \(self.sceneLabel)\n" +
-        "sceneType = \(self.sceneType)\n" +
-        "username = \(self.username)\n"
-        
-//        "appVersionId = \(APP_VERSION_ID.c_str())"
-        
-        try! strToWrite.write(toFile: filepath, atomically: true, encoding: .utf8)
-    }
-}
+
+
+
+
+
 
 //void writeIntrinsics(const Options& options)
 //{
