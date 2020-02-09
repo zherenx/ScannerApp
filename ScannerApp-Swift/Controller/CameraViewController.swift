@@ -80,16 +80,7 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         self.configurateSession()
         self.setupIMU()
         
-        
-        
-        
         self.loadUserDefaultsAndDeviceInfo()
-        
-        
-//        print(defaults.string(forKey: firstNameKey) ?? "No value for first name")
-//        print(defaults.string(forKey: lastNameKey) ?? "No value for last name")
-        
-        
         
     }
     

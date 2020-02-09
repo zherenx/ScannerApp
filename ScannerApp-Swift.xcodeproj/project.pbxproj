@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FE02EE2B23F0C750000BD9EE /* ConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE02EE2A23F0C750000BD9EE /* ConfigurationViewController.swift */; };
 		FE09456123AD7061003A1CA5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09456023AD7061003A1CA5 /* AppDelegate.swift */; };
 		FE09456323AD7061003A1CA5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09456223AD7061003A1CA5 /* SceneDelegate.swift */; };
 		FE09456523AD7061003A1CA5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09456423AD7061003A1CA5 /* ViewController.swift */; };
@@ -28,6 +29,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FE02EE2A23F0C750000BD9EE /* ConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewController.swift; sourceTree = "<group>"; };
 		FE09455D23AD7061003A1CA5 /* ScannerApp-Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ScannerApp-Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE09456023AD7061003A1CA5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FE09456223AD7061003A1CA5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 				FE09458423B1C020003A1CA5 /* DualCameraViewController.swift */,
 				FE09457823B0ACBD003A1CA5 /* LibraryViewController.swift */,
 				FE176A7B23DCEFB10050F551 /* DepthViewController.swift */,
+				FE02EE2A23F0C750000BD9EE /* ConfigurationViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -207,6 +210,7 @@
 				FE19F8BA23B6070F00CF174E /* Metadata.swift in Sources */,
 				FE09456523AD7061003A1CA5 /* ViewController.swift in Sources */,
 				FE09457523ADFAAF003A1CA5 /* CameraViewController.swift in Sources */,
+				FE02EE2B23F0C750000BD9EE /* ConfigurationViewController.swift in Sources */,
 				FE19F8BE23B754BD00CF174E /* MotionData.swift in Sources */,
 				FE09456123AD7061003A1CA5 /* AppDelegate.swift in Sources */,
 				FE09457923B0ACBD003A1CA5 /* LibraryViewController.swift in Sources */,
