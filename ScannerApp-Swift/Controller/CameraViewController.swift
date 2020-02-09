@@ -21,16 +21,34 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     
     private var deviceId: String!
     private var modelName: String!
-    private var sceneLabel: String!
+    private var deviceName: String!
+//    private var sceneLabel: String!
     private var sceneType: String!
     
-    private var sensorTypes: [String] = ["sensor 1", "sensor 2"]
+//    private var sensorTypes: [String] = ["sensor 1", "sensor 2"]
 //    private var numMeasurements: [String: Int]!
     
     private var firstName: String!
     private var lastName: String!
     private var userInputDescription: String!
     
+    private var gpsLocation: String!
+    
+    
+    private var colorResolution: [Int]!
+    private var focalLength: [Float]!
+    private var principalPoint: [Float]!
+    
+    private var numColorFrames: Int!
+    private var numImuMeasurements: Int!
+    private var imuFrequency: Int!
+    
+    
+    
+    
+    
+//    private var fileId: String?
+    private var metadataPath: String! // this is a hack
     
     
     private let sessionQueue = DispatchQueue(label: "session queue")
@@ -117,9 +135,6 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                 return
             }
             
-            
-            
-            
             do {
                 try videoDevice.lockForConfiguration()
                 
@@ -132,6 +147,11 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                 print("Error configurating video device")
             }
             
+            
+            // TODO:
+            colorResolution = [1920, 1080]
+            focalLength = [1.0, 2.0]
+            principalPoint = [3.0, 4.0]
             
             
             
@@ -224,7 +244,9 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     }
     
     private func setupIMU() {
-        self.motionManager.deviceMotionUpdateInterval = 1.0 / 60.0
+        self.numImuMeasurements = 0
+        self.imuFrequency = 60
+        self.motionManager.deviceMotionUpdateInterval = 1.0 / Double(self.imuFrequency)
         self.motionQueue.maxConcurrentOperationCount = 1
     }
     
@@ -232,12 +254,15 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         
         deviceId = UIDevice.current.identifierForVendor?.uuidString
         modelName = "model name ???"
-        sceneLabel = "scene label ???"
+        deviceName = "device name ???"
+//        sceneLabel = "scene label ???"
         sceneType = "scene type ???"
         
         firstName = defaults.string(forKey: firstNameKey)
         lastName = defaults.string(forKey: lastNameKey)
         userInputDescription = "user input ???"
+        
+        gpsLocation = "gps location ???"
         
         
         
@@ -284,15 +309,15 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                 
                 
                 
+                // TODO: use deviceId + timestamp
+//                let fileId = self.deviceId +
+                let fileId = NSUUID().uuidString
                 
-                let uuid = NSUUID().uuidString
                 let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
                 
                 // create new directory for new recording
-
-
                 let docURL = URL(string: documentsDirectory)!
-                let dataPath = docURL.appendingPathComponent(uuid)
+                let dataPath = docURL.appendingPathComponent(fileId)
                 if !FileManager.default.fileExists(atPath: dataPath.absoluteString) {
                     do {
                         try FileManager.default.createDirectory(atPath: dataPath.absoluteString, withIntermediateDirectories: true, attributes: nil)
@@ -303,23 +328,18 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                 
                 let dataPathString = dataPath.absoluteString
                 
-                // Metadata
-                let username = self.firstName + " " + self.lastName
-                let metadataPath = (dataPathString as NSString).appendingPathComponent((uuid as NSString).appendingPathExtension("txt")!)
-//                let metadata = Metadata(colorWidth: 0, colorHeight: 0, depthWidth: 0, depthHeight: 0, deviceId: "0001", modelName: self.deviceName, sceneLabel: "?", sceneType: "?", username: username)
-                let metadata = Metadata(deviceId: self.deviceId, modelName: self.modelName, sceneLabel: self.sceneLabel, sceneType: self.sceneType, sensorTypes: self.sensorTypes, numMeasurements: ["numColorFrames": 9999, "numImuMeasurements": 9998], username: username, userInputDescription: self.userInputDescription, colorWidth: 16, colorHeight: 9)
-                
-                metadata.display()
-                metadata.writeToFile(filepath: metadataPath)
+                // save metadata path, it will be used when recording is finished
+                self.metadataPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("json")!)
                 
                 // TODO:
                 // Camera data
                 
                 // Motion data
-                let motionDataPath = (dataPathString as NSString).appendingPathComponent((uuid as NSString).appendingPathExtension("imu")!)
+                let motionDataPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("imu")!)
                 self.imuFilePointer = fopen(motionDataPath, "w")
                 self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
                     if let validData = data {
+                        self.numImuMeasurements += 1
                         let motionData = MotionData(deviceMotion: validData)
 //                        motionData.display()
                         motionData.writeToFile(filePointer: self.imuFilePointer!)
@@ -329,16 +349,44 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                 }
                 
                 // Video
-                let movieFilePath = (dataPathString as NSString).appendingPathComponent((uuid as NSString).appendingPathExtension("mp4")!)
+                let movieFilePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("mp4")!)
                 self.movieFileOutput.startRecording(to: URL(fileURLWithPath: movieFilePath), recordingDelegate: self)
             } else {
                 self.movieFileOutput.stopRecording()
                 
+                // TODO: get numColorFrames
+                self.numColorFrames = 9999
+                
+                
+                
+                
                 self.motionManager.stopDeviceMotionUpdates()
                 fclose(self.imuFilePointer)
+                
+                let username = self.firstName + " " + self.lastName
+//                let metadata = Metadata(deviceId: self.deviceId, modelName: self.modelName, sceneLabel: self.sceneLabel, sceneType: self.sceneType, sensorTypes: self.sensorTypes, numMeasurements: ["numColorFrames": 9999, "numImuMeasurements": 9998], username: username, userInputDescription: self.userInputDescription, colorWidth: 16, colorHeight: 9)
+                
+                
+                
+                
+                
+                
+                
+                let metadata = Metadata(deviceId: self.deviceId, modelName: self.modelName, deviceName: self.deviceName, username: username, userInputDescription: self.userInputDescription, sceneType: self.sceneType, gpsLocation: self.gpsLocation, streams: self.generateStreamInfo())
+                
+                
+                metadata.display()
+                metadata.writeToFile(filepath: self.metadataPath)
             }
         }
         
+    }
+    
+    private func generateStreamInfo() -> [StreamInfo] {
+        let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: "color_camera", encoding: "h264", num_frames: numColorFrames, resolution: colorResolution, focal_length: focalLength, principal_point: principalPoint, extrinsics_matrix: nil)
+        let accelerometerStreamInfo = ImuStreamInfo(id: "accel_1", type: "accelerometer", encoding: "accel_bin", num_frames: numImuMeasurements, frequency: imuFrequency)
+        // TOOD: more imu streams
+        return [cameraStreamInfo, accelerometerStreamInfo]
     }
     
     /// - Tag: DidStartRecording

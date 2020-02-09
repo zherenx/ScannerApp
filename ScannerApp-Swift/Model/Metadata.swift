@@ -8,92 +8,167 @@
 
 import Foundation
 
-class Metadata: CustomData, Codable {
+class DeviceInfo: Codable {
+    private var id: String
+    private var type: String
+    private var name: String
     
-    private var deviceId: String
-    private var modelName: String
-    private var sceneLabel: String // Should this be Int?
-    private var sceneType: String
-    
-//    private var numColorFrames: Int
-//    private var numDepthFrames: Int
-//    private var numImuMeasurements: Int
-    
-    private var sensorTypes: [String]
-    private var numMeasurements: [String: Int] // does this make more sense??
-    
-    private var username: String // Do we still need this?
-    private var userInputDescription: String
-    
-    // Camera intrinsics
-    private var colorWidth: Int
-    private var colorHeight: Int
-//    private var depthWidth: Int?
-//    private var depthHeight: Int?
-    private var colorFocalX: Double // TODO: check if these should be float or double
-    private var colorFocalY: Double
-    private var colorCenterX: Double
-    private var colorCenterY: Double
-//    private var depthFocalX: Double?
-//    private var depthFocalY: Double?
-//    private var depthCenterX: Double?
-//    private var depthCenterY: Double?
-//    private var colorToDepthExtrinsics: [Double]
+    internal init(id: String, type: String, name: String) {
+        self.id = id
+        self.type = type
+        self.name = name
+    }
+}
 
+class UserInfo: Codable {
+    private var name: String
     
-    init(deviceId: String, modelName: String, sceneLabel: String, sceneType: String,
-//         numColorFrames: Int, numImuMeasurements: Int,
-         sensorTypes: [String], numMeasurements: [String: Int],
-         username: String, userInputDescription: String,
-         colorWidth: Int, colorHeight: Int) {
-        
-        self.deviceId = deviceId
-        self.modelName = modelName
-        self.sceneLabel = sceneLabel
-        self.sceneType = sceneType
-        
-//        self.numColorFrames = numColorFrames
-//        self.numImuMeasurements = numImuMeasurements
-        self.numMeasurements = numMeasurements
-        
-        self.username = username
-        self.userInputDescription = userInputDescription
-        self.sensorTypes = sensorTypes
-        
-        self.colorWidth = colorWidth
-        self.colorHeight = colorHeight
-        
-        // TODO: calculate these var, might need to pass in camera matrix
-        self.colorFocalX = 0
-        self.colorFocalY = 0
-        self.colorCenterX = 0
-        self.colorCenterY = 0
+    internal init(name: String) {
+        self.name = name
+    }
+}
+
+class SceneInfo: Codable {
+    private var description: String
+    private var type: String
+    private var gps_location: String
+    
+    internal init(description: String, type: String, gps_location: String) {
+        self.description = description
+        self.type = type
+        self.gps_location = gps_location
+    }
+}
+
+class StreamInfo: Encodable {
+    private var id: String
+    private var type: String
+    private var encoding: String
+    private var num_frames: Int
+    
+    internal init(id: String, type: String, encoding: String, num_frames: Int) {
+        self.id = id
+        self.type = type
+        self.encoding = encoding
+        self.num_frames = num_frames
+    }
+}
+
+class CameraStreamInfo: StreamInfo {
+    private var resolution: [Int]
+    private var focal_length: [Float]
+    private var principal_point: [Float]
+    private var extrinsics_matrix: [Float]?
+    
+    internal init(id: String, type: String, encoding: String, num_frames: Int, resolution: [Int], focal_length: [Float], principal_point: [Float], extrinsics_matrix: [Float]?) {
+        self.resolution = resolution
+        self.focal_length = focal_length
+        self.principal_point = principal_point
+        self.extrinsics_matrix = extrinsics_matrix
+        super.init(id: id, type: type, encoding: encoding, num_frames: num_frames)
     }
     
-//    func display() {
-//        // TODO:
-//        // need to check if depth related info is available
-//        // info is not complete
+    override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(resolution, forKey: .resolution)
+        try container.encode(focal_length, forKey: .focal_length)
+        try container.encode(principal_point, forKey: .principal_point)
+        try container.encode(extrinsics_matrix, forKey: .extrinsics_matrix)
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case resolution
+        case focal_length
+        case principal_point
+        case extrinsics_matrix
+    }
+}
+
+class ImuStreamInfo: StreamInfo {
+    private var frequency: Int
+    
+    internal init(id: String, type: String, encoding: String, num_frames: Int, frequency: Int) {
+        self.frequency = frequency
+        super.init(id: id, type: type, encoding: encoding, num_frames: num_frames)
+    }
+    
+    override func encode(to encoder: Encoder) throws {
+        try super.encode(to: encoder)
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(frequency, forKey: .frequency)
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case frequency
+    }
+}
+
+class Metadata: CustomData, Encodable {
+    
+    private var device: DeviceInfo
+    private var user: UserInfo
+    private var scene: SceneInfo
+    private var streams: [StreamInfo]
+    
+//    private var deviceId: String
+//    private var modelName: String
+//    private var sceneLabel: String // Should this be Int?
+//    private var sceneType: String
 //
-//        print("colorWidth = \(self.colorWidth)")
-//        print("colorHeight = \(self.colorHeight)")
-////        print("depthWidth = \(self.depthWidth)")
-////        print("depthHeight = \(self.depthHeight)")
-//        print("fx_color = \(self.colorFocalX)")
-//        print("fy_color = \(self.colorFocalY)")
-//        print("mx_color = \(self.colorCenterX)")
-//        print("my_color = \(self.colorCenterY)")
-////        print("fx_depth = \(self.depthFocalX)")
-////        print("fy_depth = \(self.depthFocalY)")
-////        print("mx_depth = \(self.depthCenterX)")
-////        print("my_depth = \(self.depthCenterY)")
-//        print("deviceId = \(self.deviceId)")
-//        print("deviceName = \(self.modelName)")
-//        print("sceneLabel = \(self.sceneLabel)")
-//        print("sceneType = \(self.sceneType)")
-//        print("username = \(self.username)")
-////        print("appVersionId = \(APP_VERSION_ID.c_str())")
+//    private var sensorTypes: [String]
+//    private var numMeasurements: [String: Int] // does this make more sense??
+//
+//    private var username: String // Do we still need this?
+//    private var userInputDescription: String
+//
+//    // Camera intrinsics
+//    private var colorWidth: Int
+//    private var colorHeight: Int
+//    private var colorFocalX: Double // TODO: check if these should be float or double
+//    private var colorFocalY: Double
+//    private var colorCenterX: Double
+//    private var colorCenterY: Double
+
+    
+//    init(deviceId: String, modelName: String, sceneLabel: String, sceneType: String,
+////         numColorFrames: Int, numImuMeasurements: Int,
+//         sensorTypes: [String], numMeasurements: [String: Int],
+//         username: String, userInputDescription: String,
+//         colorWidth: Int, colorHeight: Int) {
+//
+//        self.deviceId = deviceId
+//        self.modelName = modelName
+//        self.sceneLabel = sceneLabel
+//        self.sceneType = sceneType
+//
+////        self.numColorFrames = numColorFrames
+////        self.numImuMeasurements = numImuMeasurements
+//        self.numMeasurements = numMeasurements
+//
+//        self.username = username
+//        self.userInputDescription = userInputDescription
+//        self.sensorTypes = sensorTypes
+//
+//        self.colorWidth = colorWidth
+//        self.colorHeight = colorHeight
+//
+//        // TODO: calculate these var, might need to pass in camera matrix
+//        self.colorFocalX = 0
+//        self.colorFocalY = 0
+//        self.colorCenterX = 0
+//        self.colorCenterY = 0
 //    }
+    
+    init(deviceId: String, modelName: String, deviceName: String,
+         username: String, userInputDescription: String, sceneType: String, gpsLocation: String,
+         streams: [StreamInfo]) {
+        
+        device = .init(id: deviceId, type: modelName, name: deviceName)
+        user = .init(name: username)
+        scene = .init(description: userInputDescription, type: sceneType, gps_location: gpsLocation)
+        self.streams = streams
+    }
     
     func display() {
         print(self.getJsonEncoding())
