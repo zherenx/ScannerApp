@@ -16,13 +16,14 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     
     private let firstNameKey = "firstName"
     private let lastNameKey = "lastName"
+    private let userInputKey = "userInput"
+    private let sceneTypeKey = "sceneTypeKey"
     
     
     
     private var deviceId: String!
     private var modelName: String!
     private var deviceName: String!
-//    private var sceneLabel: String!
     private var sceneType: String!
     
 //    private var sensorTypes: [String] = ["sensor 1", "sensor 2"]
@@ -56,6 +57,9 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     private let motionQueue = OperationQueue()
     
     private let session = AVCaptureSession()
+    
+    private var defaultVideoDevice: AVCaptureDevice?
+    
 //    private let photoOutput = AVCapturePhotoOutput()
     private let movieFileOutput = AVCaptureMovieFileOutput()
     private let motionManager = CMMotionManager()
@@ -120,7 +124,7 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         self.session.beginConfiguration()
         
         do {
-            var defaultVideoDevice: AVCaptureDevice?
+//            var defaultVideoDevice: AVCaptureDevice?
 
             // Choose the back dual camera, if available, otherwise default to a wide angle camera.
             if let dualCameraDevice = AVCaptureDevice.default(.builtInDualCamera, for: .video, position: .back) {
@@ -149,9 +153,10 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
             
             
             // TODO:
-            colorResolution = [1920, 1080]
+//            colorResolution = [1920, 1080]
             focalLength = [1.0, 2.0]
             principalPoint = [3.0, 4.0]
+
             
             
             
@@ -209,8 +214,8 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
             
             
 //            self.session.sessionPreset = .high
-//            self.session.sessionPreset = .photo
-            self.session.sessionPreset = .hd1920x1080
+            self.session.sessionPreset = .photo
+//            self.session.sessionPreset = .hd1920x1080
             
             
             
@@ -239,6 +244,11 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
 //            }
         }
         
+        
+        let videoFormatDescription = defaultVideoDevice!.activeFormat.formatDescription
+        let dimensions = CMVideoFormatDescriptionGetDimensions(videoFormatDescription)
+        colorResolution = [Int(dimensions.width), Int(dimensions.height)]
+        
         self.session.commitConfiguration()
         
     }
@@ -254,13 +264,16 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         
         deviceId = UIDevice.current.identifierForVendor?.uuidString
         modelName = "model name ???"
-        deviceName = "device name ???"
-//        sceneLabel = "scene label ???"
-        sceneType = "scene type ???"
+        deviceName = UIDevice.current.name
         
         firstName = defaults.string(forKey: firstNameKey)
         lastName = defaults.string(forKey: lastNameKey)
+        
         userInputDescription = "user input ???"
+        sceneType = "scene type ???"
+        
+//        userInputDescription = defaults.string(forKey: userInputKey)
+//        sceneType = defaults.string(forKey: sceneTypeKey)
         
         gpsLocation = "gps location ???"
         
