@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 class DeviceInfo: Codable {
     private var id: String
@@ -160,11 +161,14 @@ class Metadata: CustomData, Encodable {
 //        self.colorCenterY = 0
 //    }
     
-    init(deviceId: String, modelName: String, deviceName: String,
-         username: String, userInputDescription: String, sceneType: String, gpsLocation: String,
+    init(username: String, userInputDescription: String, sceneType: String, gpsLocation: String,
          streams: [StreamInfo]) {
         
-        device = .init(id: deviceId, type: modelName, name: deviceName)
+        let deviceId = UIDevice.current.identifierForVendor?.uuidString
+        let modelName = Helper.getModelCode()
+        let deviceName = UIDevice.current.name
+        
+        device = .init(id: deviceId!, type: modelName, name: deviceName)
         user = .init(name: username)
         scene = .init(description: userInputDescription, type: sceneType, gps_location: gpsLocation)
         self.streams = streams

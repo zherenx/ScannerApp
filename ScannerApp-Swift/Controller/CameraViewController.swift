@@ -19,19 +19,10 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     private let userInputDescriptionKey = "userInputDescription"
     private let sceneTypeKey = "sceneTypeKey"
     
-    
-    
-    private var deviceId: String!
-    private var modelName: String!
-    private var deviceName: String!
-    private var sceneType: String?
-    
-//    private var sensorTypes: [String] = ["sensor 1", "sensor 2"]
-//    private var numMeasurements: [String: Int]!
-    
     private var firstName: String?
     private var lastName: String?
     private var userInputDescription: String?
+    private var sceneType: String?
     
     private var gpsLocation: String!
     
@@ -79,7 +70,7 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         self.configurateSession()
         self.setupIMU()
         
-        self.loadUserDefaultsAndDeviceInfo()
+        self.loadUserDefaults()
         
     }
     
@@ -250,11 +241,7 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         self.motionQueue.maxConcurrentOperationCount = 1
     }
     
-    private func loadUserDefaultsAndDeviceInfo() {
-        
-        deviceId = UIDevice.current.identifierForVendor?.uuidString
-        modelName = "model name ???"
-        deviceName = UIDevice.current.name
+    private func loadUserDefaults() {
         
         firstName = defaults.string(forKey: firstNameKey)
         lastName = defaults.string(forKey: lastNameKey)
@@ -382,6 +369,8 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
                     }
                 }
                 
+                // TODO: add a pickerview here
+                
                 alert.addAction(cancelAction)
                 alert.addAction(saveAction)
 
@@ -476,7 +465,7 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         
         
         
-        let metadata = Metadata(deviceId: self.deviceId, modelName: self.modelName, deviceName: self.deviceName, username: username, userInputDescription: self.userInputDescription!, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: self.generateStreamInfo())
+        let metadata = Metadata(username: username, userInputDescription: self.userInputDescription!, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: self.generateStreamInfo())
         
         
         metadata.display()
