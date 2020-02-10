@@ -16,7 +16,7 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     
     private let firstNameKey = "firstName"
     private let lastNameKey = "lastName"
-    private let userInputKey = "userInput"
+    private let userInputDescriptionKey = "userInputDescription"
     private let sceneTypeKey = "sceneTypeKey"
     
     
@@ -24,14 +24,14 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     private var deviceId: String!
     private var modelName: String!
     private var deviceName: String!
-    private var sceneType: String!
+    private var sceneType: String?
     
 //    private var sensorTypes: [String] = ["sensor 1", "sensor 2"]
 //    private var numMeasurements: [String: Int]!
     
-    private var firstName: String!
-    private var lastName: String!
-    private var userInputDescription: String!
+    private var firstName: String?
+    private var lastName: String?
+    private var userInputDescription: String?
     
     private var gpsLocation: String!
     
@@ -43,7 +43,6 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     private var numColorFrames: Int!
     private var numImuMeasurements: Int!
     private var imuFrequency: Int!
-    
     
     
     
@@ -260,8 +259,9 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         firstName = defaults.string(forKey: firstNameKey)
         lastName = defaults.string(forKey: lastNameKey)
         
-        userInputDescription = "user input ???"
+        userInputDescription = defaults.string(forKey: userInputDescriptionKey)
         sceneType = "scene type ???"
+//        sceneType = defaults.string(forKey: sceneTypeKey)
         
 //        userInputDescription = defaults.string(forKey: userInputKey)
 //        sceneType = defaults.string(forKey: sceneTypeKey)
@@ -293,97 +293,194 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         
         self.sessionQueue.async {
             if !self.movieFileOutput.isRecording {
-                if UIDevice.current.isMultitaskingSupported {
-                    self.backgroundRecordingID = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
-                }
                 
-                // Update the orientation on the movie file output video connection before recording.
-                let movieFileOutputConnection = self.movieFileOutput.connection(with: .video)
-//                movieFileOutputConnection?.videoOrientation = videoPreviewLayerOrientation!
-                movieFileOutputConnection?.videoOrientation = .landscapeRight
+                let alert = UIAlertController(title: "Alert Title", message: "Alert Message", preferredStyle: .alert)
                 
-//                let availableVideoCodecTypes = self.movieFileOutput.availableVideoCodecTypes
-//
-//                print(availableVideoCodecTypes)
-//
-//
-//                if availableVideoCodecTypes.contains(.hevc) {
-//                    self.movieFileOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: movieFileOutputConnection!)
-//                }
-                
-                
-                
-                // TODO: use deviceId + timestamp
-//                let fileId = self.deviceId +
-                let fileId = NSUUID().uuidString
-                
-                let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-                
-                // create new directory for new recording
-                let docURL = URL(string: documentsDirectory)!
-                let dataPath = docURL.appendingPathComponent(fileId)
-                if !FileManager.default.fileExists(atPath: dataPath.absoluteString) {
-                    do {
-                        try FileManager.default.createDirectory(atPath: dataPath.absoluteString, withIntermediateDirectories: true, attributes: nil)
-                    } catch {
-                        print(error.localizedDescription);
+                let saveAction = UIAlertAction(title: "Save", style: .default) { (action: UIAlertAction!) -> Void in
+                    
+                    self.defaults.set(self.firstName, forKey: self.firstNameKey)
+                    self.defaults.set(self.lastName, forKey: self.lastNameKey)
+                    self.defaults.set(self.userInputDescription, forKey: self.userInputDescriptionKey)
+
+                    self.sessionQueue.async {
+                        self.startRecording()
                     }
                 }
+
+                saveAction.isEnabled = false
+                if self.firstName != nil && !self.firstName!.isEmpty
+                && self.lastName != nil && !self.lastName!.isEmpty
+                && self.userInputDescription != nil && !self.userInputDescription!.isEmpty
+                && self.sceneType != nil {
+                    saveAction.isEnabled = true
+                }
+
+                let cancelAction = UIAlertAction(title: "Cancel", style: .default) { (action: UIAlertAction!) -> Void in
+                    self.recordButton.isEnabled = true
+                }
                 
-                let dataPathString = dataPath.absoluteString
+                alert.addTextField { (textField) in
+                    textField.placeholder = "Please enter first name"
+                    textField.text = self.firstName
+                }
+
+                alert.addTextField { (textField) in
+                    textField.placeholder = "Please enter last name"
+                    textField.text = self.lastName
+                }
                 
-                // save metadata path, it will be used when recording is finished
-                self.metadataPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("json")!)
-                
-                // TODO:
-                // Camera data
-                
-                // Motion data
-                let motionDataPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("imu")!)
-                self.imuFilePointer = fopen(motionDataPath, "w")
-                self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
-                    if let validData = data {
-                        self.numImuMeasurements += 1
-                        let motionData = MotionData(deviceMotion: validData)
-//                        motionData.display()
-                        motionData.writeToFile(filePointer: self.imuFilePointer!)
+                alert.addTextField { (textField) in
+                    textField.placeholder = "Please enter scene description"
+                    textField.text = self.userInputDescription
+                }
+
+                NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object:alert.textFields?[0], queue: OperationQueue.main) { (notification) -> Void in
+
+                    self.firstName = alert.textFields![0].text
+                    self.lastName = alert.textFields![1].text
+                    self.userInputDescription = alert.textFields![2].text
+
+                    if self.firstName != nil && !self.firstName!.isEmpty
+                        && self.lastName != nil && !self.lastName!.isEmpty
+                        && self.userInputDescription != nil && !self.userInputDescription!.isEmpty
+                        && self.sceneType != nil {
+                        saveAction.isEnabled = true
                     } else {
-                        print("there is some problem with motion data")
+                        saveAction.isEnabled = false
                     }
                 }
                 
-                // Video
-                let movieFilePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("mp4")!)
-                self.movieFileOutput.startRecording(to: URL(fileURLWithPath: movieFilePath), recordingDelegate: self)
+                NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object:alert.textFields?[1], queue: OperationQueue.main) { (notification) -> Void in
+
+                    self.firstName = alert.textFields![0].text
+                    self.lastName = alert.textFields![1].text
+                    self.userInputDescription = alert.textFields![2].text
+
+                    if self.firstName != nil && !self.firstName!.isEmpty
+                        && self.lastName != nil && !self.lastName!.isEmpty
+                        && self.userInputDescription != nil && !self.userInputDescription!.isEmpty
+                        && self.sceneType != nil {
+                        saveAction.isEnabled = true
+                    } else {
+                        saveAction.isEnabled = false
+                    }
+                }
+                
+                NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object:alert.textFields?[2], queue: OperationQueue.main) { (notification) -> Void in
+
+                    self.firstName = alert.textFields![0].text
+                    self.lastName = alert.textFields![1].text
+                    self.userInputDescription = alert.textFields![2].text
+
+                    if self.firstName != nil && !self.firstName!.isEmpty
+                        && self.lastName != nil && !self.lastName!.isEmpty
+                        && self.userInputDescription != nil && !self.userInputDescription!.isEmpty
+                        && self.sceneType != nil {
+                        saveAction.isEnabled = true
+                    } else {
+                        saveAction.isEnabled = false
+                    }
+                }
+                
+                alert.addAction(cancelAction)
+                alert.addAction(saveAction)
+
+                self.present(alert, animated: true, completion: nil)
+                
+//                self.startRecording()
             } else {
-                self.movieFileOutput.stopRecording()
-                
-                // TODO: get numColorFrames
-                self.numColorFrames = 9999
-                
-                
-                
-                
-                self.motionManager.stopDeviceMotionUpdates()
-                fclose(self.imuFilePointer)
-                
-                let username = self.firstName + " " + self.lastName
-//                let metadata = Metadata(deviceId: self.deviceId, modelName: self.modelName, sceneLabel: self.sceneLabel, sceneType: self.sceneType, sensorTypes: self.sensorTypes, numMeasurements: ["numColorFrames": 9999, "numImuMeasurements": 9998], username: username, userInputDescription: self.userInputDescription, colorWidth: 16, colorHeight: 9)
-                
-                
-                
-                
-                
-                
-                
-                let metadata = Metadata(deviceId: self.deviceId, modelName: self.modelName, deviceName: self.deviceName, username: username, userInputDescription: self.userInputDescription, sceneType: self.sceneType, gpsLocation: self.gpsLocation, streams: self.generateStreamInfo())
-                
-                
-                metadata.display()
-                metadata.writeToFile(filepath: self.metadataPath)
+                self.stopRecording()
+            }
+        }
+    }
+    
+    private func startRecording() {
+        if UIDevice.current.isMultitaskingSupported {
+            self.backgroundRecordingID = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
+        }
+        
+        // Update the orientation on the movie file output video connection before recording.
+        let movieFileOutputConnection = self.movieFileOutput.connection(with: .video)
+        //                movieFileOutputConnection?.videoOrientation = videoPreviewLayerOrientation!
+        movieFileOutputConnection?.videoOrientation = .landscapeRight
+        
+        //                let availableVideoCodecTypes = self.movieFileOutput.availableVideoCodecTypes
+        //
+        //                print(availableVideoCodecTypes)
+        //
+        //
+        //                if availableVideoCodecTypes.contains(.hevc) {
+        //                    self.movieFileOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: movieFileOutputConnection!)
+        //                }
+        
+        
+        
+        // TODO: use deviceId + timestamp
+        //                let fileId = self.deviceId +
+        let fileId = NSUUID().uuidString
+        
+        let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+        
+        // create new directory for new recording
+        let docURL = URL(string: documentsDirectory)!
+        let dataPath = docURL.appendingPathComponent(fileId)
+        if !FileManager.default.fileExists(atPath: dataPath.absoluteString) {
+            do {
+                try FileManager.default.createDirectory(atPath: dataPath.absoluteString, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print(error.localizedDescription);
             }
         }
         
+        let dataPathString = dataPath.absoluteString
+        
+        // save metadata path, it will be used when recording is finished
+        self.metadataPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("json")!)
+        
+        // TODO:
+        // Camera data
+        
+        // Motion data
+        self.numImuMeasurements = 0
+        let motionDataPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("imu")!)
+        self.imuFilePointer = fopen(motionDataPath, "w")
+        self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
+            if let validData = data {
+                self.numImuMeasurements += 1
+                let motionData = MotionData(deviceMotion: validData)
+                //                        motionData.display()
+                motionData.writeToFile(filePointer: self.imuFilePointer!)
+            } else {
+                print("there is some problem with motion data")
+            }
+        }
+        
+        // Video
+        let movieFilePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("mp4")!)
+        self.movieFileOutput.startRecording(to: URL(fileURLWithPath: movieFilePath), recordingDelegate: self)
+    }
+    
+    private func stopRecording() {
+        self.movieFileOutput.stopRecording()
+        
+        // TODO: get numColorFrames
+        self.numColorFrames = 9999
+        
+        
+        
+        self.motionManager.stopDeviceMotionUpdates()
+        fclose(self.imuFilePointer)
+        
+        let username = self.firstName! + " " + self.lastName!
+        //                let metadata = Metadata(deviceId: self.deviceId, modelName: self.modelName, sceneLabel: self.sceneLabel, sceneType: self.sceneType, sensorTypes: self.sensorTypes, numMeasurements: ["numColorFrames": 9999, "numImuMeasurements": 9998], username: username, userInputDescription: self.userInputDescription, colorWidth: 16, colorHeight: 9)
+        
+        
+        
+        let metadata = Metadata(deviceId: self.deviceId, modelName: self.modelName, deviceName: self.deviceName, username: username, userInputDescription: self.userInputDescription!, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: self.generateStreamInfo())
+        
+        
+        metadata.display()
+        metadata.writeToFile(filepath: self.metadataPath)
     }
     
     private func generateStreamInfo() -> [StreamInfo] {
