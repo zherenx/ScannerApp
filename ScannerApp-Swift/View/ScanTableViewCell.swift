@@ -136,4 +136,12 @@ extension ScanTableViewCell: HttpRequestHandlerDelegate {
             print ("got data: \(dataString)")
         }
     }
+    
+    func didCompleteWithoutError() {
+        DispatchQueue.main.async {
+            self.uploadButton.isEnabled = true
+            self.deleteButton.isEnabled = true
+            self.uploadProgressView.isHidden = true
+        }
+    }
 }
