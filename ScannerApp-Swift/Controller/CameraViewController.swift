@@ -404,9 +404,12 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         
         
         
-        // TODO: use deviceId + timestamp
-        //                let fileId = self.deviceId +
-        let fileId = NSUUID().uuidString
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd'T'hhmmssZZZ"
+        let dateString = dateFormatter.string(from: Date())
+        
+        let fileId = dateString + "_" + UIDevice.current.identifierForVendor!.uuidString
+//        let fileId = NSUUID().uuidString
         
         let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         
