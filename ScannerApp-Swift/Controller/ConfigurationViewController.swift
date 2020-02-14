@@ -15,6 +15,7 @@ class ConfigurationViewController: UIViewController {
     private let firstNameKey = Constants.UserDefaultsKeys.firstNameKey
     private let lastNameKey = Constants.UserDefaultsKeys.lastNameKey
     
+    private let sceneTypeIndexKey = Constants.UserDefaultsKeys.sceneTypeIndexKey
     private let sceneTypeKey = Constants.UserDefaultsKeys.sceneTypeKey
     
     private let sceneTypes = Constants.sceneTypes
@@ -22,30 +23,31 @@ class ConfigurationViewController: UIViewController {
     @IBOutlet weak var firstNameTextField: UITextField!
     @IBOutlet weak var lastNameTextField: UITextField!
 
+    @IBOutlet weak var selectSceneTypeButton: UIButton!
+    
     @IBOutlet weak var sceneTypePickerView: UIPickerView!
-    
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // setup text fields
         firstNameTextField.delegate = self
         lastNameTextField.delegate = self
-        
-        sceneTypePickerView.delegate = self
-        sceneTypePickerView.dataSource = self
-        
-        setupUI()
-    }
-    
-    private func setupUI() {
         
         let firstName = defaults.string(forKey: firstNameKey)
         let lastName = defaults.string(forKey: lastNameKey)
         
         firstNameTextField.text = firstName
         lastNameTextField.text = lastName
+        
+        // setup picker view
+        sceneTypePickerView.delegate = self
+        sceneTypePickerView.dataSource = self
+
+        sceneTypePickerView.isHidden = true
+        
+        let currentSceneTypeIndex = defaults.integer(forKey: sceneTypeIndexKey)
+        selectSceneTypeButton.setTitle(sceneTypes[currentSceneTypeIndex], for: .normal)
     }
     
     private func saveUserDefaults() {
@@ -63,10 +65,15 @@ class ConfigurationViewController: UIViewController {
         
         defaults.set(newFirstName, forKey: firstNameKey)
         defaults.set(newLastName, forKey: lastNameKey)
-        
-//        setupUI()
     }
 
+    @IBAction func toggleSelectSceneTypeButton(_ sender: Any) {
+        if sceneTypePickerView.isHidden {
+            sceneTypePickerView.isHidden = false
+        } else {
+            sceneTypePickerView.isHidden = true
+        }
+    }
 
 }
 
@@ -94,6 +101,8 @@ extension ConfigurationViewController: UIPickerViewDelegate, UIPickerViewDataSou
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        defaults.set(sceneTypes[row], forKey: sceneTypeKey)
+        defaults.set(row, forKey: sceneTypeIndexKey)
+//        defaults.set(sceneTypes[row], forKey: sceneTypeKey)
+        selectSceneTypeButton.setTitle(sceneTypes[row], for: .normal)
     }
 }
