@@ -18,4 +18,11 @@ struct Constants {
                                        "Bathroom",
                                        "Conference Room",
                                        "Misc."]
+    
+    struct UserDefaultsKeys {
+        static let firstNameKey = "firstName"
+        static let lastNameKey = "lastName"
+        static let sceneTypeKey = "sceneType"
+        static let userInputDescriptionKey = "userInputDescription"
+    }
 }

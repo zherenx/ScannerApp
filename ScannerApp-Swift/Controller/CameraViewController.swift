@@ -14,10 +14,10 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     
     private let defaults = UserDefaults.standard
     
-    private let firstNameKey = "firstName"
-    private let lastNameKey = "lastName"
-    private let userInputDescriptionKey = "userInputDescription"
-    private let sceneTypeKey = "sceneTypeKey"
+    private let firstNameKey = Constants.UserDefaultsKeys.firstNameKey
+    private let lastNameKey = Constants.UserDefaultsKeys.lastNameKey
+    private let userInputDescriptionKey = Constants.UserDefaultsKeys.userInputDescriptionKey
+    private let sceneTypeKey = Constants.UserDefaultsKeys.sceneTypeKey
     
     private var firstName: String?
     private var lastName: String?
