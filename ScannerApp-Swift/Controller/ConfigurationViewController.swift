@@ -48,6 +48,8 @@ class ConfigurationViewController: UIViewController {
         
         let currentSceneTypeIndex = defaults.integer(forKey: sceneTypeIndexKey)
         selectSceneTypeButton.setTitle(sceneTypes[currentSceneTypeIndex], for: .normal)
+        
+        sceneTypePickerView.selectRow(currentSceneTypeIndex, inComponent: 0, animated: false)
     }
     
     private func saveUserDefaults() {
