@@ -15,14 +15,26 @@ class ConfigurationViewController: UIViewController {
     private let firstNameKey = "firstName"
     private let lastNameKey = "lastName"
     
+    private let sceneTypeKey = "sceneLabel"
+    
+    private let sceneTypes = Constants.sceneTypes
+    
     @IBOutlet weak var firstNameTextField: UITextField!
     @IBOutlet weak var lastNameTextField: UITextField!
 
+    @IBOutlet weak var sceneTypePickerView: UIPickerView!
+    
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         firstNameTextField.delegate = self
         lastNameTextField.delegate = self
+        
+        sceneTypePickerView.delegate = self
+        sceneTypePickerView.dataSource = self
         
         setupUI()
     }
@@ -65,5 +77,23 @@ extension ConfigurationViewController: UITextFieldDelegate {
         saveUserDefaults()
         
         return true
+    }
+}
+
+extension ConfigurationViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1;
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return sceneTypes.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return sceneTypes[row]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        defaults.set(sceneTypes[row], forKey: sceneTypeKey)
     }
 }

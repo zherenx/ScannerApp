@@ -17,7 +17,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="ble-zw-gJc">
-                                <rect key="frame" x="20" y="404" width="374" height="88"/>
+                                <rect key="frame" x="20" y="286" width="374" height="324"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="42" translatesAutoresizingMaskIntoConstraints="NO" id="dmn-7K-DjT">
                                         <rect key="frame" x="0.0" y="0.0" width="374" height="34"/>
@@ -51,6 +51,9 @@
                                             </textField>
                                         </subviews>
                                     </stackView>
+                                    <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="S52-oU-gA5">
+                                        <rect key="frame" x="0.0" y="108" width="374" height="216"/>
+                                    </pickerView>
                                 </subviews>
                             </stackView>
                         </subviews>
@@ -67,6 +70,7 @@
                     <connections>
                         <outlet property="firstNameTextField" destination="TmV-XF-18Y" id="O23-4V-7hZ"/>
                         <outlet property="lastNameTextField" destination="kyT-9V-gPV" id="j4H-3V-Psg"/>
+                        <outlet property="sceneTypePickerView" destination="S52-oU-gA5" id="2li-OE-SbV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vfG-w8-IpY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
