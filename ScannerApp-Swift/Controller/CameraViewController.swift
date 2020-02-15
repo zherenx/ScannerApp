@@ -45,6 +45,7 @@ class CameraViewController: UIViewController {
     
     
 //    private var fileId: String?
+    private var movieFilePath: String!
     private var metadataPath: String! // this is a hack
     
     
@@ -476,20 +477,17 @@ class CameraViewController: UIViewController {
         }
         
         // Video
-        let movieFilePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("mp4")!)
+        self.movieFilePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("mp4")!)
         self.movieFileOutput.startRecording(to: URL(fileURLWithPath: movieFilePath), recordingDelegate: self)
     }
     
     private func stopRecording() {
         self.movieFileOutput.stopRecording()
         
-        // TODO: get numColorFrames
-        self.numColorFrames = 9999
-        
-        
-        
         self.motionManager.stopDeviceMotionUpdates()
         fclose(self.imuFilePointer)
+        
+        self.numColorFrames = getNumberOfFrames(videoUrl: URL(fileURLWithPath: movieFilePath))
         
         let username = self.firstName! + " " + self.lastName!
         //                let metadata = Metadata(deviceId: self.deviceId, modelName: self.modelName, sceneLabel: self.sceneLabel, sceneType: self.sceneType, sensorTypes: self.sensorTypes, numMeasurements: ["numColorFrames": 9999, "numImuMeasurements": 9998], username: username, userInputDescription: self.userInputDescription, colorWidth: 16, colorHeight: 9)
@@ -519,6 +517,37 @@ class CameraViewController: UIViewController {
                 gpsLocation = [coordinate.latitude, coordinate.longitude]
             }
         }
+    }
+    
+    private func getNumberOfFrames(videoUrl url: URL) -> Int {
+        let asset = AVURLAsset(url: url, options: nil)
+        do {
+            let reader = try AVAssetReader(asset: asset)
+            //AVAssetReader(asset: asset, error: nil)
+            let videoTrack = asset.tracks(withMediaType: AVMediaType.video)[0]
+            
+            let readerOutput = AVAssetReaderTrackOutput(track: videoTrack, outputSettings: nil)
+            reader.add(readerOutput)
+            reader.startReading()
+            
+            var nFrames = 0
+            
+            while true {
+                let sampleBuffer = readerOutput.copyNextSampleBuffer()
+                if sampleBuffer == nil {
+                    break
+                }
+                
+                nFrames += 1
+            }
+            
+            return nFrames
+            
+        } catch {
+            print("Error: \(error)")
+        }
+        
+        return 0
     }
     
 }
