@@ -10,14 +10,17 @@ import AVFoundation
 import CoreMotion
 import UIKit
 
-class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
+class CameraViewController: UIViewController {
     
     private let defaults = UserDefaults.standard
     
     private let firstNameKey = Constants.UserDefaultsKeys.firstNameKey
     private let lastNameKey = Constants.UserDefaultsKeys.lastNameKey
     private let userInputDescriptionKey = Constants.UserDefaultsKeys.userInputDescriptionKey
+    private let sceneTypeIndexKey = Constants.UserDefaultsKeys.sceneTypeIndexKey
     private let sceneTypeKey = Constants.UserDefaultsKeys.sceneTypeKey
+    
+    private let sceneTypes = Constants.sceneTypes
     
     private var firstName: String?
     private var lastName: String?
@@ -60,17 +63,27 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     @IBOutlet private weak var previewView: PreviewView!
     @IBOutlet private weak var recordButton: UIButton!
     
+    @IBOutlet private weak var popUpView: UIView!
+//    private var popUpView: UIView!
+    
+    @IBOutlet private weak var firstNameTextField: UITextField!
+    @IBOutlet private weak var lastNameTextField: UITextField!
+    @IBOutlet private weak var descriptionTextField: UITextField!
+    @IBOutlet private weak var selectSceneTypeButton: UIButton!
+    @IBOutlet private weak var sceneTypePickerView: UIPickerView!
+    @IBOutlet private weak var cancelButton: UIButton!
+    @IBOutlet private weak var startButton: UIButton!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.previewView.videoPreviewLayer.session = self.session
         
-        // TODO: authorization check
-        
         self.configurateSession()
         self.setupIMU()
         
         self.loadUserDefaults()
+        self.configPopUpView()
         
     }
     
@@ -247,11 +260,17 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         lastName = defaults.string(forKey: lastNameKey)
         
         userInputDescription = defaults.string(forKey: userInputDescriptionKey)
-        sceneType = "scene type ???"
+        
+        updateSceneType()
+//        let currentSceneTypeIndex = defaults.integer(forKey: sceneTypeIndexKey)
+//        if currentSceneTypeIndex == 0 {
+//            sceneType = nil
+//        } else {
+//            sceneType = sceneTypes[currentSceneTypeIndex]
+//        }
 //        sceneType = defaults.string(forKey: sceneTypeKey)
         
 //        userInputDescription = defaults.string(forKey: userInputKey)
-//        sceneType = defaults.string(forKey: sceneTypeKey)
         
         gpsLocation = "gps location ???"
         
@@ -268,6 +287,46 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
     
     }
     
+    private func updateSceneType() {
+        let currentSceneTypeIndex = defaults.integer(forKey: sceneTypeIndexKey)
+        if currentSceneTypeIndex == 0 {
+            sceneType = nil
+        } else {
+            sceneType = sceneTypes[currentSceneTypeIndex]
+        }
+    }
+    
+    private func configPopUpView() {
+        popUpView.isHidden = true
+        
+        firstNameTextField.delegate = self
+        lastNameTextField.delegate = self
+        descriptionTextField.delegate = self
+        
+        firstNameTextField.tag = Constants.Tag.firstNameTag
+        lastNameTextField.tag = Constants.Tag.lastNameTag
+        descriptionTextField.tag = Constants.Tag.descriptionTag
+        
+        let firstName = defaults.string(forKey: firstNameKey)
+        let lastName = defaults.string(forKey: lastNameKey)
+        
+        firstNameTextField.text = firstName
+        lastNameTextField.text = lastName
+        
+        // setup picker view
+        sceneTypePickerView.delegate = self
+        sceneTypePickerView.dataSource = self
+
+        sceneTypePickerView.isHidden = true
+        
+        let currentSceneTypeIndex = defaults.integer(forKey: sceneTypeIndexKey)
+        selectSceneTypeButton.setTitle(sceneTypes[currentSceneTypeIndex], for: .normal)
+        
+        sceneTypePickerView.selectRow(currentSceneTypeIndex, inComponent: 0, animated: false)
+        
+        startButton.isEnabled = false
+    }
+    
     @IBAction private func recordButtonTapped(_ sender: Any) {
     
 //        guard let movieFileOutput = self.movieFileOutput else {
@@ -281,106 +340,62 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         self.sessionQueue.async {
             if !self.movieFileOutput.isRecording {
                 
-                let alert = UIAlertController(title: "Alert Title", message: "Alert Message", preferredStyle: .alert)
-                
-                let saveAction = UIAlertAction(title: "Save", style: .default) { (action: UIAlertAction!) -> Void in
-                    
-                    self.defaults.set(self.firstName, forKey: self.firstNameKey)
-                    self.defaults.set(self.lastName, forKey: self.lastNameKey)
-                    self.defaults.set(self.userInputDescription, forKey: self.userInputDescriptionKey)
-
-                    self.sessionQueue.async {
-                        self.startRecording()
-                    }
-                }
-
-                saveAction.isEnabled = false
-                if self.firstName != nil && !self.firstName!.isEmpty
-                && self.lastName != nil && !self.lastName!.isEmpty
-                && self.userInputDescription != nil && !self.userInputDescription!.isEmpty
-                && self.sceneType != nil {
-                    saveAction.isEnabled = true
-                }
-
-                let cancelAction = UIAlertAction(title: "Cancel", style: .default) { (action: UIAlertAction!) -> Void in
-                    self.recordButton.isEnabled = true
+                DispatchQueue.main.async {
+                    self.popUpView.isHidden = false
+                    self.updateStartButton()
                 }
                 
-                alert.addTextField { (textField) in
-                    textField.placeholder = "Please enter first name"
-                    textField.text = self.firstName
-                }
-
-                alert.addTextField { (textField) in
-                    textField.placeholder = "Please enter last name"
-                    textField.text = self.lastName
-                }
                 
-                alert.addTextField { (textField) in
-                    textField.placeholder = "Please enter scene description"
-                    textField.text = self.userInputDescription
-                }
-
-                NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object:alert.textFields?[0], queue: OperationQueue.main) { (notification) -> Void in
-
-                    self.firstName = alert.textFields![0].text
-                    self.lastName = alert.textFields![1].text
-                    self.userInputDescription = alert.textFields![2].text
-
-                    if self.firstName != nil && !self.firstName!.isEmpty
-                        && self.lastName != nil && !self.lastName!.isEmpty
-                        && self.userInputDescription != nil && !self.userInputDescription!.isEmpty
-                        && self.sceneType != nil {
-                        saveAction.isEnabled = true
-                    } else {
-                        saveAction.isEnabled = false
-                    }
-                }
                 
-                NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object:alert.textFields?[1], queue: OperationQueue.main) { (notification) -> Void in
 
-                    self.firstName = alert.textFields![0].text
-                    self.lastName = alert.textFields![1].text
-                    self.userInputDescription = alert.textFields![2].text
-
-                    if self.firstName != nil && !self.firstName!.isEmpty
-                        && self.lastName != nil && !self.lastName!.isEmpty
-                        && self.userInputDescription != nil && !self.userInputDescription!.isEmpty
-                        && self.sceneType != nil {
-                        saveAction.isEnabled = true
-                    } else {
-                        saveAction.isEnabled = false
-                    }
-                }
-                
-                NotificationCenter.default.addObserver(forName: UITextField.textDidChangeNotification, object:alert.textFields?[2], queue: OperationQueue.main) { (notification) -> Void in
-
-                    self.firstName = alert.textFields![0].text
-                    self.lastName = alert.textFields![1].text
-                    self.userInputDescription = alert.textFields![2].text
-
-                    if self.firstName != nil && !self.firstName!.isEmpty
-                        && self.lastName != nil && !self.lastName!.isEmpty
-                        && self.userInputDescription != nil && !self.userInputDescription!.isEmpty
-                        && self.sceneType != nil {
-                        saveAction.isEnabled = true
-                    } else {
-                        saveAction.isEnabled = false
-                    }
-                }
-                
-                // TODO: add a pickerview here
-                
-                alert.addAction(cancelAction)
-                alert.addAction(saveAction)
-
-                self.present(alert, animated: true, completion: nil)
                 
 //                self.startRecording()
             } else {
                 self.stopRecording()
             }
         }
+    }
+    
+    @IBAction func startButtonTapped(_ sender: Any) {
+        self.popUpView.isHidden = true
+        self.sessionQueue.async {
+            self.startRecording()
+        }
+    }
+    
+    @IBAction func cancelButtonTapped(_ sender: Any) {
+        self.popUpView.isHidden = true
+        self.recordButton.isEnabled = true
+    }
+    
+    @IBAction func selectSceneButtonTapped(_ sender: Any) {
+        if sceneTypePickerView.isHidden {
+            sceneTypePickerView.isHidden = false
+        } else {
+            sceneTypePickerView.isHidden = true
+        }
+    }
+    
+    private func hasAllRequiredProperties() -> Bool {
+        if self.firstName != nil && !self.firstName!.isEmpty
+            && self.lastName != nil && !self.lastName!.isEmpty
+            && self.userInputDescription != nil && !self.userInputDescription!.isEmpty
+            && self.sceneType != nil {
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    private func updateStartButton() {
+        DispatchQueue.main.async {
+            if self.hasAllRequiredProperties() {
+                self.startButton.isEnabled = true
+            } else {
+                self.startButton.isEnabled = false
+            }
+        }
+        
     }
     
     private func startRecording() {
@@ -482,6 +497,9 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
         return [cameraStreamInfo, accelerometerStreamInfo]
     }
     
+}
+
+extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
     /// - Tag: DidStartRecording
     func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
         // Enable the Record button to let the user stop recording.
@@ -569,5 +587,57 @@ class CameraViewController: UIViewController, AVCaptureFileOutputRecordingDelega
 //            self.captureModeControl.isEnabled = true
 //            self.recordButton.setImage(#imageLiteral(resourceName: "CaptureVideo"), for: [])
         }
+    }
+}
+
+extension CameraViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        
+        var text = textField.text?.trimmingCharacters(in: .whitespaces)
+
+        if text != nil && text!.isEmpty {
+            text = nil
+        }
+        
+        switch textField.tag {
+        case Constants.Tag.firstNameTag:
+            firstName = text
+            defaults.set(text, forKey: firstNameKey)
+        case Constants.Tag.lastNameTag:
+            lastName = text
+            defaults.set(text, forKey: lastNameKey)
+        case Constants.Tag.descriptionTag:
+            userInputDescription = text
+            defaults.set(text, forKey: userInputDescriptionKey)
+        default:
+            print("text field with tag \(textField.tag) is not found.")
+        }
+        
+        updateStartButton()
+        
+        return true
+    }
+}
+
+extension CameraViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1;
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return sceneTypes.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return sceneTypes[row]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        defaults.set(row, forKey: sceneTypeIndexKey)
+        selectSceneTypeButton.setTitle(sceneTypes[row], for: .normal)
+        
+        updateSceneType()
+        updateStartButton()
     }
 }
