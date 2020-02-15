@@ -32,9 +32,9 @@ class UserInfo: Codable {
 class SceneInfo: Codable {
     private var description: String
     private var type: String
-    private var gps_location: String
+    private var gps_location: [Double]
     
-    internal init(description: String, type: String, gps_location: String) {
+    internal init(description: String, type: String, gps_location: [Double]) {
         self.description = description
         self.type = type
         self.gps_location = gps_location
@@ -161,11 +161,11 @@ class Metadata: CustomData, Encodable {
 //        self.colorCenterY = 0
 //    }
     
-    init(username: String, userInputDescription: String, sceneType: String, gpsLocation: String,
+    init(username: String, userInputDescription: String, sceneType: String, gpsLocation: [Double],
          streams: [StreamInfo]) {
         
         let deviceId = UIDevice.current.identifierForVendor?.uuidString
-        let modelName = Helper.getModelCode()
+        let modelName = Helper.getDeviceModelCode()
         let deviceName = UIDevice.current.name
         
         device = .init(id: deviceId!, type: modelName, name: deviceName)

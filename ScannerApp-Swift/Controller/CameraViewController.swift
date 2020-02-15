@@ -14,6 +14,7 @@ import UIKit
 class CameraViewController: UIViewController {
     
     private let defaults = UserDefaults.standard
+    private let locationManager = CLLocationManager()
     
     private let firstNameKey = Constants.UserDefaultsKeys.firstNameKey
     private let lastNameKey = Constants.UserDefaultsKeys.lastNameKey
@@ -78,6 +79,8 @@ class CameraViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        locationManager.requestWhenInUseAuthorization()
         
         self.previewView.videoPreviewLayer.session = self.session
         
@@ -275,11 +278,9 @@ class CameraViewController: UIViewController {
 //        userInputDescription = defaults.string(forKey: userInputKey)
         
 //        gpsLocation = "gps location ???"
-        if let coordinate = CLLocationManager().location?.coordinate {
-            gpsLocation = [coordinate.latitude, coordinate.longitude]
-        } else {
-            gpsLocation = []
-        }
+        
+        gpsLocation = [] // Do we want to enforce valid gps location?
+        updateGpsLocation()
         
         
         
@@ -349,6 +350,8 @@ class CameraViewController: UIViewController {
         
         self.sessionQueue.async {
             if !self.movieFileOutput.isRecording {
+                
+                self.updateGpsLocation()
                 
                 DispatchQueue.main.async {
                     self.popUpView.isHidden = false
@@ -505,6 +508,17 @@ class CameraViewController: UIViewController {
         let accelerometerStreamInfo = ImuStreamInfo(id: "accel_1", type: "accelerometer", encoding: "accel_bin", num_frames: numImuMeasurements, frequency: imuFrequency)
         // TOOD: more imu streams
         return [cameraStreamInfo, accelerometerStreamInfo]
+    }
+    
+    private func updateGpsLocation() {
+        gpsLocation = [] // Do we want to enforce valid gps location?
+//        locationManager.requestWhenInUseAuthorization()
+        if (CLLocationManager.authorizationStatus() == .authorizedWhenInUse ||
+            CLLocationManager.authorizationStatus() == .authorizedAlways) {
+            if let coordinate = locationManager.location?.coordinate {
+                gpsLocation = [coordinate.latitude, coordinate.longitude]
+            }
+        }
     }
     
 }

@@ -9,7 +9,7 @@
 import Foundation
 
 class Helper {
-    static func getModelCode() -> String {
+    static func getDeviceModelCode() -> String {
         var systemInfo = utsname()
         uname(&systemInfo)
         let machineMirror = Mirror(reflecting: systemInfo.machine)
