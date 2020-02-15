@@ -7,6 +7,7 @@
 //
 
 import AVFoundation
+import CoreLocation
 import CoreMotion
 import UIKit
 
@@ -27,7 +28,8 @@ class CameraViewController: UIViewController {
     private var userInputDescription: String?
     private var sceneType: String?
     
-    private var gpsLocation: String!
+//    private var gpsLocation: String!
+    private var gpsLocation: [Double]!
     
     
     private var colorResolution: [Int]!
@@ -272,7 +274,14 @@ class CameraViewController: UIViewController {
         
 //        userInputDescription = defaults.string(forKey: userInputKey)
         
-        gpsLocation = "gps location ???"
+//        gpsLocation = "gps location ???"
+        if let coordinate = CLLocationManager().location?.coordinate {
+            gpsLocation = [coordinate.latitude, coordinate.longitude]
+        } else {
+            gpsLocation = []
+        }
+        
+        
         
         
         
@@ -298,6 +307,7 @@ class CameraViewController: UIViewController {
     
     private func configPopUpView() {
         popUpView.isHidden = true
+//        startButton.isEnabled = false
         
         firstNameTextField.delegate = self
         lastNameTextField.delegate = self
@@ -307,11 +317,13 @@ class CameraViewController: UIViewController {
         lastNameTextField.tag = Constants.Tag.lastNameTag
         descriptionTextField.tag = Constants.Tag.descriptionTag
         
-        let firstName = defaults.string(forKey: firstNameKey)
-        let lastName = defaults.string(forKey: lastNameKey)
+        firstName = defaults.string(forKey: firstNameKey)
+        lastName = defaults.string(forKey: lastNameKey)
+        userInputDescription = defaults.string(forKey: userInputDescriptionKey)
         
         firstNameTextField.text = firstName
         lastNameTextField.text = lastName
+        descriptionTextField.text = userInputDescription
         
         // setup picker view
         sceneTypePickerView.delegate = self
@@ -323,8 +335,6 @@ class CameraViewController: UIViewController {
         selectSceneTypeButton.setTitle(sceneTypes[currentSceneTypeIndex], for: .normal)
         
         sceneTypePickerView.selectRow(currentSceneTypeIndex, inComponent: 0, animated: false)
-        
-        startButton.isEnabled = false
     }
     
     @IBAction private func recordButtonTapped(_ sender: Any) {
