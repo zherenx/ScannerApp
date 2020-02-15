@@ -89,4 +89,37 @@ class MotionData: CustomData {
         
         fflush(filePointer)
     }
+    
+    func writeToFiles(rotationRateFilePointer: UnsafeMutablePointer<FILE>, userAccelerationFilePointer: UnsafeMutablePointer<FILE>, magneticFieldFilePointer: UnsafeMutablePointer<FILE>, attitudeFilePointer: UnsafeMutablePointer<FILE>, gravityFilePointer: UnsafeMutablePointer<FILE>) {
+        
+        fwrite(UnsafePointer<Double>(&self.systemUptime), 8, 1, rotationRateFilePointer)
+        fwrite(UnsafePointer<Double>(&self.rotX), 8, 1, rotationRateFilePointer)
+        fwrite(UnsafePointer<Double>(&self.rotY), 8, 1, rotationRateFilePointer)
+        fwrite(UnsafePointer<Double>(&self.rotZ), 8, 1, rotationRateFilePointer)
+        fflush(rotationRateFilePointer)
+        
+        fwrite(UnsafePointer<Double>(&self.systemUptime), 8, 1, userAccelerationFilePointer)
+        fwrite(UnsafePointer<Double>(&self.accX), 8, 1, userAccelerationFilePointer)
+        fwrite(UnsafePointer<Double>(&self.accY), 8, 1, userAccelerationFilePointer)
+        fwrite(UnsafePointer<Double>(&self.accZ), 8, 1, userAccelerationFilePointer)
+        fflush(userAccelerationFilePointer)
+        
+        fwrite(UnsafePointer<Double>(&self.systemUptime), 8, 1, magneticFieldFilePointer)
+        fwrite(UnsafePointer<Double>(&self.magX), 8, 1, magneticFieldFilePointer)
+        fwrite(UnsafePointer<Double>(&self.magY), 8, 1, magneticFieldFilePointer)
+        fwrite(UnsafePointer<Double>(&self.magZ), 8, 1, magneticFieldFilePointer)
+        fflush(magneticFieldFilePointer)
+        
+        fwrite(UnsafePointer<Double>(&self.systemUptime), 8, 1, attitudeFilePointer)
+        fwrite(UnsafePointer<Double>(&self.roll), 8, 1, attitudeFilePointer)
+        fwrite(UnsafePointer<Double>(&self.pitch), 8, 1, attitudeFilePointer)
+        fwrite(UnsafePointer<Double>(&self.yaw), 8, 1, attitudeFilePointer)
+        fflush(attitudeFilePointer)
+        
+        fwrite(UnsafePointer<Double>(&self.systemUptime), 8, 1, gravityFilePointer)
+        fwrite(UnsafePointer<Double>(&self.gravX), 8, 1, gravityFilePointer)
+        fwrite(UnsafePointer<Double>(&self.gravY), 8, 1, gravityFilePointer)
+        fwrite(UnsafePointer<Double>(&self.gravZ), 8, 1, gravityFilePointer)
+        fflush(gravityFilePointer)
+    }
 }

@@ -62,7 +62,12 @@ class CameraViewController: UIViewController {
     private let motionManager = CMMotionManager()
     
     private var backgroundRecordingID: UIBackgroundTaskIdentifier?
-    private var imuFilePointer: UnsafeMutablePointer<FILE>?
+//    private var imuFilePointer: UnsafeMutablePointer<FILE>?
+    private var rotationRateFilePointer: UnsafeMutablePointer<FILE>?
+    private var userAccelerationFilePointer: UnsafeMutablePointer<FILE>?
+    private var magneticFieldFilePointer: UnsafeMutablePointer<FILE>?
+    private var attitudeFilePointer: UnsafeMutablePointer<FILE>?
+    private var gravityFilePointer: UnsafeMutablePointer<FILE>?
     
     @IBOutlet private weak var previewView: PreviewView!
     @IBOutlet private weak var recordButton: UIButton!
@@ -463,14 +468,31 @@ class CameraViewController: UIViewController {
         
         // Motion data
         self.numImuMeasurements = 0
-        let motionDataPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("imu")!)
-        self.imuFilePointer = fopen(motionDataPath, "w")
+//        let motionDataPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("imu")!)
+//        self.imuFilePointer = fopen(motionDataPath, "w")
+        
+        let rotationRatePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("rot")!)
+        self.rotationRateFilePointer = fopen(rotationRatePath, "w")
+        
+        let userAccelerationPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("acce")!)
+        self.userAccelerationFilePointer = fopen(userAccelerationPath, "w")
+        
+        let magneticFieldPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("mag")!)
+        self.magneticFieldFilePointer = fopen(magneticFieldPath, "w")
+        
+        let attitudePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("atti")!)
+        self.attitudeFilePointer = fopen(attitudePath, "w")
+        
+        let gravityPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("grav")!)
+        self.gravityFilePointer = fopen(gravityPath, "w")
+        
         self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
             if let validData = data {
                 self.numImuMeasurements += 1
                 let motionData = MotionData(deviceMotion: validData)
-                //                        motionData.display()
-                motionData.writeToFile(filePointer: self.imuFilePointer!)
+//                motionData.display()
+//                motionData.writeToFile(filePointer: self.imuFilePointer!)
+                motionData.writeToFiles(rotationRateFilePointer: self.rotationRateFilePointer!, userAccelerationFilePointer: self.userAccelerationFilePointer!, magneticFieldFilePointer: self.magneticFieldFilePointer!, attitudeFilePointer: self.attitudeFilePointer!, gravityFilePointer: self.gravityFilePointer!)
             } else {
                 print("there is some problem with motion data")
             }
@@ -485,7 +507,12 @@ class CameraViewController: UIViewController {
         self.movieFileOutput.stopRecording()
         
         self.motionManager.stopDeviceMotionUpdates()
-        fclose(self.imuFilePointer)
+//        fclose(self.imuFilePointer)
+        fclose(rotationRateFilePointer)
+        fclose(userAccelerationFilePointer)
+        fclose(magneticFieldFilePointer)
+        fclose(attitudeFilePointer)
+        fclose(gravityFilePointer)
         
         self.numColorFrames = getNumberOfFrames(videoUrl: URL(fileURLWithPath: movieFilePath))
         
