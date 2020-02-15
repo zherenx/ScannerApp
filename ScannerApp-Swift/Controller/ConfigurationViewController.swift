@@ -34,6 +34,9 @@ class ConfigurationViewController: UIViewController {
         firstNameTextField.delegate = self
         lastNameTextField.delegate = self
         
+        firstNameTextField.tag = Constants.Tag.firstNameTag
+        lastNameTextField.tag = Constants.Tag.lastNameTag
+        
         let firstName = defaults.string(forKey: firstNameKey)
         let lastName = defaults.string(forKey: lastNameKey)
         
@@ -51,23 +54,6 @@ class ConfigurationViewController: UIViewController {
         
         sceneTypePickerView.selectRow(currentSceneTypeIndex, inComponent: 0, animated: false)
     }
-    
-    private func saveUserDefaults() {
-        
-        var newFirstName = firstNameTextField.text?.trimmingCharacters(in: .whitespaces)
-        var newLastName = lastNameTextField.text?.trimmingCharacters(in: .whitespaces)
-
-        if newFirstName != nil && newFirstName!.isEmpty {
-            newFirstName = nil
-        }
-
-        if newLastName != nil && newLastName!.isEmpty {
-            newLastName = nil
-        }
-        
-        defaults.set(newFirstName, forKey: firstNameKey)
-        defaults.set(newLastName, forKey: lastNameKey)
-    }
 
     @IBAction func selectSceneTypeButtonTapped(_ sender: Any) {
         if sceneTypePickerView.isHidden {
@@ -83,7 +69,21 @@ extension ConfigurationViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         
-        saveUserDefaults()
+        var text = textField.text?.trimmingCharacters(in: .whitespaces)
+
+        if text != nil && text!.isEmpty {
+            text = nil
+        }
+        
+        switch textField.tag {
+        case Constants.Tag.firstNameTag:
+            defaults.set(text, forKey: firstNameKey)
+        case Constants.Tag.lastNameTag:
+            defaults.set(text, forKey: lastNameKey)
+        default:
+            print("text field with tag \(textField.tag) is not found.")
+        }
+        
         
         return true
     }
