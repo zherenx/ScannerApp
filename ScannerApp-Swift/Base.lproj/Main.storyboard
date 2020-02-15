@@ -64,7 +64,7 @@
                                                 <rect key="frame" x="109.66666666666666" y="0.0" width="264.33333333333337" height="30"/>
                                                 <state key="normal" title="---- Please Select ----"/>
                                                 <connections>
-                                                    <action selector="toggleSelectSceneTypeButton:" destination="HH8-a4-OXI" eventType="touchUpInside" id="YsT-w9-iou"/>
+                                                    <action selector="selectSceneTypeButtonTapped:" destination="HH8-a4-OXI" eventType="touchUpInside" id="YsT-w9-iou"/>
                                                 </connections>
                                             </button>
                                         </subviews>
@@ -356,8 +356,8 @@
                                                         <rect key="frame" x="109.66666666666664" y="0.0" width="210.33333333333337" height="30"/>
                                                         <state key="normal" title="---- Please Select ----"/>
                                                         <connections>
-                                                            <action selector="selectSceneButtonTapped:" destination="iQQ-Hf-ehR" eventType="touchUpInside" id="pLJ-ya-Isk"/>
-                                                            <action selector="toggleSelectSceneTypeButton:" destination="HH8-a4-OXI" eventType="touchUpInside" id="xIh-2w-4m5"/>
+                                                            <action selector="selectSceneTypeButtonTapped:" destination="iQQ-Hf-ehR" eventType="touchUpInside" id="pLJ-ya-Isk"/>
+                                                            <action selector="selectSceneTypeButtonTapped:" destination="HH8-a4-OXI" eventType="touchUpInside" id="xIh-2w-4m5"/>
                                                         </connections>
                                                     </button>
                                                 </subviews>

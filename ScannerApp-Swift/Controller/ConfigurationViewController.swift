@@ -69,7 +69,7 @@ class ConfigurationViewController: UIViewController {
         defaults.set(newLastName, forKey: lastNameKey)
     }
 
-    @IBAction func toggleSelectSceneTypeButton(_ sender: Any) {
+    @IBAction func selectSceneTypeButtonTapped(_ sender: Any) {
         if sceneTypePickerView.isHidden {
             sceneTypePickerView.isHidden = false
         } else {

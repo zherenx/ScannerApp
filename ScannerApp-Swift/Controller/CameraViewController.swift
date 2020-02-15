@@ -368,7 +368,7 @@ class CameraViewController: UIViewController {
         self.recordButton.isEnabled = true
     }
     
-    @IBAction func selectSceneButtonTapped(_ sender: Any) {
+    @IBAction func selectSceneTypeButtonTapped(_ sender: Any) {
         if sceneTypePickerView.isHidden {
             sceneTypePickerView.isHidden = false
         } else {
