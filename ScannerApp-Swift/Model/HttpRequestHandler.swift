@@ -15,26 +15,25 @@ protocol HttpRequestHandlerDelegate {
 }
 
 class HttpRequestHandler: NSObject {
+
+    private let host = Constants.Server.host
+    private let uploadEndpoint = Constants.Server.Endpoints.upload
+    private let verifyEndpoint = Constants.Server.Endpoints.verify
+    
+    private let uploadQueue = OperationQueue()
     
 //    private let host = URL(string: "http://192.168.1.66:5000/upload")!
-    private let host = URL(string: "http://aspis.cmpt.sfu.ca/multiscan/upload")!
-    private let uploadQueue = OperationQueue()
+    private let uploadUrl: URL!
+    private let verifyUrl: URL!
+    
     var httpRequestHandlerDelegate: HttpRequestHandlerDelegate?
     
-    // TODO: return type should be whatever http response code type is
+    override init() {
+        uploadUrl = URL(string: host + uploadEndpoint)!
+        verifyUrl = URL(string: host + verifyEndpoint)!
+    }
+    
     func upload(toUpload url: URL) {
-        
-//        if url.isFileURL {
-//
-//            print("hello")
-//
-//            uploadOneFile(url: url)
-//        } else {
-//
-//            print("world")
-//
-//            uploadAllFilesInDir(dirUrl: url)
-//        }
         
         if url.hasDirectoryPath {
             uploadAllFilesInDir(dirUrl: url)
@@ -45,7 +44,7 @@ class HttpRequestHandler: NSObject {
     }
     
     func uploadOneFile(url: URL) {
-        var request = URLRequest(url: host)
+        var request = URLRequest(url: uploadUrl)
         request.allowsCellularAccess = false
         
 //        request.httpMethod = "POST"
@@ -138,7 +137,7 @@ class HttpRequestHandler: NSObject {
         var newFileList = fileURLs
         newFileList.remove(at: 0)
         
-        var request = URLRequest(url: host)
+        var request = URLRequest(url: uploadUrl)
         request.allowsCellularAccess = false
         
         request.httpMethod = "PUT"
@@ -156,6 +155,7 @@ class HttpRequestHandler: NSObject {
                 (200...299).contains(response1.statusCode) else {
                     
                     print("upload return error")
+                    print(response.debugDescription)
                     
                     if let delegate = self.httpRequestHandlerDelegate {
                         delegate.didCompleteUpload(data: data, response: response, error: error)
@@ -167,6 +167,10 @@ class HttpRequestHandler: NSObject {
         })
         
         task.resume()
+    }
+    
+    func verifyUpload(url: URL) {
+        
     }
     
 }
