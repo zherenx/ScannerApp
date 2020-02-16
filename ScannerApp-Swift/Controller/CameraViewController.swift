@@ -530,9 +530,14 @@ class CameraViewController: UIViewController {
     
     private func generateStreamInfo() -> [StreamInfo] {
         let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: "color_camera", encoding: "h264", num_frames: numColorFrames, resolution: colorResolution, focal_length: focalLength, principal_point: principalPoint, extrinsics_matrix: nil)
-        let accelerometerStreamInfo = ImuStreamInfo(id: "accel_1", type: "accelerometer", encoding: "accel_bin", num_frames: numImuMeasurements, frequency: imuFrequency)
-        // TOOD: more imu streams
-        return [cameraStreamInfo, accelerometerStreamInfo]
+        
+        let rotationRateStreamInfo = ImuStreamInfo(id: "rot_1", type: "rotation_rate", encoding: "bin", num_frames: numImuMeasurements, frequency: imuFrequency)
+        let userAccelerationStreamInfo = ImuStreamInfo(id: "acce_1", type: "user_acceleration", encoding: "bin", num_frames: numImuMeasurements, frequency: imuFrequency)
+        let magneticFieldStreamInfo = ImuStreamInfo(id: "mag_1", type: "magnetic_field", encoding: "bin", num_frames: numImuMeasurements, frequency: imuFrequency)
+        let attitudeStreamInfo = ImuStreamInfo(id: "atti_1", type: "attitude", encoding: "bin", num_frames: numImuMeasurements, frequency: imuFrequency)
+        let gravityStreamInfo = ImuStreamInfo(id: "grav_1", type: "gravity", encoding: "bin", num_frames: numImuMeasurements, frequency: imuFrequency)
+
+        return [cameraStreamInfo, rotationRateStreamInfo, userAccelerationStreamInfo, magneticFieldStreamInfo, attitudeStreamInfo, gravityStreamInfo]
     }
     
     private func updateGpsLocation() {
