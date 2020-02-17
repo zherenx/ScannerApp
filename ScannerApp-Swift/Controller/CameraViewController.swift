@@ -15,6 +15,7 @@ class CameraViewController: UIViewController {
     
     private let defaults = UserDefaults.standard
     private let locationManager = CLLocationManager()
+    private let motionManager = CMMotionManager()
     
     private let firstNameKey = Constants.UserDefaultsKeys.firstNameKey
     private let lastNameKey = Constants.UserDefaultsKeys.lastNameKey
@@ -23,45 +24,34 @@ class CameraViewController: UIViewController {
     private let sceneTypeKey = Constants.UserDefaultsKeys.sceneTypeKey
     
     private let sceneTypes = Constants.sceneTypes
-    
+
     private var firstName: String?
     private var lastName: String?
     private var userInputDescription: String?
     private var sceneType: String?
-    
-//    private var gpsLocation: String!
     private var gpsLocation: [Double]!
-    
-    
     private var colorResolution: [Int]!
     private var focalLength: [Float]!
     private var principalPoint: [Float]!
-    
     private var numColorFrames: Int!
     private var numImuMeasurements: Int!
     private var imuFrequency: Int!
-    
-    
-    
     
     private var fileId: String!
     private var movieFilePath: String!
     private var metadataPath: String! // this is a hack
     
-    
-    private let sessionQueue = DispatchQueue(label: "session queue")
-//    private let motionQueue = DispatchQueue(label: "motion queue")
-    private let motionQueue = OperationQueue()
-    
     private let session = AVCaptureSession()
     
-    private var defaultVideoDevice: AVCaptureDevice?
+    private let sessionQueue = DispatchQueue(label: "session queue")
+    private let motionQueue = OperationQueue()
     
-//    private let photoOutput = AVCapturePhotoOutput()
+    private var defaultVideoDevice: AVCaptureDevice?
+
     private let movieFileOutput = AVCaptureMovieFileOutput()
-    private let motionManager = CMMotionManager()
     
     private var backgroundRecordingID: UIBackgroundTaskIdentifier?
+    
 //    private var imuFilePointer: UnsafeMutablePointer<FILE>?
     private var rotationRateFilePointer: UnsafeMutablePointer<FILE>?
     private var userAccelerationFilePointer: UnsafeMutablePointer<FILE>?
@@ -72,9 +62,8 @@ class CameraViewController: UIViewController {
     @IBOutlet private weak var previewView: PreviewView!
     @IBOutlet private weak var recordButton: UIButton!
     
+    // pop-up view
     @IBOutlet private weak var popUpView: UIView!
-//    private var popUpView: UIView!
-    
     @IBOutlet private weak var firstNameTextField: UITextField!
     @IBOutlet private weak var lastNameTextField: UITextField!
     @IBOutlet private weak var descriptionTextField: UITextField!
@@ -90,6 +79,7 @@ class CameraViewController: UIViewController {
         
         self.previewView.videoPreviewLayer.session = self.session
         
+        // TODO: order of these function calls might matter, consider improve on this
         self.configurateSession()
         self.setupIMU()
         
@@ -115,22 +105,10 @@ class CameraViewController: UIViewController {
         super.viewWillDisappear(animated)
     }
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-    
     private func configurateSession() {
         self.session.beginConfiguration()
         
         do {
-//            var defaultVideoDevice: AVCaptureDevice?
-
             // Choose the back dual camera, if available, otherwise default to a wide angle camera.
             if let dualCameraDevice = AVCaptureDevice.default(.builtInDualCamera, for: .video, position: .back) {
                 defaultVideoDevice = dualCameraDevice
@@ -139,7 +117,6 @@ class CameraViewController: UIViewController {
             }
             guard let videoDevice = defaultVideoDevice else {
                 print("Default video device is unavailable.")
-//                setupResult = .configurationFailed
                 session.commitConfiguration()
                 return
             }
@@ -156,99 +133,36 @@ class CameraViewController: UIViewController {
                 print("Error configurating video device")
             }
             
-            
-            // TODO:
-//            colorResolution = [1920, 1080]
+            // TODO: calculate these
             focalLength = [1.0, 2.0]
             principalPoint = [3.0, 4.0]
 
-            
-            
-            
-            
             let videoDeviceInput = try AVCaptureDeviceInput(device: videoDevice)
 
             if self.session.canAddInput(videoDeviceInput) {
                 self.session.addInput(videoDeviceInput)
-//                self.videoDeviceInput = videoDeviceInput
-
-//                DispatchQueue.main.async {
-//                    /*
-//                     Dispatch video streaming to the main queue because AVCaptureVideoPreviewLayer is the backing layer for PreviewView.
-//                     You can manipulate UIView only on the main thread.
-//                     Note: As an exception to the above rule, it's not necessary to serialize video orientation changes
-//                     on the AVCaptureVideoPreviewLayer’s connection with other session manipulation.
-//
-//                     Use the window scene's orientation as the initial video orientation. Subsequent orientation changes are
-//                     handled by CameraViewController.viewWillTransition(to:with:).
-//                     */
-//                    var initialVideoOrientation: AVCaptureVideoOrientation = .portrait
-//                    if self.windowOrientation != .unknown {
-//                        if let videoOrientation = AVCaptureVideoOrientation(interfaceOrientation: self.windowOrientation) {
-//                            initialVideoOrientation = videoOrientation
-//                        }
-//                    }
-//
-//                    self.previewView.videoPreviewLayer.connection?.videoOrientation = initialVideoOrientation
-//                    self.previewView.videoPreviewLayer.connection?.videoOrientation = .portrait
-//                }
             } else {
                 print("Couldn't add video device input to the session.")
-//                setupResult = .configurationFailed
                 self.session.commitConfiguration()
                 return
             }
         } catch {
             print("Couldn't create video device input: \(error)")
-//            setupResult = .configurationFailed
             self.session.commitConfiguration()
             return
         }
         
-        
-        
-        // config output
-//        let outputSettings = NSDictionary(object: NSNumber(value: kCVPixelFormatType_420YpCbCr8BiPlanarFullRange), forKey: NSString(string: kCVPixelBufferPixelFormatTypeKey))
-//        self.movieFileOutput.setOutputSettings(outputSettings, for: <#T##AVCaptureConnection#>)
-        
-        
         if self.session.canAddOutput(self.movieFileOutput) {
-//            self.session.beginConfiguration()
             self.session.addOutput(self.movieFileOutput)
             
-            
-            
-//            self.session.sessionPreset = .high
             self.session.sessionPreset = .photo
-//            self.session.sessionPreset = .hd1920x1080
-            
-            
-            
+
             if let connection = self.movieFileOutput.connection(with: .video) {
                 if connection.isVideoStabilizationSupported {
                     connection.preferredVideoStabilizationMode = .auto
                 }
             }
-//            self.session.commitConfiguration()
-            
-//            DispatchQueue.main.async {
-//                captureModeControl.isEnabled = true
-//            }
-//
-//            self.movieFileOutput = movieFileOutput
-//
-//            DispatchQueue.main.async {
-//                self.recordButton.isEnabled = true
-//
-//                /*
-//                 For photo captures during movie recording, Speed quality photo processing is prioritized
-//                 to avoid frame drops during recording.
-//                 */
-//                self.photoQualityPrioritizationSegControl.selectedSegmentIndex = 0
-//                self.photoQualityPrioritizationSegControl.sendActions(for: UIControl.Event.valueChanged)
-//            }
         }
-        
         
         let videoFormatDescription = defaultVideoDevice!.activeFormat.formatDescription
         let dimensions = CMVideoFormatDescriptionGetDimensions(videoFormatDescription)
@@ -273,34 +187,9 @@ class CameraViewController: UIViewController {
         userInputDescription = defaults.string(forKey: userInputDescriptionKey)
         
         updateSceneType()
-//        let currentSceneTypeIndex = defaults.integer(forKey: sceneTypeIndexKey)
-//        if currentSceneTypeIndex == 0 {
-//            sceneType = nil
-//        } else {
-//            sceneType = sceneTypes[currentSceneTypeIndex]
-//        }
-//        sceneType = defaults.string(forKey: sceneTypeKey)
-        
-//        userInputDescription = defaults.string(forKey: userInputKey)
-        
-//        gpsLocation = "gps location ???"
         
         gpsLocation = [] // Do we want to enforce valid gps location?
         updateGpsLocation()
-        
-        
-        
-        
-        
-//        print(UIDevice.current.name)
-//        print(UIDevice.current.systemName)
-//        print(UIDevice.current.systemVersion)
-//        print(UIDevice.current.model)
-//        print(UIDevice.current.localizedModel)
-//        print(UIDevice.current.identifierForVendor)
-        
-        
-    
     }
     
     private func updateSceneType() {
@@ -314,7 +203,6 @@ class CameraViewController: UIViewController {
     
     private func configPopUpView() {
         popUpView.isHidden = true
-//        startButton.isEnabled = false
         
         firstNameTextField.delegate = self
         lastNameTextField.delegate = self
@@ -345,14 +233,8 @@ class CameraViewController: UIViewController {
     }
     
     @IBAction private func recordButtonTapped(_ sender: Any) {
-    
-//        guard let movieFileOutput = self.movieFileOutput else {
-//            return
-//        }
         
         self.recordButton.isEnabled = false
-        
-//        let videoPreviewLayerOrientation = previewView.videoPreviewLayer.connection?.videoOrientation
         
         self.sessionQueue.async {
             if !self.movieFileOutput.isRecording {
@@ -364,11 +246,6 @@ class CameraViewController: UIViewController {
                     self.updateStartButton()
                 }
                 
-                
-                
-
-                
-//                self.startRecording()
             } else {
                 self.stopRecording()
             }
@@ -422,28 +299,15 @@ class CameraViewController: UIViewController {
             self.backgroundRecordingID = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
         }
         
-        // Update the orientation on the movie file output video connection before recording.
         let movieFileOutputConnection = self.movieFileOutput.connection(with: .video)
-        //                movieFileOutputConnection?.videoOrientation = videoPreviewLayerOrientation!
+
         movieFileOutputConnection?.videoOrientation = .landscapeRight
-        
-        //                let availableVideoCodecTypes = self.movieFileOutput.availableVideoCodecTypes
-        //
-        //                print(availableVideoCodecTypes)
-        //
-        //
-        //                if availableVideoCodecTypes.contains(.hevc) {
-        //                    self.movieFileOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: movieFileOutputConnection!)
-        //                }
-        
-        
-        
+
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyyMMdd'T'hhmmssZZZ"
         let dateString = dateFormatter.string(from: Date())
         
         fileId = dateString + "_" + UIDevice.current.identifierForVendor!.uuidString
-//        let fileId = NSUUID().uuidString
         
         let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
         
@@ -517,14 +381,9 @@ class CameraViewController: UIViewController {
         self.numColorFrames = getNumberOfFrames(videoUrl: URL(fileURLWithPath: movieFilePath))
         
         let username = self.firstName! + " " + self.lastName!
-        //                let metadata = Metadata(deviceId: self.deviceId, modelName: self.modelName, sceneLabel: self.sceneLabel, sceneType: self.sceneType, sensorTypes: self.sensorTypes, numMeasurements: ["numColorFrames": 9999, "numImuMeasurements": 9998], username: username, userInputDescription: self.userInputDescription, colorWidth: 16, colorHeight: 9)
-        
-        
-        
         let metadata = Metadata(username: username, userInputDescription: self.userInputDescription!, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: self.generateStreamInfo())
         
-        
-        metadata.display()
+//        metadata.display()
         metadata.writeToFile(filepath: self.metadataPath)
         
         Helper.showToast(controller: self, message: "Finish recording\nfile prefix: \(fileId)", seconds: 1)
@@ -553,11 +412,12 @@ class CameraViewController: UIViewController {
         }
     }
     
+    // https://stackoverflow.com/questions/29506411/ios-determine-number-of-frames-in-video
     private func getNumberOfFrames(videoUrl url: URL) -> Int {
         let asset = AVURLAsset(url: url, options: nil)
         do {
             let reader = try AVAssetReader(asset: asset)
-            //AVAssetReader(asset: asset, error: nil)
+            
             let videoTrack = asset.tracks(withMediaType: AVMediaType.video)[0]
             
             let readerOutput = AVAssetReaderTrackOutput(track: videoTrack, outputSettings: nil)
@@ -587,7 +447,7 @@ class CameraViewController: UIViewController {
 }
 
 extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
-    /// - Tag: DidStartRecording
+    
     func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
         // Enable the Record button to let the user stop recording.
         DispatchQueue.main.async {
@@ -597,21 +457,12 @@ extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
         }
     }
     
-    /// - Tag: DidFinishRecording
     func fileOutput(_ output: AVCaptureFileOutput,
                     didFinishRecordingTo outputFileURL: URL,
                     from connections: [AVCaptureConnection],
                     error: Error?) {
-        // Note: Because we use a unique file path for each recording, a new recording won't overwrite a recording mid-save.
+
         func cleanup() {
-//            let path = outputFileURL.path
-//            if FileManager.default.fileExists(atPath: path) {
-//                do {
-//                    try FileManager.default.removeItem(atPath: path)
-//                } catch {
-//                    print("Could not remove file at url: \(outputFileURL)")
-//                }
-//            }
             
             if let currentBackgroundRecordingID = backgroundRecordingID {
                 backgroundRecordingID = UIBackgroundTaskIdentifier.invalid
@@ -629,50 +480,13 @@ extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
             success = (((error! as NSError).userInfo[AVErrorRecordingSuccessfullyFinishedKey] as AnyObject).boolValue)!
         }
         
-//        if success {
-//            // Check the authorization status.
-//            PHPhotoLibrary.requestAuthorization { status in
-//                if status == .authorized {
-//                    // Save the movie file to the photo library and cleanup.
-//                    PHPhotoLibrary.shared().performChanges({
-//                        let options = PHAssetResourceCreationOptions()
-//                        options.shouldMoveFile = true
-//                        let creationRequest = PHAssetCreationRequest.forAsset()
-//                        creationRequest.addResource(with: .video, fileURL: outputFileURL, options: options)
-//                    }, completionHandler: { success, error in
-//                        if !success {
-//                            print("AVCam couldn't save the movie to your photo library: \(String(describing: error))")
-//                        }
-//                        cleanup()
-//                    }
-//                    )
-//                } else {
-//                    cleanup()
-//                }
-//            }
-//        } else {
-//            cleanup()
-//        }
-        
-        if success {
-            
-        } else {
-            // TODO: delete file
-        }
-        
         cleanup()
         
         // Enable the Camera and Record buttons to let the user switch camera and start another recording.
         DispatchQueue.main.async {
-            // Only enable the ability to change camera if the device has more than one camera.
-//            self.cameraButton.isEnabled = self.videoDeviceDiscoverySession.uniqueDevicePositionsCount > 1
-            
             self.recordButton.setTitle("Record", for: .normal)
             self.recordButton.backgroundColor = .systemBlue
             self.recordButton.isEnabled = true
-            
-//            self.captureModeControl.isEnabled = true
-//            self.recordButton.setImage(#imageLiteral(resourceName: "CaptureVideo"), for: [])
         }
     }
 }
