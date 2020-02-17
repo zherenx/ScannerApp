@@ -56,13 +56,15 @@ class LibraryViewController: UITableViewController {
 
 extension LibraryViewController: ScanTableViewCellDelegate {
     
-//    func didTappedUpload(url: URL) {
-//        
-//    }
-    
-    func didTappedDelete() {
+    func deleteSuccess(fileId: String) {
         loadFiles()
         tableView.reloadData()
+    }
+    
+    func deleteFailed(fileId: String) {
+        loadFiles()
+        tableView.reloadData()
+        Helper.showToast(controller: self, message: "Failed to delete \(fileId)", seconds: 1)
     }
     
     func didCompletedUploadWithError(fileId: String) {

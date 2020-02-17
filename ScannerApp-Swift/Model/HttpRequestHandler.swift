@@ -25,12 +25,12 @@ class HttpRequestHandler: NSObject {
     private let uploadUrl: URL!
     private var verifyUrl: URLComponents!
     
-    // TODO: init this in init()
-    var httpRequestHandlerDelegate: HttpRequestHandlerDelegate!
+    let httpRequestHandlerDelegate: HttpRequestHandlerDelegate!
     
-    override init() {
+    init(delegate: HttpRequestHandlerDelegate) {
         uploadUrl = URL(string: host + uploadEndpoint)
         verifyUrl = URLComponents(string: host + verifyEndpoint)
+        httpRequestHandlerDelegate = delegate
     }
     
     func upload(toUpload url: URL) {

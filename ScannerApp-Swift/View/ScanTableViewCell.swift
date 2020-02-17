@@ -10,8 +10,8 @@ import AVFoundation
 import UIKit
 
 protocol ScanTableViewCellDelegate {
-//    func didTappedUpload(url: URL)
-    func didTappedDelete()
+    func deleteSuccess(fileId: String)
+    func deleteFailed(fileId: String)
     func didCompletedUploadWithError(fileId: String)
     func didCompletedUploadWithoutError(fileId: String)
 }
@@ -89,19 +89,18 @@ class ScanTableViewCell: UITableViewCell {
             self.uploadProgressView.isHidden = false
         }
         
-        let requestHandler = HttpRequestHandler()
-        requestHandler.httpRequestHandlerDelegate = self
+        let requestHandler = HttpRequestHandler(delegate: self)
         requestHandler.upload(toUpload: url)
     }
     
     @IBAction func deleteButtonTapped(_ sender: Any) {
-        // TODO
         do {
             try FileManager.default.removeItem(at: url)
+            scanTableViewCellDelegate.deleteSuccess(fileId: url.lastPathComponent)
         } catch {
-            print("Remove file failed")
+            print("failed to remove \(url.absoluteString)")
+            scanTableViewCellDelegate.deleteFailed(fileId: url.lastPathComponent)
         }
-        scanTableViewCellDelegate.didTappedDelete()
     }
 }
 
