@@ -263,41 +263,48 @@ class CameraViewController: UIViewController {
     
     @IBAction private func recordButtonTapped(_ sender: Any) {
         
-        self.recordButton.isEnabled = false
-        
-        self.sessionQueue.async {
-            if !self.movieFileOutput.isRecording {
-                
-                self.updateGpsLocation()
-                
-                DispatchQueue.main.async {
-                    self.popUpView.isHidden = false
-                    self.updateStartButton()
-                }
-                
-            } else {
-                self.stopRecording()
-            }
+        DispatchQueue.main.async {
+            self.recordButton.isEnabled = false
         }
+        
+        if !self.movieFileOutput.isRecording {
+            
+            self.updateGpsLocation()
+            
+            DispatchQueue.main.async {
+                self.popUpView.isHidden = false
+            }
+            
+            self.updateStartButton()
+            
+        } else {
+            self.stopRecording()
+        }
+
     }
     
     @IBAction func startButtonTapped(_ sender: Any) {
-        self.popUpView.isHidden = true
-        self.sessionQueue.async {
-            self.startRecording()
+        DispatchQueue.main.async {
+            self.popUpView.isHidden = true
         }
+        
+        self.startRecording()
     }
     
     @IBAction func cancelButtonTapped(_ sender: Any) {
-        self.popUpView.isHidden = true
-        self.recordButton.isEnabled = true
+        DispatchQueue.main.async {
+            self.popUpView.isHidden = true
+            self.recordButton.isEnabled = true
+        }
     }
     
     @IBAction func selectSceneTypeButtonTapped(_ sender: Any) {
-        if sceneTypePickerView.isHidden {
-            sceneTypePickerView.isHidden = false
-        } else {
-            sceneTypePickerView.isHidden = true
+        DispatchQueue.main.async {
+            if self.sceneTypePickerView.isHidden {
+                self.sceneTypePickerView.isHidden = false
+            } else {
+                self.sceneTypePickerView.isHidden = true
+            }
         }
     }
     
@@ -320,100 +327,106 @@ class CameraViewController: UIViewController {
                 self.startButton.isEnabled = false
             }
         }
-        
     }
     
     private func startRecording() {
-        if UIDevice.current.isMultitaskingSupported {
-            self.backgroundRecordingID = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
-        }
-        
-        let movieFileOutputConnection = self.movieFileOutput.connection(with: .video)
-
-        movieFileOutputConnection?.videoOrientation = .landscapeRight
-
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyyMMdd'T'hhmmssZZZ"
-        let dateString = dateFormatter.string(from: Date())
-        
-        fileId = dateString + "_" + UIDevice.current.identifierForVendor!.uuidString
-        
-        let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-        
-        // create new directory for new recording
-        let docURL = URL(string: documentsDirectory)!
-        let dataPath = docURL.appendingPathComponent(fileId)
-        if !FileManager.default.fileExists(atPath: dataPath.absoluteString) {
-            do {
-                try FileManager.default.createDirectory(atPath: dataPath.absoluteString, withIntermediateDirectories: true, attributes: nil)
-            } catch {
-                print(error.localizedDescription);
+        sessionQueue.async {
+            
+            if UIDevice.current.isMultitaskingSupported {
+                self.backgroundRecordingID = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
             }
-        }
-        
-        let dataPathString = dataPath.absoluteString
-        
-        // save metadata path, it will be used when recording is finished
-        self.metadataPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("json")!)
-        
-        // TODO:
-        // Camera data
-        
-        // Motion data
-        self.numImuMeasurements = 0
-//        let motionDataPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("imu")!)
-//        self.imuFilePointer = fopen(motionDataPath, "w")
-        
-        let rotationRatePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("rot")!)
-        self.rotationRateFilePointer = fopen(rotationRatePath, "w")
-        
-        let userAccelerationPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("acce")!)
-        self.userAccelerationFilePointer = fopen(userAccelerationPath, "w")
-        
-        let magneticFieldPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("mag")!)
-        self.magneticFieldFilePointer = fopen(magneticFieldPath, "w")
-        
-        let attitudePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("atti")!)
-        self.attitudeFilePointer = fopen(attitudePath, "w")
-        
-        let gravityPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("grav")!)
-        self.gravityFilePointer = fopen(gravityPath, "w")
-        
-        self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
-            if let validData = data {
-                self.numImuMeasurements += 1
-                let motionData = MotionData(deviceMotion: validData)
-//                motionData.display()
-//                motionData.writeToFile(filePointer: self.imuFilePointer!)
-                motionData.writeToFiles(rotationRateFilePointer: self.rotationRateFilePointer!, userAccelerationFilePointer: self.userAccelerationFilePointer!, magneticFieldFilePointer: self.magneticFieldFilePointer!, attitudeFilePointer: self.attitudeFilePointer!, gravityFilePointer: self.gravityFilePointer!)
-            } else {
-                print("there is some problem with motion data")
+            
+            let movieFileOutputConnection = self.movieFileOutput.connection(with: .video)
+            
+            movieFileOutputConnection?.videoOrientation = .landscapeRight
+            
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyyMMdd'T'hhmmssZZZ"
+            let dateString = dateFormatter.string(from: Date())
+            
+            self.fileId = dateString + "_" + UIDevice.current.identifierForVendor!.uuidString
+            
+            let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+            
+            // create new directory for new recording
+            let docURL = URL(string: documentsDirectory)!
+            let dataPath = docURL.appendingPathComponent(self.fileId)
+            if !FileManager.default.fileExists(atPath: dataPath.absoluteString) {
+                do {
+                    try FileManager.default.createDirectory(atPath: dataPath.absoluteString, withIntermediateDirectories: true, attributes: nil)
+                } catch {
+                    print(error.localizedDescription);
+                }
             }
+            
+            let dataPathString = dataPath.absoluteString
+            
+            // save metadata path, it will be used when recording is finished
+            self.metadataPath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("json")!)
+            
+            // TODO:
+            // Camera data
+            
+            // Motion data
+            self.numImuMeasurements = 0
+            //        let motionDataPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("imu")!)
+            //        self.imuFilePointer = fopen(motionDataPath, "w")
+            
+            let rotationRatePath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("rot")!)
+            self.rotationRateFilePointer = fopen(rotationRatePath, "w")
+            
+            let userAccelerationPath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("acce")!)
+            self.userAccelerationFilePointer = fopen(userAccelerationPath, "w")
+            
+            let magneticFieldPath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("mag")!)
+            self.magneticFieldFilePointer = fopen(magneticFieldPath, "w")
+            
+            let attitudePath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("atti")!)
+            self.attitudeFilePointer = fopen(attitudePath, "w")
+            
+            let gravityPath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("grav")!)
+            self.gravityFilePointer = fopen(gravityPath, "w")
+            
+            self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
+                if let validData = data {
+                    self.numImuMeasurements += 1
+                    let motionData = MotionData(deviceMotion: validData)
+                    //                motionData.display()
+                    //                motionData.writeToFile(filePointer: self.imuFilePointer!)
+                    motionData.writeToFiles(rotationRateFilePointer: self.rotationRateFilePointer!, userAccelerationFilePointer: self.userAccelerationFilePointer!, magneticFieldFilePointer: self.magneticFieldFilePointer!, attitudeFilePointer: self.attitudeFilePointer!, gravityFilePointer: self.gravityFilePointer!)
+                } else {
+                    print("there is some problem with motion data")
+                }
+            }
+            
+            // Video
+            self.movieFilePath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("mp4")!)
+            self.movieFileOutput.startRecording(to: URL(fileURLWithPath: self.movieFilePath), recordingDelegate: self)
         }
-        
-        // Video
-        self.movieFilePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("mp4")!)
-        self.movieFileOutput.startRecording(to: URL(fileURLWithPath: movieFilePath), recordingDelegate: self)
     }
     
     private func stopRecording() {
-        self.movieFileOutput.stopRecording()
-        
-        self.motionManager.stopDeviceMotionUpdates()
-//        fclose(self.imuFilePointer)
-        fclose(rotationRateFilePointer)
-        fclose(userAccelerationFilePointer)
-        fclose(magneticFieldFilePointer)
-        fclose(attitudeFilePointer)
-        fclose(gravityFilePointer)
-        
-        self.numColorFrames = getNumberOfFrames(videoUrl: URL(fileURLWithPath: movieFilePath))
-        
-        let username = self.firstName! + " " + self.lastName!
-        let metadata = Metadata(username: username, userInputDescription: self.userInputDescription!, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: self.generateStreamInfo())
-        
-//        metadata.display()
-        metadata.writeToFile(filepath: self.metadataPath)
+        sessionQueue.async {
+            
+            self.movieFileOutput.stopRecording()
+            
+            self.motionManager.stopDeviceMotionUpdates()
+//            fclose(self.imuFilePointer)
+            fclose(self.rotationRateFilePointer)
+            fclose(self.userAccelerationFilePointer)
+            fclose(self.magneticFieldFilePointer)
+            fclose(self.attitudeFilePointer)
+            fclose(self.gravityFilePointer)
+            
+            self.numColorFrames = self.getNumberOfFrames(videoUrl: URL(fileURLWithPath: self.movieFilePath))
+            
+            let username = self.firstName! + " " + self.lastName!
+            let metadata = Metadata(username: username, userInputDescription: self.userInputDescription!, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: self.generateStreamInfo())
+            
+//            metadata.display()
+            metadata.writeToFile(filepath: self.metadataPath)
+            
+        }
         
         Helper.showToast(controller: self, message: "Finish recording\nfile prefix: \(fileId)", seconds: 1)
     }
