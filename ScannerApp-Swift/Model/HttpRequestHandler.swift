@@ -10,8 +10,8 @@ import Foundation
 
 protocol HttpRequestHandlerDelegate {
     func didReceiveUploadProgressUpdate(progress: Float)
-    func didCompleteUpload(data: Data?,response: URLResponse?, error: Error?)
-    func didCompleteWithoutError()
+    func didCompletedUploadWithError()
+    func didCompletedUploadWithoutError()
 }
 
 class HttpRequestHandler: NSObject {
@@ -22,11 +22,11 @@ class HttpRequestHandler: NSObject {
     
     private let uploadQueue = OperationQueue()
     
-//    private let host = URL(string: "http://192.168.1.66:5000/upload")!
     private let uploadUrl: URL!
     private var verifyUrl: URLComponents!
     
-    var httpRequestHandlerDelegate: HttpRequestHandlerDelegate?
+    // TODO: init this in init()
+    var httpRequestHandlerDelegate: HttpRequestHandlerDelegate!
     
     override init() {
         uploadUrl = URL(string: host + uploadEndpoint)
@@ -47,42 +47,23 @@ class HttpRequestHandler: NSObject {
         var request = URLRequest(url: uploadUrl)
         request.allowsCellularAccess = false
         
-//        request.httpMethod = "POST"
-//        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-//        request.setValue(url.lastPathComponent, forHTTPHeaderField: "filename")
-        
         request.httpMethod = "PUT"
         request.setValue("application/ipad_scanner_data", forHTTPHeaderField: "Content-Type")
         request.setValue(url.lastPathComponent, forHTTPHeaderField: "FILE_NAME")
-        
-        
-        //        var config = URLSessionConfiguration.background(withIdentifier: "url session")
-        //        let session = URLSession(configuration: config, delegate: self, delegateQueue: nil)
         
         let session = URLSession(configuration: .default, delegate: self, delegateQueue: uploadQueue)
         let task = session.uploadTask(with: request, fromFile: url, completionHandler: {
             data, response, error in
             
-            if let delegate = self.httpRequestHandlerDelegate {
-                delegate.didCompleteUpload(data: data, response: response, error: error)
-            } else {
-                print("Upload complete")
-                
-                if let error = error {
-                    print ("error: \(error)")
+            guard let httpUrlResponse = response as? HTTPURLResponse,
+                (200...299).contains(httpUrlResponse.statusCode) else {
+                    
+                    print("failed to upload \(url.absoluteString)")
+                    print(response.debugDescription)
+                    
+                    self.httpRequestHandlerDelegate.didCompletedUploadWithError()
+                    
                     return
-                }
-                guard let response = response as? HTTPURLResponse,
-                    (200...299).contains(response.statusCode) else {
-                        print ("server error")
-                        return
-                }
-                if let mimeType = response.mimeType,
-                    mimeType == "application/json",
-                    let data = data,
-                    let dataString = String(data: data, encoding: .utf8) {
-                    print ("got data: \(dataString)")
-                }
             }
             
         })
@@ -92,6 +73,12 @@ class HttpRequestHandler: NSObject {
     
     func uploadAllFilesInDir(dirUrl: URL) {
         
+        let fileURLs = getFilesInDirectorySortedByFileSize(dirUrl: dirUrl)
+        
+        uploadAllFilesOneByOne(fileURLs: fileURLs)
+    }
+    
+    private func getFilesInDirectorySortedByFileSize(dirUrl: URL) -> [URL] {
         var fileURLs: [URL] = []
         
         do {
@@ -113,22 +100,13 @@ class HttpRequestHandler: NSObject {
             print("Error while enumerating files \(dirUrl.path): \(error.localizedDescription)")
         }
         
-//        uploadOneFile(url: fileURLs[0])
-//        print(fileURLs[0])
-        
-//        for url in fileURLs {
-//            uploadOneFile(url: url)
-//        }
-        
-        
-        
-        uploadAllFilesOneByOne(fileURLs: fileURLs)
+        return fileURLs
     }
     
     func uploadAllFilesOneByOne(fileURLs: [URL]) {
         if fileURLs.isEmpty {
             if let delegate = self.httpRequestHandlerDelegate {
-                delegate.didCompleteWithoutError()
+                delegate.didCompletedUploadWithoutError()
             }
             return
         }
@@ -146,20 +124,18 @@ class HttpRequestHandler: NSObject {
         let uploadTask = session.uploadTask(with: uploadRequest, fromFile: currentFileUrl, completionHandler: {
             data, response, error in
             
-            print("reach completion handler")
-            print(currentFileUrl)
-            
-            guard let response1 = response as? HTTPURLResponse,
-                (200...299).contains(response1.statusCode) else {
+            guard let httpUrlResponse = response as? HTTPURLResponse,
+                (200...299).contains(httpUrlResponse.statusCode) else {
                     
-                    print("upload return error")
+                    print("failed to upload \(currentFileUrl.absoluteString)")
                     print(response.debugDescription)
                     
-                    if let delegate = self.httpRequestHandlerDelegate {
-                        delegate.didCompleteUpload(data: data, response: response, error: error)
-                    }
+                    self.httpRequestHandlerDelegate.didCompletedUploadWithError()
+                    
                     return
             }
+            
+            print("uploaded \(currentFileUrl.lastPathComponent)")
             
             // verify newly uploaded file
             var queryItems = [URLQueryItem]()
@@ -173,28 +149,22 @@ class HttpRequestHandler: NSObject {
             var verifyRequest = URLRequest(url: self.verifyUrl.url!)
             verifyRequest.allowsCellularAccess = false
             verifyRequest.httpMethod = "GET"
-            
-//            verifyRequest.setValue(currentFileUrl.lastPathComponent, forHTTPHeaderField: "filename")
-//            verifyRequest.setValue(Helper.calculateChecksum(url: currentFileUrl), forHTTPHeaderField: "checksum")
 
             let verifyTask = session.dataTask(with: verifyRequest, completionHandler: {
                 data, response, error in
                 
-                print("reach verify")
-                
-                guard let response1 = response as? HTTPURLResponse,
-                    (200...299).contains(response1.statusCode) else {
+                guard let httpUrlResponse = response as? HTTPURLResponse,
+                    (200...299).contains(httpUrlResponse.statusCode) else {
                         
-                        print("verify has failed")
+                        print("failed to verify \(currentFileUrl.absoluteString)")
                         print(response.debugDescription)
                         
-                        if let delegate = self.httpRequestHandlerDelegate {
-                            delegate.didCompleteUpload(data: data, response: response, error: error)
-                        }
+                        self.httpRequestHandlerDelegate.didCompletedUploadWithError()
+                        
                         return
                 }
                 
-                print("verify success")
+                print("verified \(currentFileUrl.lastPathComponent)")
                 
                 var newFileList = fileURLs
                 newFileList.remove(at: 0)
@@ -205,10 +175,6 @@ class HttpRequestHandler: NSObject {
         })
         
         uploadTask.resume()
-    }
-    
-    func verifyUpload(url: URL) {
-        
     }
     
 }

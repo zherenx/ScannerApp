@@ -55,6 +55,7 @@ class LibraryViewController: UITableViewController {
 }
 
 extension LibraryViewController: ScanTableViewCellDelegate {
+    
 //    func didTappedUpload(url: URL) {
 //        
 //    }
@@ -62,5 +63,13 @@ extension LibraryViewController: ScanTableViewCellDelegate {
     func didTappedDelete() {
         loadFiles()
         tableView.reloadData()
+    }
+    
+    func didCompletedUploadWithError(fileId: String) {
+        Helper.showToast(controller: self, message: "Failed to upload \(fileId)", seconds: 1)
+    }
+    
+    func didCompletedUploadWithoutError(fileId: String) {
+        Helper.showToast(controller: self, message: "All files in \(fileId) have been uploaded", seconds: 1)
     }
 }

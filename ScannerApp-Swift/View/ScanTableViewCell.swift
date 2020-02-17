@@ -12,6 +12,8 @@ import UIKit
 protocol ScanTableViewCellDelegate {
 //    func didTappedUpload(url: URL)
     func didTappedDelete()
+    func didCompletedUploadWithError(fileId: String)
+    func didCompletedUploadWithoutError(fileId: String)
 }
 
 class ScanTableViewCell: UITableViewCell {
@@ -112,36 +114,24 @@ extension ScanTableViewCell: HttpRequestHandlerDelegate {
         }
     }
     
-    func didCompleteUpload(data: Data?, response: URLResponse?, error: Error?) {
+    func didCompletedUploadWithError() {
 
         DispatchQueue.main.async {
             self.uploadButton.isEnabled = true
             self.deleteButton.isEnabled = true
             self.uploadProgressView.isHidden = true
-        }
-
-        if let error = error {
-            print ("error: \(error)")
-            return
-        }
-        guard let response = response as? HTTPURLResponse,
-            (200...299).contains(response.statusCode) else {
-                print ("server error")
-                return
-        }
-        if let mimeType = response.mimeType,
-            mimeType == "application/json",
-            let data = data,
-            let dataString = String(data: data, encoding: .utf8) {
-            print ("got data: \(dataString)")
+            
+            self.scanTableViewCellDelegate.didCompletedUploadWithError(fileId: self.url.lastPathComponent)
         }
     }
     
-    func didCompleteWithoutError() {
+    func didCompletedUploadWithoutError() {
         DispatchQueue.main.async {
             self.uploadButton.isEnabled = true
             self.deleteButton.isEnabled = true
             self.uploadProgressView.isHidden = true
+            
+            self.scanTableViewCellDelegate.didCompletedUploadWithoutError(fileId: self.url.lastPathComponent)
         }
     }
 }
