@@ -39,7 +39,9 @@ class CameraViewController: UIViewController {
     
     private var fileId: String!
     private var movieFilePath: String!
-    private var metadataPath: String! // this is a hack
+    private var metadataPath: String!
+    
+    private var videoIsReady: Bool = false // this is a heck, consider improve it
     
     private let session = AVCaptureSession()
     
@@ -423,12 +425,14 @@ class CameraViewController: UIViewController {
             let username = self.firstName! + " " + self.lastName!
             let metadata = Metadata(username: username, userInputDescription: self.userInputDescription!, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: self.generateStreamInfo())
             
-//            metadata.display()
+            metadata.display()
             metadata.writeToFile(filepath: self.metadataPath)
             
         }
         
         Helper.showToast(controller: self, message: "Finish recording\nfile prefix: \(fileId)", seconds: 1)
+        
+        videoIsReady = false
     }
     
     private func generateStreamInfo() -> [StreamInfo] {
@@ -456,9 +460,18 @@ class CameraViewController: UIViewController {
     
     // https://stackoverflow.com/questions/29506411/ios-determine-number-of-frames-in-video
     private func getNumberOfFrames(videoUrl url: URL) -> Int {
+        
+        while !videoIsReady {
+            // this is a heck
+            // wait until video is ready
+            print("waiting for video ...")
+            usleep(10000)
+        }
+        
         let asset = AVURLAsset(url: url, options: nil)
         do {
             let reader = try AVAssetReader(asset: asset)
+            //AVAssetReader(asset: asset, error: nil)
             
             let videoTrack = asset.tracks(withMediaType: AVMediaType.video)[0]
             
@@ -530,6 +543,8 @@ extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
             self.recordButton.backgroundColor = .systemBlue
             self.recordButton.isEnabled = true
         }
+        
+        videoIsReady = true
     }
 }
 
