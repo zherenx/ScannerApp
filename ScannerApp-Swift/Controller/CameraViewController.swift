@@ -132,10 +132,6 @@ class CameraViewController: UIViewController {
             } catch {
                 print("Error configurating video device")
             }
-            
-            // TODO: calculate these
-            focalLength = [1.0, 2.0]
-            principalPoint = [3.0, 4.0]
 
             let videoDeviceInput = try AVCaptureDeviceInput(device: videoDevice)
 
@@ -161,12 +157,45 @@ class CameraViewController: UIViewController {
                 if connection.isVideoStabilizationSupported {
                     connection.preferredVideoStabilizationMode = .auto
                 }
+                
+                // TODO: change this and test fov value
+                connection.videoOrientation = .landscapeRight
             }
         }
         
         let videoFormatDescription = defaultVideoDevice!.activeFormat.formatDescription
         let dimensions = CMVideoFormatDescriptionGetDimensions(videoFormatDescription)
-        colorResolution = [Int(dimensions.width), Int(dimensions.height)]
+        
+        let width = Int(dimensions.width)
+        let height = Int(dimensions.height)
+        colorResolution = [width, height]
+        
+        // TODO: calculate these
+        let fov = defaultVideoDevice!.activeFormat.videoFieldOfView
+        let aspect = Float(width) / Float(height)
+        let t = tan(0.5 * fov)
+        
+        //            float fx = 0.5f * width / t;
+        //            float fy = 0.5f * height / t * aspect;
+        //
+        //            float mx = (float)(width - 1.0f) / 2.0f;
+        //            float my = (float)(height - 1.0f) / 2.0f;
+        
+        let fx = 0.5 * Float(width) / t
+        let fy = 0.5 * Float(height) / t
+        
+        let mx = Float(width - 1) / 2.0
+        let my = Float(height - 1) / 2.0
+        
+        focalLength = [fx, fy]
+        principalPoint = [mx, my]
+        
+//        print(fov)
+//        print(aspect)
+//        print(width)
+//        print(height)
+//        print(focalLength)
+//        print(principalPoint)
         
         self.session.commitConfiguration()
         
