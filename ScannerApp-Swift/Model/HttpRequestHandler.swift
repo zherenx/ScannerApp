@@ -36,7 +36,8 @@ class HttpRequestHandler: NSObject {
     func upload(toUpload url: URL) {
         
         if url.hasDirectoryPath {
-            uploadAllFilesInDir(dirUrl: url)
+            let fileURLs = getFilesInDirectorySortedByFileSize(dirUrl: url)
+            uploadAllFilesOneByOne(fileURLs: fileURLs)
         } else {
             uploadOneFile(url: url)
         }
@@ -69,38 +70,6 @@ class HttpRequestHandler: NSObject {
         })
         
         task.resume()
-    }
-    
-    func uploadAllFilesInDir(dirUrl: URL) {
-        
-        let fileURLs = getFilesInDirectorySortedByFileSize(dirUrl: dirUrl)
-        
-        uploadAllFilesOneByOne(fileURLs: fileURLs)
-    }
-    
-    private func getFilesInDirectorySortedByFileSize(dirUrl: URL) -> [URL] {
-        var fileURLs: [URL] = []
-        
-        do {
-            fileURLs = try FileManager.default.contentsOfDirectory(at: dirUrl, includingPropertiesForKeys: [.fileSizeKey])
-            
-            fileURLs = fileURLs.sorted(by: { (url1: URL, url2: URL) -> Bool in
-                do {
-                    let size1 = try url1.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
-                    let size2 = try url2.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
-                    return size1 < size2
-                } catch {
-                    print(error.localizedDescription)
-                }
-                print("some problem")
-                return true
-            })
-            
-        } catch {
-            print("Error while enumerating files \(dirUrl.path): \(error.localizedDescription)")
-        }
-        
-        return fileURLs
     }
     
     func uploadAllFilesOneByOne(fileURLs: [URL]) {
@@ -175,6 +144,31 @@ class HttpRequestHandler: NSObject {
         })
         
         uploadTask.resume()
+    }
+    
+    private func getFilesInDirectorySortedByFileSize(dirUrl: URL) -> [URL] {
+        var fileURLs: [URL] = []
+        
+        do {
+            fileURLs = try FileManager.default.contentsOfDirectory(at: dirUrl, includingPropertiesForKeys: [.fileSizeKey])
+            
+            fileURLs = fileURLs.sorted(by: { (url1: URL, url2: URL) -> Bool in
+                do {
+                    let size1 = try url1.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
+                    let size2 = try url2.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
+                    return size1 < size2
+                } catch {
+                    print(error.localizedDescription)
+                }
+                print("some problem")
+                return true
+            })
+            
+        } catch {
+            print("Error while enumerating files \(dirUrl.path): \(error.localizedDescription)")
+        }
+        
+        return fileURLs
     }
     
 }
