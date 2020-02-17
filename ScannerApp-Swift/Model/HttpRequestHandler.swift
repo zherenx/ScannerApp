@@ -24,13 +24,13 @@ class HttpRequestHandler: NSObject {
     
 //    private let host = URL(string: "http://192.168.1.66:5000/upload")!
     private let uploadUrl: URL!
-    private let verifyUrl: URL!
+    private var verifyUrl: URLComponents!
     
     var httpRequestHandlerDelegate: HttpRequestHandlerDelegate?
     
     override init() {
-        uploadUrl = URL(string: host + uploadEndpoint)!
-        verifyUrl = URL(string: host + verifyEndpoint)!
+        uploadUrl = URL(string: host + uploadEndpoint)
+        verifyUrl = URLComponents(string: host + verifyEndpoint)
     }
     
     func upload(toUpload url: URL) {
@@ -133,23 +133,21 @@ class HttpRequestHandler: NSObject {
             return
         }
         
-        let url = fileURLs[0]
-        var newFileList = fileURLs
-        newFileList.remove(at: 0)
+        let currentFileUrl = fileURLs[0]
         
-        var request = URLRequest(url: uploadUrl)
-        request.allowsCellularAccess = false
+        var uploadRequest = URLRequest(url: uploadUrl)
+        uploadRequest.allowsCellularAccess = false
         
-        request.httpMethod = "PUT"
-        request.setValue("application/ipad_scanner_data", forHTTPHeaderField: "Content-Type")
-        request.setValue(url.lastPathComponent, forHTTPHeaderField: "FILE_NAME")
+        uploadRequest.httpMethod = "PUT"
+        uploadRequest.setValue("application/ipad_scanner_data", forHTTPHeaderField: "Content-Type")
+        uploadRequest.setValue(currentFileUrl.lastPathComponent, forHTTPHeaderField: "FILE_NAME")
         
         let session = URLSession(configuration: .default, delegate: self, delegateQueue: uploadQueue)
-        let task = session.uploadTask(with: request, fromFile: url, completionHandler: {
+        let uploadTask = session.uploadTask(with: uploadRequest, fromFile: currentFileUrl, completionHandler: {
             data, response, error in
             
             print("reach completion handler")
-            print(url)
+            print(currentFileUrl)
             
             guard let response1 = response as? HTTPURLResponse,
                 (200...299).contains(response1.statusCode) else {
@@ -162,11 +160,51 @@ class HttpRequestHandler: NSObject {
                     }
                     return
             }
+            
+            // verify newly uploaded file
+            var queryItems = [URLQueryItem]()
+            let params = ["filename": currentFileUrl.lastPathComponent, "checksum": Helper.calculateChecksum(url: currentFileUrl)]
+            for (key,value) in params {
+                queryItems.append(URLQueryItem(name: key, value: value))
+            }
+            
+            self.verifyUrl.queryItems = queryItems
+            
+            var verifyRequest = URLRequest(url: self.verifyUrl.url!)
+            verifyRequest.allowsCellularAccess = false
+            verifyRequest.httpMethod = "GET"
+            
+//            verifyRequest.setValue(currentFileUrl.lastPathComponent, forHTTPHeaderField: "filename")
+//            verifyRequest.setValue(Helper.calculateChecksum(url: currentFileUrl), forHTTPHeaderField: "checksum")
 
-            self.uploadAllFilesOneByOne(fileURLs: newFileList)
+            let verifyTask = session.dataTask(with: verifyRequest, completionHandler: {
+                data, response, error in
+                
+                print("reach verify")
+                
+                guard let response1 = response as? HTTPURLResponse,
+                    (200...299).contains(response1.statusCode) else {
+                        
+                        print("verify has failed")
+                        print(response.debugDescription)
+                        
+                        if let delegate = self.httpRequestHandlerDelegate {
+                            delegate.didCompleteUpload(data: data, response: response, error: error)
+                        }
+                        return
+                }
+                
+                print("verify success")
+                
+                var newFileList = fileURLs
+                newFileList.remove(at: 0)
+                self.uploadAllFilesOneByOne(fileURLs: newFileList)
+            })
+            
+            verifyTask.resume()
         })
         
-        task.resume()
+        uploadTask.resume()
     }
     
     func verifyUpload(url: URL) {

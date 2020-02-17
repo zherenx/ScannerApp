@@ -21,13 +21,16 @@ struct Constants {
                                        "Misc."]
     
     struct Server {
-        static let host: String = "http://aspis.cmpt.sfu.ca/multiscan"
-//        static let host: String = "http://192.168.1.66:5000/"
+        
+        static let chuckSize = 4096
         
         struct Endpoints {
             static let upload: String = "/upload"
             static let verify: String = "/verify"
         }
+
+        static let host: String = "http://aspis.cmpt.sfu.ca/multiscan"
+//        static let host: String = "http://192.168.1.66:5000/"
     }
     
     struct Tag {
