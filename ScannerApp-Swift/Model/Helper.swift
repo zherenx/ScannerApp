@@ -8,19 +8,10 @@
 
 import CommonCrypto
 import Foundation
+import UIKit
 
 class Helper {
-    static func getDeviceModelCode() -> String {
-        var systemInfo = utsname()
-        uname(&systemInfo)
-        let machineMirror = Mirror(reflecting: systemInfo.machine)
-        let identifier = machineMirror.children.reduce("") { identifier, element in
-            guard let value = element.value as? Int8, value != 0 else { return identifier }
-            return identifier + String(UnicodeScalar(UInt8(value)))
-        }
-        return identifier
-    }
-    
+
     // https://stackoverflow.com/questions/42935148/swift-calculate-md5-checksum-for-large-files
     static func calculateChecksum(url: URL) -> String? {
         
@@ -64,36 +55,26 @@ class Helper {
         }
     }
     
-//    NSString *calculateChecksum(NSString *fileName)
-//    {
-//        FILE *fp = fopen([fileName UTF8String], "rb");
-//        uint8_t buf[READ_CHUNK_SIZE];
-//
-//        CC_MD5_CTX md5;
-//        CC_MD5_Init(&md5);
-//
-//        size_t read_size = READ_CHUNK_SIZE;
-//        if (fp != NULL)
-//        {
-//            while (read_size == READ_CHUNK_SIZE)
-//            {
-//                read_size = fread(buf, sizeof(uint8_t), READ_CHUNK_SIZE, fp);
-//                CC_MD5_Update(&md5, buf, read_size);
-//            }
-//        }
-//        else
-//        {
-//            NSLog(@"Unable to read file: %@", fileName);
-//            return nil;
-//        }
-//
-//        uint8_t digest[CC_MD5_DIGEST_LENGTH];
-//        CC_MD5_Final(digest, &md5);
-//
-//        NSMutableString *output = [NSMutableString stringWithCapacity:CC_MD5_DIGEST_LENGTH * 2];
-//        for(int i = 0; i < CC_MD5_DIGEST_LENGTH; i++)
-//            [output appendFormat:@"%02x", digest[i]];
-//
-//        return output;
-//    }
+    static func getDeviceModelCode() -> String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        let identifier = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8, value != 0 else { return identifier }
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
+        return identifier
+    }
+    
+    // https://medium.com/@rushikeshT/displaying-simple-toast-in-ios-swift-57014cbb9ffa
+    static func showToast(controller: UIViewController, message : String, seconds: Double) {
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        alert.view.backgroundColor = .black
+        alert.view.alpha = 0.5
+        alert.view.layer.cornerRadius = 15
+        controller.present(alert, animated: true)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + seconds) {
+            alert.dismiss(animated: true)
+        }
+    }
 }

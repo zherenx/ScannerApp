@@ -44,7 +44,7 @@ class CameraViewController: UIViewController {
     
     
     
-//    private var fileId: String?
+    private var fileId: String!
     private var movieFilePath: String!
     private var metadataPath: String! // this is a hack
     
@@ -442,7 +442,7 @@ class CameraViewController: UIViewController {
         dateFormatter.dateFormat = "yyyyMMdd'T'hhmmssZZZ"
         let dateString = dateFormatter.string(from: Date())
         
-        let fileId = dateString + "_" + UIDevice.current.identifierForVendor!.uuidString
+        fileId = dateString + "_" + UIDevice.current.identifierForVendor!.uuidString
 //        let fileId = NSUUID().uuidString
         
         let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
@@ -526,6 +526,8 @@ class CameraViewController: UIViewController {
         
         metadata.display()
         metadata.writeToFile(filepath: self.metadataPath)
+        
+        Helper.showToast(controller: self, message: "Finish recording\nfile prefix: \(fileId)", seconds: 1)
     }
     
     private func generateStreamInfo() -> [StreamInfo] {
