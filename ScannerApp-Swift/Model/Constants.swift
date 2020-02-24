@@ -8,17 +8,43 @@
 
 struct Constants {
     
+//    static let sceneTypes: [String] = ["Please Select A Scene Type",
+//                                       "Dining Room",
+//                                       "Office",
+//                                       "Classroom",
+//                                       "Bedroom / Hotel",
+//                                       "Living room / Lounge",
+//                                       "Kitchen",
+//                                       "Bookstore / Library",
+//                                       "Bathroom",
+//                                       "Conference Room",
+//                                       "Misc."]
+    
     static let sceneTypes: [String] = ["Please Select A Scene Type",
-                                       "Dining Room",
-                                       "Office",
-                                       "Classroom",
-                                       "Bedroom / Hotel",
-                                       "Living room / Lounge",
-                                       "Kitchen",
-                                       "Bookstore / Library",
+                                       "Apartment",
                                        "Bathroom",
+                                       "Bedroom / Hotel",
+                                       "Bookstore / Library",
+                                       "Classroom",
+                                       "Closet",
+                                       "ComputerCluster",
                                        "Conference Room",
-                                       "Misc."]
+                                       "Copy Room",
+                                       "Copy/Mail Room",
+                                       "Dining Room",
+                                       "Game room",
+                                       "Gym",
+                                       "Hallway",
+                                       "Kitchen",
+                                       "Laundromat",
+                                       "Laundry Room",
+                                       "Living room / Lounge",
+                                       "Lobby",
+                                       "Mailboxes",
+                                       "Misc.",
+                                       "Office",
+                                       "Stairs",
+                                       "Storage/Basement/Garage"]
     
     struct Server {
         
