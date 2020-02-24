@@ -425,7 +425,7 @@ class CameraViewController: UIViewController {
             let username = self.firstName! + " " + self.lastName!
             let metadata = Metadata(username: username, userInputDescription: self.userInputDescription!, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: self.generateStreamInfo())
             
-            metadata.display()
+//            metadata.display()
             metadata.writeToFile(filepath: self.metadataPath)
             
         }
@@ -464,7 +464,7 @@ class CameraViewController: UIViewController {
         while !videoIsReady {
             // this is a heck
             // wait until video is ready
-            print("waiting for video ...")
+//            print("waiting for video ...")
             usleep(10000)
         }
         
@@ -550,6 +550,18 @@ extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
 
 extension CameraViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textFieldDidUpdate(textField)
+        
+        return true
+    }
+    
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        textFieldDidUpdate(textField)
+        
+        return true
+    }
+    
+    private func textFieldDidUpdate(_ textField: UITextField) {
         textField.resignFirstResponder()
         
         var text = textField.text?.trimmingCharacters(in: .whitespaces)
@@ -573,8 +585,6 @@ extension CameraViewController: UITextFieldDelegate {
         }
         
         updateStartButton()
-        
-        return true
     }
 }
 

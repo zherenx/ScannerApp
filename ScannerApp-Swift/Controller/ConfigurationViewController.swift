@@ -67,6 +67,18 @@ class ConfigurationViewController: UIViewController {
 
 extension ConfigurationViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textFieldDidUpdate(textField)
+        
+        return true
+    }
+    
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        textFieldDidUpdate(textField)
+        
+        return true
+    }
+    
+    private func textFieldDidUpdate(_ textField: UITextField) {
         textField.resignFirstResponder()
         
         var text = textField.text?.trimmingCharacters(in: .whitespaces)
@@ -83,9 +95,6 @@ extension ConfigurationViewController: UITextFieldDelegate {
         default:
             print("text field with tag \(textField.tag) is not found.")
         }
-        
-        
-        return true
     }
 }
 
