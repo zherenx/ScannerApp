@@ -9,6 +9,7 @@
 import AVFoundation
 import CoreLocation
 import CoreMotion
+import Foundation
 import UIKit
 
 class CameraViewController: UIViewController {
@@ -53,6 +54,12 @@ class CameraViewController: UIViewController {
     private let movieFileOutput = AVCaptureMovieFileOutput()
     
     private var backgroundRecordingID: UIBackgroundTaskIdentifier?
+    
+    private var rotationRatePath: String!
+    private var userAccelerationPath: String!
+    private var magneticFieldPath: String!
+    private var attitudePath: String!
+    private var gravityPath: String!
     
 //    private var imuFilePointer: UnsafeMutablePointer<FILE>?
     private var rotationRateFilePointer: UnsafeMutablePointer<FILE>?
@@ -374,26 +381,33 @@ class CameraViewController: UIViewController {
             //        let motionDataPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("imu")!)
             //        self.imuFilePointer = fopen(motionDataPath, "w")
             
-            let rotationRatePath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("rot")!)
-            self.rotationRateFilePointer = fopen(rotationRatePath, "w")
+            let tempHeader = "#\n"
             
-            let userAccelerationPath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("acce")!)
-            self.userAccelerationFilePointer = fopen(userAccelerationPath, "w")
+            self.rotationRatePath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("rot")!)
+            do {
+                try tempHeader.write(to: URL(fileURLWithPath: self.rotationRatePath), atomically: true, encoding: .utf8)
+            } catch {
+                print("fail to write header.")
+            }
+            self.rotationRateFilePointer = fopen(self.rotationRatePath, "a")
             
-            let magneticFieldPath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("mag")!)
-            self.magneticFieldFilePointer = fopen(magneticFieldPath, "w")
+            self.userAccelerationPath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("acce")!)
+            self.userAccelerationFilePointer = fopen(self.userAccelerationPath, "w")
             
-            let attitudePath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("atti")!)
-            self.attitudeFilePointer = fopen(attitudePath, "w")
+            self.magneticFieldPath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("mag")!)
+            self.magneticFieldFilePointer = fopen(self.magneticFieldPath, "w")
             
-            let gravityPath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("grav")!)
-            self.gravityFilePointer = fopen(gravityPath, "w")
+            self.attitudePath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("atti")!)
+            self.attitudeFilePointer = fopen(self.attitudePath, "w")
+            
+            self.gravityPath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("grav")!)
+            self.gravityFilePointer = fopen(self.gravityPath, "w")
             
             self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
                 if let validData = data {
                     self.numImuMeasurements += 1
                     let motionData = MotionData(deviceMotion: validData)
-                    //                motionData.display()
+                    motionData.display()
                     //                motionData.writeToFile(filePointer: self.imuFilePointer!)
                     motionData.writeToFiles(rotationRateFilePointer: self.rotationRateFilePointer!, userAccelerationFilePointer: self.userAccelerationFilePointer!, magneticFieldFilePointer: self.magneticFieldFilePointer!, attitudeFilePointer: self.attitudeFilePointer!, gravityFilePointer: self.gravityFilePointer!)
                 } else {
@@ -421,6 +435,17 @@ class CameraViewController: UIViewController {
             fclose(self.gravityFilePointer)
             
             self.numColorFrames = self.getNumberOfFrames(videoUrl: URL(fileURLWithPath: self.movieFilePath))
+            
+            let endian = "little"
+            let rotHeader = "#rot \(self.numImuMeasurements!) 3 \(endian)\n";
+            do {
+                let fileHandle = try FileHandle(forUpdating: URL(fileURLWithPath: self.rotationRatePath))
+                fileHandle.seek(toFileOffset: 0)
+                fileHandle.write(rotHeader.data(using: .utf8)!)
+                fileHandle.closeFile()
+            } catch {
+                print("fail to re-write header.")
+            }
             
             let username = self.firstName! + " " + self.lastName!
             let metadata = Metadata(username: username, userInputDescription: self.userInputDescription!, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: self.generateStreamInfo())
