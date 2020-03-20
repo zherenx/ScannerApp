@@ -10,7 +10,7 @@ import CommonCrypto
 import Foundation
 import UIKit
 
-class Helper {
+struct Helper {
 
     // https://stackoverflow.com/questions/42935148/swift-calculate-md5-checksum-for-large-files
     static func calculateChecksum(url: URL) -> String? {
