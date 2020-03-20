@@ -16,7 +16,7 @@ class CameraViewController: UIViewController {
     
     private let defaults = UserDefaults.standard
     private let locationManager = CLLocationManager()
-    private let motionManager = CMMotionManager()
+    private let motionManager = MotionManager.instance
     
     private let firstNameKey = Constants.UserDefaultsKeys.firstNameKey
     private let lastNameKey = Constants.UserDefaultsKeys.lastNameKey
@@ -36,7 +36,6 @@ class CameraViewController: UIViewController {
     private var principalPoint: [Float]!
     private var numColorFrames: Int!
     private var numImuMeasurements: Int!
-    private var imuFrequency: Int!
     
     private var fileId: String!
     private var movieFilePath: String!
@@ -47,26 +46,12 @@ class CameraViewController: UIViewController {
     private let session = AVCaptureSession()
     
     private let sessionQueue = DispatchQueue(label: "session queue")
-    private let motionQueue = OperationQueue()
     
     private var defaultVideoDevice: AVCaptureDevice?
 
     private let movieFileOutput = AVCaptureMovieFileOutput()
     
     private var backgroundRecordingID: UIBackgroundTaskIdentifier?
-    
-    private var rotationRatePath: String!
-    private var userAccelerationPath: String!
-    private var magneticFieldPath: String!
-    private var attitudePath: String!
-    private var gravityPath: String!
-    
-//    private var imuFilePointer: UnsafeMutablePointer<FILE>?
-    private var rotationRateFilePointer: UnsafeMutablePointer<FILE>?
-    private var userAccelerationFilePointer: UnsafeMutablePointer<FILE>?
-    private var magneticFieldFilePointer: UnsafeMutablePointer<FILE>?
-    private var attitudeFilePointer: UnsafeMutablePointer<FILE>?
-    private var gravityFilePointer: UnsafeMutablePointer<FILE>?
     
     @IBOutlet private weak var previewView: PreviewView!
     @IBOutlet private weak var recordButton: UIButton!
@@ -90,7 +75,6 @@ class CameraViewController: UIViewController {
         
         // TODO: order of these function calls might matter, consider improve on this
         self.configurateSession()
-        self.setupIMU()
         
         self.loadUserDefaults()
         self.configPopUpView()
@@ -208,13 +192,6 @@ class CameraViewController: UIViewController {
         
         self.session.commitConfiguration()
         
-    }
-    
-    private func setupIMU() {
-        self.numImuMeasurements = 0
-        self.imuFrequency = 60
-        self.motionManager.deviceMotionUpdateInterval = 1.0 / Double(self.imuFrequency)
-        self.motionQueue.maxConcurrentOperationCount = 1
     }
     
     private func loadUserDefaults() {
@@ -377,43 +354,7 @@ class CameraViewController: UIViewController {
             // Camera data
             
             // Motion data
-            self.numImuMeasurements = 0
-            //        let motionDataPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("imu")!)
-            //        self.imuFilePointer = fopen(motionDataPath, "w")
-            
-            let tempHeader = "#\n"
-            
-            self.rotationRatePath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("rot")!)
-            do {
-                try tempHeader.write(to: URL(fileURLWithPath: self.rotationRatePath), atomically: true, encoding: .utf8)
-            } catch {
-                print("fail to write header.")
-            }
-            self.rotationRateFilePointer = fopen(self.rotationRatePath, "a")
-            
-            self.userAccelerationPath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("acce")!)
-            self.userAccelerationFilePointer = fopen(self.userAccelerationPath, "w")
-            
-            self.magneticFieldPath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("mag")!)
-            self.magneticFieldFilePointer = fopen(self.magneticFieldPath, "w")
-            
-            self.attitudePath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("atti")!)
-            self.attitudeFilePointer = fopen(self.attitudePath, "w")
-            
-            self.gravityPath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("grav")!)
-            self.gravityFilePointer = fopen(self.gravityPath, "w")
-            
-            self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
-                if let validData = data {
-                    self.numImuMeasurements += 1
-                    let motionData = MotionData(deviceMotion: validData)
-                    motionData.display()
-                    //                motionData.writeToFile(filePointer: self.imuFilePointer!)
-                    motionData.writeToFiles(rotationRateFilePointer: self.rotationRateFilePointer!, userAccelerationFilePointer: self.userAccelerationFilePointer!, magneticFieldFilePointer: self.magneticFieldFilePointer!, attitudeFilePointer: self.attitudeFilePointer!, gravityFilePointer: self.gravityFilePointer!)
-                } else {
-                    print("there is some problem with motion data")
-                }
-            }
+            self.motionManager.startRecording(dataPathString: dataPathString, fileId: self.fileId)
             
             // Video
             self.movieFilePath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("mp4")!)
@@ -426,31 +367,14 @@ class CameraViewController: UIViewController {
             
             self.movieFileOutput.stopRecording()
             
-            self.motionManager.stopDeviceMotionUpdates()
-//            fclose(self.imuFilePointer)
-            fclose(self.rotationRateFilePointer)
-            fclose(self.userAccelerationFilePointer)
-            fclose(self.magneticFieldFilePointer)
-            fclose(self.attitudeFilePointer)
-            fclose(self.gravityFilePointer)
+            self.numImuMeasurements = self.motionManager.stopRecordingAndRetureNumberOfMeasurements()
             
             self.numColorFrames = self.getNumberOfFrames(videoUrl: URL(fileURLWithPath: self.movieFilePath))
-            
-            let endian = "little"
-            let rotHeader = "#rot \(self.numImuMeasurements!) 3 \(endian)\n";
-            do {
-                let fileHandle = try FileHandle(forUpdating: URL(fileURLWithPath: self.rotationRatePath))
-                fileHandle.seek(toFileOffset: 0)
-                fileHandle.write(rotHeader.data(using: .utf8)!)
-                fileHandle.closeFile()
-            } catch {
-                print("fail to re-write header.")
-            }
             
             let username = self.firstName! + " " + self.lastName!
             let metadata = Metadata(username: username, userInputDescription: self.userInputDescription!, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: self.generateStreamInfo())
             
-//            metadata.display()
+            metadata.display()
             metadata.writeToFile(filepath: self.metadataPath)
             
         }
@@ -463,6 +387,7 @@ class CameraViewController: UIViewController {
     private func generateStreamInfo() -> [StreamInfo] {
         let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: "color_camera", encoding: "h264", num_frames: numColorFrames, resolution: colorResolution, focal_length: focalLength, principal_point: principalPoint, extrinsics_matrix: nil)
         
+        let imuFrequency = Constants.Sensor.Imu.frequency
         let rotationRateStreamInfo = ImuStreamInfo(id: "rot_1", type: "rotation_rate", encoding: "bin", num_frames: numImuMeasurements, frequency: imuFrequency)
         let userAccelerationStreamInfo = ImuStreamInfo(id: "acce_1", type: "user_acceleration", encoding: "bin", num_frames: numImuMeasurements, frequency: imuFrequency)
         let magneticFieldStreamInfo = ImuStreamInfo(id: "mag_1", type: "magnetic_field", encoding: "bin", num_frames: numImuMeasurements, frequency: imuFrequency)
