@@ -46,6 +46,36 @@ struct Constants {
                                        "Stairs",
                                        "Storage/Basement/Garage"]
     
+    struct Sensor {
+        struct Imu {
+            struct RotationRate {
+                static let type: String = "rot"
+            }
+            
+            struct UserAcceleration {
+                static let type: String = "acce"
+            }
+            
+            struct MagneticField {
+                static let type: String = "mag"
+            }
+            
+            struct Attitude {
+                static let type: String = "atti"
+            }
+            
+            struct Gravity {
+                static let type: String = "grav"
+            }
+            
+            static let frequency = 60
+        }
+        
+//        struct Camera {
+//
+//        }
+    }
+    
     struct Server {
         
         static let chuckSize = 4096
@@ -56,7 +86,7 @@ struct Constants {
         }
 
         static let host: String = "http://aspis.cmpt.sfu.ca/multiscan"
-//        static let host: String = "http://192.168.1.66:5000/"
+//        static let host: String = "http://192.168.1.66:5000"
     }
     
     struct Tag {
