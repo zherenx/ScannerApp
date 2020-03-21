@@ -54,27 +54,21 @@ class MotionManager {
         isRecording = true // should i move this to later?
         numberOfMeasurements = 0
         
-        let tempHeader = "#\n"
+        rotationRatePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("rot")!)
+        preserveSpaceForHeader(fileUrl: URL(fileURLWithPath: rotationRatePath))
+        rotationRateFilePointer = fopen(self.rotationRatePath, "a")
         
-        self.rotationRatePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("rot")!)
-        do {
-            try tempHeader.write(to: URL(fileURLWithPath: self.rotationRatePath), atomically: true, encoding: .utf8)
-        } catch {
-            print("fail to write header.")
-        }
-        self.rotationRateFilePointer = fopen(self.rotationRatePath, "a")
+        userAccelerationPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("acce")!)
+        userAccelerationFilePointer = fopen(self.userAccelerationPath, "w")
         
-        self.userAccelerationPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("acce")!)
-        self.userAccelerationFilePointer = fopen(self.userAccelerationPath, "w")
+        magneticFieldPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("mag")!)
+        magneticFieldFilePointer = fopen(self.magneticFieldPath, "w")
         
-        self.magneticFieldPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("mag")!)
-        self.magneticFieldFilePointer = fopen(self.magneticFieldPath, "w")
+        attitudePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("atti")!)
+        attitudeFilePointer = fopen(self.attitudePath, "w")
         
-        self.attitudePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("atti")!)
-        self.attitudeFilePointer = fopen(self.attitudePath, "w")
-        
-        self.gravityPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("grav")!)
-        self.gravityFilePointer = fopen(self.gravityPath, "w")
+        gravityPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("grav")!)
+        gravityFilePointer = fopen(self.gravityPath, "w")
         
         self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
             if let validData = data {
@@ -98,26 +92,66 @@ class MotionManager {
         
         isRecording = false
         
-        fclose(self.rotationRateFilePointer)
-        fclose(self.userAccelerationFilePointer)
-        fclose(self.magneticFieldFilePointer)
-        fclose(self.attitudeFilePointer)
-        fclose(self.gravityFilePointer)
+        fclose(rotationRateFilePointer)
+        fclose(userAccelerationFilePointer)
+        fclose(magneticFieldFilePointer)
+        fclose(attitudeFilePointer)
+        fclose(gravityFilePointer)
         
-        
-        let endian = "little"
-        let rotHeader = "#rot \(self.numberOfMeasurements) 3 \(endian)\n";
-        do {
-            let fileHandle = try FileHandle(forUpdating: URL(fileURLWithPath: self.rotationRatePath))
-            fileHandle.seek(toFileOffset: 0)
-            fileHandle.write(rotHeader.data(using: .utf8)!)
-            fileHandle.closeFile()
-        } catch {
-            print("fail to re-write header.")
-        }
+        writeImuHeader(fileUrl: URL(fileURLWithPath: rotationRatePath), sensorType: "rot", numOfFrame: numberOfMeasurements)
         
         
         
         return numberOfMeasurements
+    }
+    
+    // this function will write empty line to the file
+    private func preserveSpaceForHeader(fileUrl: URL) {
+        let numOfHeaderLines = 8 // this might need to be changed if we support more sensors in the future
+        for i in 1...numOfHeaderLines {
+            do {
+                try "Line \(i)\n".data(using: .utf8)?.write(to: fileUrl, options: .withoutOverwriting)
+            } catch {
+                print("error writing to \(fileUrl.absoluteString)")
+            }
+        }
+    }
+    
+    private func writeImuHeader(fileUrl: URL, sensorType: String, numOfFrame: Int) {
+        var header: String = ""
+        
+        header += "format binary_little_endian 1.0\n"
+        header += "element \(sensorType) \(numOfFrame)\n"
+        header += "comment\n"
+        
+        switch sensorType {
+        case Constants.Sensor.Imu.RotationRate.type,
+             Constants.Sensor.Imu.UserAcceleration.type,
+             Constants.Sensor.Imu.MagneticField.type,
+             Constants.Sensor.Imu.Gravity.type:
+            header += "property long timestamp\n"
+            header += "property double x\n"
+            header += "property double y\n"
+            header += "property double z\n"
+        case Constants.Sensor.Imu.Attitude.type:
+            header += "property long timestamp\n"
+            header += "property double roll\n"
+            header += "property double pitch\n"
+            header += "property double yaw\n"
+        default:
+            print("Invalid sensor type")
+            return
+        }
+        
+        header += "end_header\n"
+        
+        do {
+            let fileHandle = try FileHandle(forUpdating: fileUrl)
+            fileHandle.seek(toFileOffset: 0)
+            fileHandle.write(header.data(using: .utf8)!)
+            fileHandle.closeFile()
+        } catch {
+            print("fail to re-write header.")
+        }
     }
 }
