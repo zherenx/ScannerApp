@@ -17,6 +17,8 @@ class MotionManager {
     private let motionManager = CMMotionManager()
     private let motionQueue = OperationQueue()
     
+//    private let bootTime: Double
+    
     private var isRecording: Bool = false
     private var numberOfMeasurements: Int = 0
     
@@ -35,6 +37,8 @@ class MotionManager {
     private init() {
         motionManager.deviceMotionUpdateInterval = 1.0 / Double(Constants.Sensor.Imu.frequency)
         motionQueue.maxConcurrentOperationCount = 1
+        
+//        bootTime = Helper.bootTime()!
     }
     
     func startRecording(dataPathString: String, fileId: String) {
@@ -80,7 +84,10 @@ class MotionManager {
             if let validData = data {
                 self.numberOfMeasurements += 1
                 let motionData = MotionData(deviceMotion: validData)
+//                let motionData = MotionData(deviceMotion: validData, bootTime: self.bootTime)
+                
 //                motionData.display()
+                
                 motionData.writeToFiles(rotationRateFilePointer: self.rotationRateFilePointer!, userAccelerationFilePointer: self.userAccelerationFilePointer!, magneticFieldFilePointer: self.magneticFieldFilePointer!, attitudeFilePointer: self.attitudeFilePointer!, gravityFilePointer: self.gravityFilePointer!)
             } else {
                 print("there is some problem with motion data")
@@ -135,12 +142,12 @@ class MotionManager {
              Constants.Sensor.Imu.UserAcceleration.type,
              Constants.Sensor.Imu.MagneticField.type,
              Constants.Sensor.Imu.Gravity.type:
-            header += "property double timestamp\n"
+            header += "property int64 timestamp\n"
             header += "property double x\n"
             header += "property double y\n"
             header += "property double z\n"
         case Constants.Sensor.Imu.Attitude.type:
-            header += "property double timestamp\n"
+            header += "property int64 timestamp\n"
             header += "property double roll\n"
             header += "property double pitch\n"
             header += "property double yaw\n"
