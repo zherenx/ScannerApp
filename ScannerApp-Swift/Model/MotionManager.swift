@@ -20,25 +20,17 @@ class MotionManager {
     private var isRecording: Bool = false
     private var numberOfMeasurements: Int = 0
     
+    private var rotationRateFileUrl: URL!
+    private var userAccelerationFileUrl: URL!
+    private var magneticFieldFileUrl: URL!
+    private var attitudeFileUrl: URL!
+    private var gravityFileUrl: URL!
     
-    
-    
-    private var rotationRatePath: String!
-    private var userAccelerationPath: String!
-    private var magneticFieldPath: String!
-    private var attitudePath: String!
-    private var gravityPath: String!
-    
-    private var rotationRateFilePointer: UnsafeMutablePointer<FILE>?
-    private var userAccelerationFilePointer: UnsafeMutablePointer<FILE>?
-    private var magneticFieldFilePointer: UnsafeMutablePointer<FILE>?
-    private var attitudeFilePointer: UnsafeMutablePointer<FILE>?
-    private var gravityFilePointer: UnsafeMutablePointer<FILE>?
-    
-    
-    
-    
-    
+    private var rotationRateFilePointer: UnsafeMutablePointer<FILE>!
+    private var userAccelerationFilePointer: UnsafeMutablePointer<FILE>!
+    private var magneticFieldFilePointer: UnsafeMutablePointer<FILE>!
+    private var attitudeFilePointer: UnsafeMutablePointer<FILE>!
+    private var gravityFilePointer: UnsafeMutablePointer<FILE>!
     
     private init() {
         motionManager.deviceMotionUpdateInterval = 1.0 / Double(Constants.Sensor.Imu.frequency)
@@ -54,27 +46,38 @@ class MotionManager {
         isRecording = true // should i move this to later?
         numberOfMeasurements = 0
         
-        rotationRatePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("rot")!)
-        preserveSpaceForHeader(fileUrl: URL(fileURLWithPath: rotationRatePath))
-        rotationRateFilePointer = fopen(self.rotationRatePath, "a")
+        let rotationRatePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("rot")!)
         
-        userAccelerationPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("acce")!)
-        userAccelerationFilePointer = fopen(self.userAccelerationPath, "w")
+        rotationRateFileUrl = URL(fileURLWithPath: rotationRatePath)
         
-        magneticFieldPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("mag")!)
-        magneticFieldFilePointer = fopen(self.magneticFieldPath, "w")
+        createEmptyFile(fileUrl: rotationRateFileUrl)
         
-        attitudePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("atti")!)
-        attitudeFilePointer = fopen(self.attitudePath, "w")
+        // preserve space for header
+        writeImuHeader(fileUrl: rotationRateFileUrl, sensorType: "rot", numOfFrame: -1)
         
-        gravityPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("grav")!)
-        gravityFilePointer = fopen(self.gravityPath, "w")
+        rotationRateFilePointer = fopen(rotationRatePath, "a")
+        
+        
+        
+        
+        
+        let userAccelerationPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("acce")!)
+        userAccelerationFilePointer = fopen(userAccelerationPath, "w")
+
+        let magneticFieldPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("mag")!)
+        magneticFieldFilePointer = fopen(magneticFieldPath, "w")
+
+        let attitudePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("atti")!)
+        attitudeFilePointer = fopen(attitudePath, "w")
+
+        let gravityPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("grav")!)
+        gravityFilePointer = fopen(gravityPath, "w")
         
         self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
             if let validData = data {
                 self.numberOfMeasurements += 1
                 let motionData = MotionData(deviceMotion: validData)
-                motionData.display()
+//                motionData.display()
                 motionData.writeToFiles(rotationRateFilePointer: self.rotationRateFilePointer!, userAccelerationFilePointer: self.userAccelerationFilePointer!, magneticFieldFilePointer: self.magneticFieldFilePointer!, attitudeFilePointer: self.attitudeFilePointer!, gravityFilePointer: self.gravityFilePointer!)
             } else {
                 print("there is some problem with motion data")
@@ -98,27 +101,25 @@ class MotionManager {
         fclose(attitudeFilePointer)
         fclose(gravityFilePointer)
         
-        writeImuHeader(fileUrl: URL(fileURLWithPath: rotationRatePath), sensorType: "rot", numOfFrame: numberOfMeasurements)
+        // rewrite header
+        writeImuHeader(fileUrl: rotationRateFileUrl, sensorType: "rot", numOfFrame: numberOfMeasurements)
         
         
         
         return numberOfMeasurements
     }
     
-    // this function will write empty line to the file
-    private func preserveSpaceForHeader(fileUrl: URL) {
-        let numOfHeaderLines = 8 // this might need to be changed if we support more sensors in the future
-        for i in 1...numOfHeaderLines {
-            do {
-                try "Line \(i)\n".data(using: .utf8)?.write(to: fileUrl, options: .withoutOverwriting)
-            } catch {
-                print("error writing to \(fileUrl.absoluteString)")
-            }
+    private func createEmptyFile(fileUrl: URL) {
+        do {
+            try "".write(to: fileUrl, atomically: true, encoding: .utf8)
+        } catch {
+            print("fail to create file at \(fileUrl.absoluteString)")
+            print(error)
         }
     }
     
     private func writeImuHeader(fileUrl: URL, sensorType: String, numOfFrame: Int) {
-        var header: String = ""
+        var header: String = "ply\n"
         
         header += "format binary_little_endian 1.0\n"
         header += "element \(sensorType) \(numOfFrame)\n"
