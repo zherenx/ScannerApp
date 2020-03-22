@@ -47,31 +47,34 @@ class MotionManager {
         numberOfMeasurements = 0
         
         let rotationRatePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("rot")!)
-        
         rotationRateFileUrl = URL(fileURLWithPath: rotationRatePath)
-        
         createEmptyFile(fileUrl: rotationRateFileUrl)
-        
-        // preserve space for header
-        writeImuHeader(fileUrl: rotationRateFileUrl, sensorType: "rot", numOfFrame: -1)
-        
+        writeImuHeader(fileUrl: rotationRateFileUrl, sensorType: "rot", numOfFrame: -1) // preserve space for header
         rotationRateFilePointer = fopen(rotationRatePath, "a")
         
-        
-        
-        
-        
         let userAccelerationPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("acce")!)
-        userAccelerationFilePointer = fopen(userAccelerationPath, "w")
+        userAccelerationFileUrl = URL(fileURLWithPath: userAccelerationPath)
+        createEmptyFile(fileUrl: userAccelerationFileUrl)
+        writeImuHeader(fileUrl: userAccelerationFileUrl, sensorType: "acce", numOfFrame: -1) // preserve space for header
+        userAccelerationFilePointer = fopen(userAccelerationPath, "a")
 
         let magneticFieldPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("mag")!)
-        magneticFieldFilePointer = fopen(magneticFieldPath, "w")
+        magneticFieldFileUrl = URL(fileURLWithPath: magneticFieldPath)
+        createEmptyFile(fileUrl: magneticFieldFileUrl)
+        writeImuHeader(fileUrl: magneticFieldFileUrl, sensorType: "mag", numOfFrame: -1) // preserve space for header
+        magneticFieldFilePointer = fopen(magneticFieldPath, "a")
 
         let attitudePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("atti")!)
-        attitudeFilePointer = fopen(attitudePath, "w")
+        attitudeFileUrl = URL(fileURLWithPath: attitudePath)
+        createEmptyFile(fileUrl: attitudeFileUrl)
+        writeImuHeader(fileUrl: attitudeFileUrl, sensorType: "atti", numOfFrame: -1) // preserve space for header
+        attitudeFilePointer = fopen(attitudePath, "a")
 
         let gravityPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("grav")!)
-        gravityFilePointer = fopen(gravityPath, "w")
+        gravityFileUrl = URL(fileURLWithPath: gravityPath)
+        createEmptyFile(fileUrl: gravityFileUrl)
+        writeImuHeader(fileUrl: gravityFileUrl, sensorType: "grav", numOfFrame: -1) // preserve space for header
+        gravityFilePointer = fopen(gravityPath, "a")
         
         self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
             if let validData = data {
@@ -103,8 +106,10 @@ class MotionManager {
         
         // rewrite header
         writeImuHeader(fileUrl: rotationRateFileUrl, sensorType: "rot", numOfFrame: numberOfMeasurements)
-        
-        
+        writeImuHeader(fileUrl: userAccelerationFileUrl, sensorType: "acce", numOfFrame: numberOfMeasurements)
+        writeImuHeader(fileUrl: magneticFieldFileUrl, sensorType: "mag", numOfFrame: numberOfMeasurements)
+        writeImuHeader(fileUrl: attitudeFileUrl, sensorType: "atti", numOfFrame: numberOfMeasurements)
+        writeImuHeader(fileUrl: gravityFileUrl, sensorType: "grav", numOfFrame: numberOfMeasurements)
         
         return numberOfMeasurements
     }
@@ -130,12 +135,12 @@ class MotionManager {
              Constants.Sensor.Imu.UserAcceleration.type,
              Constants.Sensor.Imu.MagneticField.type,
              Constants.Sensor.Imu.Gravity.type:
-            header += "property long timestamp\n"
+            header += "property double timestamp\n"
             header += "property double x\n"
             header += "property double y\n"
             header += "property double z\n"
         case Constants.Sensor.Imu.Attitude.type:
-            header += "property long timestamp\n"
+            header += "property double timestamp\n"
             header += "property double roll\n"
             header += "property double pitch\n"
             header += "property double yaw\n"
