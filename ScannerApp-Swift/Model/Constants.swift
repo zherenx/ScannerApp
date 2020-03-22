@@ -50,22 +50,27 @@ struct Constants {
         struct Imu {
             struct RotationRate {
                 static let type: String = "rot"
+                static let fileExtension: String = "rot"
             }
             
             struct UserAcceleration {
                 static let type: String = "acce"
+                static let fileExtension: String = "acce"
             }
             
             struct MagneticField {
                 static let type: String = "mag"
+                static let fileExtension: String = "mag"
             }
             
             struct Attitude {
                 static let type: String = "atti"
+                static let fileExtension: String = "atti"
             }
             
             struct Gravity {
                 static let type: String = "grav"
+                static let fileExtension: String = "grav"
             }
             
             static let frequency = 60
