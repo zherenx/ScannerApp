@@ -144,7 +144,8 @@ class CameraViewController: UIViewController {
         if self.session.canAddOutput(self.movieFileOutput) {
             self.session.addOutput(self.movieFileOutput)
             
-            self.session.sessionPreset = .photo
+//            self.session.sessionPreset = .photo
+            self.session.sessionPreset = .hd1920x1080
 
             if let connection = self.movieFileOutput.connection(with: .video) {
                 if connection.isVideoStabilizationSupported {
@@ -368,13 +369,14 @@ class CameraViewController: UIViewController {
             self.movieFileOutput.stopRecording()
             
             self.numImuMeasurements = self.motionManager.stopRecordingAndRetureNumberOfMeasurements()
+//            self.numImuMeasurements = 0
             
             self.numColorFrames = self.getNumberOfFrames(videoUrl: URL(fileURLWithPath: self.movieFilePath))
             
             let username = self.firstName! + " " + self.lastName!
             let metadata = Metadata(username: username, userInputDescription: self.userInputDescription!, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: self.generateStreamInfo())
             
-            metadata.display()
+//            metadata.display()
             metadata.writeToFile(filepath: self.metadataPath)
             
         }
