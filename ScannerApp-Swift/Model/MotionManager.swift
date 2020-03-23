@@ -53,31 +53,31 @@ class MotionManager {
         let rotationRatePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.RotationRate.fileExtension)!)
         rotationRateFileUrl = URL(fileURLWithPath: rotationRatePath)
         createEmptyFile(fileUrl: rotationRateFileUrl)
-        writeImuHeader(fileUrl: rotationRateFileUrl, sensorType: Constants.Sensor.Imu.RotationRate.type, numOfFrame: -1) // preserve space for header
+//        writeImuHeader(fileUrl: rotationRateFileUrl, sensorType: Constants.Sensor.Imu.RotationRate.type, numOfFrame: -1) // preserve space for header
         rotationRateFilePointer = fopen(rotationRatePath, "a")
         
         let userAccelerationPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.UserAcceleration.fileExtension)!)
         userAccelerationFileUrl = URL(fileURLWithPath: userAccelerationPath)
         createEmptyFile(fileUrl: userAccelerationFileUrl)
-        writeImuHeader(fileUrl: userAccelerationFileUrl, sensorType: Constants.Sensor.Imu.UserAcceleration.type, numOfFrame: -1) // preserve space for header
+//        writeImuHeader(fileUrl: userAccelerationFileUrl, sensorType: Constants.Sensor.Imu.UserAcceleration.type, numOfFrame: -1) // preserve space for header
         userAccelerationFilePointer = fopen(userAccelerationPath, "a")
 
         let magneticFieldPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.MagneticField.fileExtension)!)
         magneticFieldFileUrl = URL(fileURLWithPath: magneticFieldPath)
         createEmptyFile(fileUrl: magneticFieldFileUrl)
-        writeImuHeader(fileUrl: magneticFieldFileUrl, sensorType: Constants.Sensor.Imu.MagneticField.type, numOfFrame: -1) // preserve space for header
+//        writeImuHeader(fileUrl: magneticFieldFileUrl, sensorType: Constants.Sensor.Imu.MagneticField.type, numOfFrame: -1) // preserve space for header
         magneticFieldFilePointer = fopen(magneticFieldPath, "a")
 
         let attitudePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.Attitude.fileExtension)!)
         attitudeFileUrl = URL(fileURLWithPath: attitudePath)
         createEmptyFile(fileUrl: attitudeFileUrl)
-        writeImuHeader(fileUrl: attitudeFileUrl, sensorType: Constants.Sensor.Imu.Attitude.type, numOfFrame: -1) // preserve space for header
+//        writeImuHeader(fileUrl: attitudeFileUrl, sensorType: Constants.Sensor.Imu.Attitude.type, numOfFrame: -1) // preserve space for header
         attitudeFilePointer = fopen(attitudePath, "a")
 
         let gravityPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.Gravity.fileExtension)!)
         gravityFileUrl = URL(fileURLWithPath: gravityPath)
         createEmptyFile(fileUrl: gravityFileUrl)
-        writeImuHeader(fileUrl: gravityFileUrl, sensorType: Constants.Sensor.Imu.Gravity.type, numOfFrame: -1) // preserve space for header
+//        writeImuHeader(fileUrl: gravityFileUrl, sensorType: Constants.Sensor.Imu.Gravity.type, numOfFrame: -1) // preserve space for header
         gravityFilePointer = fopen(gravityPath, "a")
         
         self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
@@ -112,11 +112,17 @@ class MotionManager {
         fclose(gravityFilePointer)
         
         // rewrite header
-        writeImuHeader(fileUrl: rotationRateFileUrl, sensorType: Constants.Sensor.Imu.RotationRate.type, numOfFrame: numberOfMeasurements)
-        writeImuHeader(fileUrl: userAccelerationFileUrl, sensorType: Constants.Sensor.Imu.UserAcceleration.type, numOfFrame: numberOfMeasurements)
-        writeImuHeader(fileUrl: magneticFieldFileUrl, sensorType: Constants.Sensor.Imu.MagneticField.type, numOfFrame: numberOfMeasurements)
-        writeImuHeader(fileUrl: attitudeFileUrl, sensorType: Constants.Sensor.Imu.Attitude.type, numOfFrame: numberOfMeasurements)
-        writeImuHeader(fileUrl: gravityFileUrl, sensorType: Constants.Sensor.Imu.Gravity.type, numOfFrame: numberOfMeasurements)
+//        writeImuHeader(fileUrl: rotationRateFileUrl, sensorType: Constants.Sensor.Imu.RotationRate.type, numOfFrame: numberOfMeasurements)
+//        writeImuHeader(fileUrl: userAccelerationFileUrl, sensorType: Constants.Sensor.Imu.UserAcceleration.type, numOfFrame: numberOfMeasurements)
+//        writeImuHeader(fileUrl: magneticFieldFileUrl, sensorType: Constants.Sensor.Imu.MagneticField.type, numOfFrame: numberOfMeasurements)
+//        writeImuHeader(fileUrl: attitudeFileUrl, sensorType: Constants.Sensor.Imu.Attitude.type, numOfFrame: numberOfMeasurements)
+//        writeImuHeader(fileUrl: gravityFileUrl, sensorType: Constants.Sensor.Imu.Gravity.type, numOfFrame: numberOfMeasurements)
+        
+        addHeaderToFile(fileUrl: rotationRateFileUrl, sensorType: Constants.Sensor.Imu.RotationRate.type, numOfFrame: numberOfMeasurements)
+        addHeaderToFile(fileUrl: userAccelerationFileUrl, sensorType: Constants.Sensor.Imu.UserAcceleration.type, numOfFrame: numberOfMeasurements)
+        addHeaderToFile(fileUrl: magneticFieldFileUrl, sensorType: Constants.Sensor.Imu.MagneticField.type, numOfFrame: numberOfMeasurements)
+        addHeaderToFile(fileUrl: attitudeFileUrl, sensorType: Constants.Sensor.Imu.Attitude.type, numOfFrame: numberOfMeasurements)
+        addHeaderToFile(fileUrl: gravityFileUrl, sensorType: Constants.Sensor.Imu.Gravity.type, numOfFrame: numberOfMeasurements)
         
         return numberOfMeasurements
     }
@@ -165,6 +171,49 @@ class MotionManager {
             fileHandle.closeFile()
         } catch {
             print("fail to re-write header.")
+        }
+    }
+    
+    private func addHeaderToFile(fileUrl: URL, sensorType: String, numOfFrame: Int) {
+        var header: String = "ply\n"
+        
+        header += "format binary_little_endian 1.0\n"
+        header += "element \(sensorType) \(numOfFrame)\n"
+        header += "comment\n"
+        
+        switch sensorType {
+        case Constants.Sensor.Imu.RotationRate.type,
+             Constants.Sensor.Imu.UserAcceleration.type,
+             Constants.Sensor.Imu.MagneticField.type,
+             Constants.Sensor.Imu.Gravity.type:
+            header += "property int64 timestamp\n"
+            header += "property double x\n"
+            header += "property double y\n"
+            header += "property double z\n"
+        case Constants.Sensor.Imu.Attitude.type:
+            header += "property int64 timestamp\n"
+            header += "property double roll\n"
+            header += "property double pitch\n"
+            header += "property double yaw\n"
+        default:
+            print("Invalid sensor type")
+            return
+        }
+        
+        header += "end_header\n"
+        
+        // base on
+        // https://stackoverflow.com/questions/56441768/swift-how-to-append-text-line-to-top-of-file-txt
+        do {
+            let fileHandle = try FileHandle(forWritingTo: fileUrl)
+            fileHandle.seek(toFileOffset: 0)
+            let oldData = try Data(contentsOf: fileUrl)
+            var data = header.data(using: .utf8)!
+            data.append(oldData)
+            fileHandle.write(data)
+            fileHandle.closeFile()
+        } catch {
+            print("Error writing to file \(error)")
         }
     }
 }
