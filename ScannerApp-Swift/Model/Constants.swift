@@ -74,10 +74,12 @@ struct Constants {
             }
             
             static let frequency = 60
+            static let encoding = "bin"
         }
         
 //        struct Camera {
-//
+//            static let frequency = 30
+//            static let encoding = "h264"
 //        }
     }
     

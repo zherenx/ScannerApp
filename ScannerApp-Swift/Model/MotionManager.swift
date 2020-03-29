@@ -11,6 +11,10 @@ import Foundation
 
 class MotionManager {
     
+    enum MotionManagerError: Error {
+        case imuSensorInUnexpectedStateError
+    }
+    
     // is it necessary to make this a singleton class??
     static let instance = MotionManager()
     
@@ -95,10 +99,34 @@ class MotionManager {
         }
     }
     
-    func stopRecordingAndRetureNumberOfMeasurements() -> Int {
-        if !isRecording {
+    func stopRecordingAndReturnNumberOfMeasurements() -> Int {
+        do {
+            try stopRecording()
+        } catch {
             // TODO: do something
             return -1
+        }
+        
+        return numberOfMeasurements
+    }
+    
+    func stopRecordingAndReturnStreamInfo() -> [ImuStreamInfo] {
+        do {
+            try stopRecording()
+        } catch {
+            // TODO: do something
+            return []
+        }
+        
+        return generateStreamInfo()
+    }
+    
+    func stopRecording() throws {
+        if !isRecording {
+            print("Imu sensor is not recording when calling stopRecording().")
+            
+            // TODO: do something
+            throw MotionManagerError.imuSensorInUnexpectedStateError
         }
         
         self.motionManager.stopDeviceMotionUpdates()
@@ -112,19 +140,17 @@ class MotionManager {
         fclose(gravityFilePointer)
         
         // rewrite header
-//        writeImuHeader(fileUrl: rotationRateFileUrl, sensorType: Constants.Sensor.Imu.RotationRate.type, numOfFrame: numberOfMeasurements)
-//        writeImuHeader(fileUrl: userAccelerationFileUrl, sensorType: Constants.Sensor.Imu.UserAcceleration.type, numOfFrame: numberOfMeasurements)
-//        writeImuHeader(fileUrl: magneticFieldFileUrl, sensorType: Constants.Sensor.Imu.MagneticField.type, numOfFrame: numberOfMeasurements)
-//        writeImuHeader(fileUrl: attitudeFileUrl, sensorType: Constants.Sensor.Imu.Attitude.type, numOfFrame: numberOfMeasurements)
-//        writeImuHeader(fileUrl: gravityFileUrl, sensorType: Constants.Sensor.Imu.Gravity.type, numOfFrame: numberOfMeasurements)
+        //        writeImuHeader(fileUrl: rotationRateFileUrl, sensorType: Constants.Sensor.Imu.RotationRate.type, numOfFrame: numberOfMeasurements)
+        //        writeImuHeader(fileUrl: userAccelerationFileUrl, sensorType: Constants.Sensor.Imu.UserAcceleration.type, numOfFrame: numberOfMeasurements)
+        //        writeImuHeader(fileUrl: magneticFieldFileUrl, sensorType: Constants.Sensor.Imu.MagneticField.type, numOfFrame: numberOfMeasurements)
+        //        writeImuHeader(fileUrl: attitudeFileUrl, sensorType: Constants.Sensor.Imu.Attitude.type, numOfFrame: numberOfMeasurements)
+        //        writeImuHeader(fileUrl: gravityFileUrl, sensorType: Constants.Sensor.Imu.Gravity.type, numOfFrame: numberOfMeasurements)
         
         addHeaderToFile(fileUrl: rotationRateFileUrl, sensorType: Constants.Sensor.Imu.RotationRate.type, numOfFrame: numberOfMeasurements)
         addHeaderToFile(fileUrl: userAccelerationFileUrl, sensorType: Constants.Sensor.Imu.UserAcceleration.type, numOfFrame: numberOfMeasurements)
         addHeaderToFile(fileUrl: magneticFieldFileUrl, sensorType: Constants.Sensor.Imu.MagneticField.type, numOfFrame: numberOfMeasurements)
         addHeaderToFile(fileUrl: attitudeFileUrl, sensorType: Constants.Sensor.Imu.Attitude.type, numOfFrame: numberOfMeasurements)
         addHeaderToFile(fileUrl: gravityFileUrl, sensorType: Constants.Sensor.Imu.Gravity.type, numOfFrame: numberOfMeasurements)
-        
-        return numberOfMeasurements
     }
     
     private func createEmptyFile(fileUrl: URL) {
@@ -215,5 +241,17 @@ class MotionManager {
         } catch {
             print("Error writing to file \(error)")
         }
+    }
+    
+    private func generateStreamInfo() -> [ImuStreamInfo] {
+        let imuFrequency = Constants.Sensor.Imu.frequency
+        let imuFileEncoding = Constants.Sensor.Imu.encoding
+        let rotationRateStreamInfo = ImuStreamInfo(id: "rot_1", type: Constants.Sensor.Imu.RotationRate.type, encoding: imuFileEncoding, num_frames: numberOfMeasurements, frequency: imuFrequency)
+        let userAccelerationStreamInfo = ImuStreamInfo(id: "acce_1", type: Constants.Sensor.Imu.UserAcceleration.type, encoding: imuFileEncoding, num_frames: numberOfMeasurements, frequency: imuFrequency)
+        let magneticFieldStreamInfo = ImuStreamInfo(id: "mag_1", type: Constants.Sensor.Imu.MagneticField.type, encoding: imuFileEncoding, num_frames: numberOfMeasurements, frequency: imuFrequency)
+        let attitudeStreamInfo = ImuStreamInfo(id: "atti_1", type: Constants.Sensor.Imu.Attitude.type, encoding: imuFileEncoding, num_frames: numberOfMeasurements, frequency: imuFrequency)
+        let gravityStreamInfo = ImuStreamInfo(id: "grav_1", type: Constants.Sensor.Imu.Gravity.type, encoding: imuFileEncoding, num_frames: numberOfMeasurements, frequency: imuFrequency)
+
+        return [rotationRateStreamInfo, userAccelerationStreamInfo, magneticFieldStreamInfo, attitudeStreamInfo, gravityStreamInfo]
     }
 }

@@ -34,8 +34,8 @@ class CameraViewController: UIViewController {
     private var colorResolution: [Int]!
     private var focalLength: [Float]!
     private var principalPoint: [Float]!
-    private var numColorFrames: Int!
-    private var numImuMeasurements: Int!
+//    private var numColorFrames: Int!
+//    private var numImuMeasurements: Int!
     
     private var fileId: String!
     private var movieFilePath: String!
@@ -368,13 +368,19 @@ class CameraViewController: UIViewController {
             
             self.movieFileOutput.stopRecording()
             
-            self.numImuMeasurements = self.motionManager.stopRecordingAndRetureNumberOfMeasurements()
-//            self.numImuMeasurements = 0
+//            let numImuMeasurements = self.motionManager.stopRecordingAndReturnNumberOfMeasurements()
+//            let numImuMeasurements = 0
             
-            self.numColorFrames = self.getNumberOfFrames(videoUrl: URL(fileURLWithPath: self.movieFilePath))
+            var streamInfo: [StreamInfo] = self.motionManager.stopRecordingAndReturnStreamInfo()
+            
+            let numColorFrames = self.getNumberOfFrames(videoUrl: URL(fileURLWithPath: self.movieFilePath))
+            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: "color_camera", encoding: "h264", num_frames: numColorFrames, resolution: self.colorResolution, focal_length: self.focalLength, principal_point: self.principalPoint, extrinsics_matrix: nil)
+            
+            streamInfo.append(cameraStreamInfo)
             
             let username = self.firstName! + " " + self.lastName!
-            let metadata = Metadata(username: username, userInputDescription: self.userInputDescription!, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: self.generateStreamInfo())
+//            let streamInfo = self.generateStreamInfo(numColorFrames: numColorFrames, numImuMeasurements: numImuMeasurements)
+            let metadata = Metadata(username: username, userInputDescription: self.userInputDescription!, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: streamInfo)
             
 //            metadata.display()
             metadata.writeToFile(filepath: self.metadataPath)
@@ -386,18 +392,18 @@ class CameraViewController: UIViewController {
         videoIsReady = false
     }
     
-    private func generateStreamInfo() -> [StreamInfo] {
-        let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: "color_camera", encoding: "h264", num_frames: numColorFrames, resolution: colorResolution, focal_length: focalLength, principal_point: principalPoint, extrinsics_matrix: nil)
-        
-        let imuFrequency = Constants.Sensor.Imu.frequency
-        let rotationRateStreamInfo = ImuStreamInfo(id: "rot_1", type: "rotation_rate", encoding: "bin", num_frames: numImuMeasurements, frequency: imuFrequency)
-        let userAccelerationStreamInfo = ImuStreamInfo(id: "acce_1", type: "user_acceleration", encoding: "bin", num_frames: numImuMeasurements, frequency: imuFrequency)
-        let magneticFieldStreamInfo = ImuStreamInfo(id: "mag_1", type: "magnetic_field", encoding: "bin", num_frames: numImuMeasurements, frequency: imuFrequency)
-        let attitudeStreamInfo = ImuStreamInfo(id: "atti_1", type: "attitude", encoding: "bin", num_frames: numImuMeasurements, frequency: imuFrequency)
-        let gravityStreamInfo = ImuStreamInfo(id: "grav_1", type: "gravity", encoding: "bin", num_frames: numImuMeasurements, frequency: imuFrequency)
-
-        return [cameraStreamInfo, rotationRateStreamInfo, userAccelerationStreamInfo, magneticFieldStreamInfo, attitudeStreamInfo, gravityStreamInfo]
-    }
+//    private func generateStreamInfo(numColorFrames: Int, numImuMeasurements: Int) -> [StreamInfo] {
+//        let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: "color_camera", encoding: "h264", num_frames: numColorFrames, resolution: colorResolution, focal_length: focalLength, principal_point: principalPoint, extrinsics_matrix: nil)
+//
+//        let imuFrequency = Constants.Sensor.Imu.frequency
+//        let rotationRateStreamInfo = ImuStreamInfo(id: "rot_1", type: "rotation_rate", encoding: "bin", num_frames: numImuMeasurements, frequency: imuFrequency)
+//        let userAccelerationStreamInfo = ImuStreamInfo(id: "acce_1", type: "user_acceleration", encoding: "bin", num_frames: numImuMeasurements, frequency: imuFrequency)
+//        let magneticFieldStreamInfo = ImuStreamInfo(id: "mag_1", type: "magnetic_field", encoding: "bin", num_frames: numImuMeasurements, frequency: imuFrequency)
+//        let attitudeStreamInfo = ImuStreamInfo(id: "atti_1", type: "attitude", encoding: "bin", num_frames: numImuMeasurements, frequency: imuFrequency)
+//        let gravityStreamInfo = ImuStreamInfo(id: "grav_1", type: "gravity", encoding: "bin", num_frames: numImuMeasurements, frequency: imuFrequency)
+//
+//        return [cameraStreamInfo, rotationRateStreamInfo, userAccelerationStreamInfo, magneticFieldStreamInfo, attitudeStreamInfo, gravityStreamInfo]
+//    }
     
     private func updateGpsLocation() {
         gpsLocation = [] // Do we want to enforce valid gps location?
