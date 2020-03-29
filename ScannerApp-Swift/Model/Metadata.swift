@@ -105,7 +105,7 @@ class ImuStreamInfo: StreamInfo {
     }
 }
 
-class Metadata: CustomData, Encodable {
+class Metadata: Encodable {
     
     private var device: DeviceInfo
     private var user: UserInfo

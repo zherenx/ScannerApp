@@ -9,7 +9,7 @@
 import CoreMotion
 import Foundation
 
-class MotionData: CustomData {
+class MotionData {
     
     private var timestamp: Int64
 //    private var timestamp: UInt64

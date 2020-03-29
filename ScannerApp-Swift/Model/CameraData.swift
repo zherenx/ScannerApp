@@ -8,7 +8,7 @@
 
 import Foundation
 
-class CameraData: CustomData {
+class CameraData {
     
     func display() {
         // TODO:
