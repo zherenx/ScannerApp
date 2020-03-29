@@ -45,12 +45,14 @@ class StreamInfo: Encodable {
     private var id: String
     private var type: String
     private var encoding: String
+    private var frequency: Int
     private var num_frames: Int
     
-    internal init(id: String, type: String, encoding: String, num_frames: Int) {
+    internal init(id: String, type: String, encoding: String, frequency: Int, num_frames: Int) {
         self.id = id
         self.type = type
         self.encoding = encoding
+        self.frequency = frequency
         self.num_frames = num_frames
     }
 }
@@ -61,12 +63,12 @@ class CameraStreamInfo: StreamInfo {
     private var principal_point: [Float]
     private var extrinsics_matrix: [Float]?
     
-    internal init(id: String, type: String, encoding: String, num_frames: Int, resolution: [Int], focal_length: [Float], principal_point: [Float], extrinsics_matrix: [Float]?) {
+    internal init(id: String, type: String, encoding: String, frequency: Int, num_frames: Int, resolution: [Int], focal_length: [Float], principal_point: [Float], extrinsics_matrix: [Float]?) {
         self.resolution = resolution
         self.focal_length = focal_length
         self.principal_point = principal_point
         self.extrinsics_matrix = extrinsics_matrix
-        super.init(id: id, type: type, encoding: encoding, num_frames: num_frames)
+        super.init(id: id, type: type, encoding: encoding, frequency: frequency, num_frames: num_frames)
     }
     
     override func encode(to encoder: Encoder) throws {
@@ -87,22 +89,24 @@ class CameraStreamInfo: StreamInfo {
 }
 
 class ImuStreamInfo: StreamInfo {
-    private var frequency: Int
+    // this subclass was used to handle 'frequency' which has been moved to StreamInfo,
+    // so it is currently the same as its superclass
+    
+    // TODO: Add 'precision' info of imu sensor
     
     internal init(id: String, type: String, encoding: String, num_frames: Int, frequency: Int) {
-        self.frequency = frequency
-        super.init(id: id, type: type, encoding: encoding, num_frames: num_frames)
+        super.init(id: id, type: type, encoding: encoding, frequency: frequency, num_frames: num_frames)
     }
     
-    override func encode(to encoder: Encoder) throws {
-        try super.encode(to: encoder)
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(frequency, forKey: .frequency)
-    }
-    
-    enum CodingKeys: String, CodingKey {
-        case frequency
-    }
+//    override func encode(to encoder: Encoder) throws {
+//        try super.encode(to: encoder)
+//        var container = encoder.container(keyedBy: CodingKeys.self)
+//        try container.encode(frequency, forKey: .frequency)
+//    }
+//
+//    enum CodingKeys: String, CodingKey {
+//        case frequency
+//    }
 }
 
 class Metadata: Encodable {
