@@ -146,11 +146,11 @@ class MotionManager {
         //        writeImuHeader(fileUrl: attitudeFileUrl, sensorType: Constants.Sensor.Imu.Attitude.type, numOfFrame: numberOfMeasurements)
         //        writeImuHeader(fileUrl: gravityFileUrl, sensorType: Constants.Sensor.Imu.Gravity.type, numOfFrame: numberOfMeasurements)
         
-        addHeaderToFile(fileUrl: rotationRateFileUrl, sensorType: Constants.Sensor.Imu.RotationRate.type, numOfFrame: numberOfMeasurements)
-        addHeaderToFile(fileUrl: userAccelerationFileUrl, sensorType: Constants.Sensor.Imu.UserAcceleration.type, numOfFrame: numberOfMeasurements)
-        addHeaderToFile(fileUrl: magneticFieldFileUrl, sensorType: Constants.Sensor.Imu.MagneticField.type, numOfFrame: numberOfMeasurements)
-        addHeaderToFile(fileUrl: attitudeFileUrl, sensorType: Constants.Sensor.Imu.Attitude.type, numOfFrame: numberOfMeasurements)
-        addHeaderToFile(fileUrl: gravityFileUrl, sensorType: Constants.Sensor.Imu.Gravity.type, numOfFrame: numberOfMeasurements)
+        addHeaderToFile(fileUrl: rotationRateFileUrl, sensorType: Constants.Sensor.Imu.RotationRate.type, numOfFrames: numberOfMeasurements)
+        addHeaderToFile(fileUrl: userAccelerationFileUrl, sensorType: Constants.Sensor.Imu.UserAcceleration.type, numOfFrames: numberOfMeasurements)
+        addHeaderToFile(fileUrl: magneticFieldFileUrl, sensorType: Constants.Sensor.Imu.MagneticField.type, numOfFrames: numberOfMeasurements)
+        addHeaderToFile(fileUrl: attitudeFileUrl, sensorType: Constants.Sensor.Imu.Attitude.type, numOfFrames: numberOfMeasurements)
+        addHeaderToFile(fileUrl: gravityFileUrl, sensorType: Constants.Sensor.Imu.Gravity.type, numOfFrames: numberOfMeasurements)
     }
     
     private func createEmptyFile(fileUrl: URL) {
@@ -200,11 +200,11 @@ class MotionManager {
         }
     }
     
-    private func addHeaderToFile(fileUrl: URL, sensorType: String, numOfFrame: Int) {
+    private func addHeaderToFile(fileUrl: URL, sensorType: String, numOfFrames: Int) {
         var header: String = "ply\n"
         
         header += "format binary_little_endian 1.0\n"
-        header += "element \(sensorType) \(numOfFrame)\n"
+        header += "element \(sensorType) \(numOfFrames)\n"
         header += "comment\n"
         
         switch sensorType {
@@ -245,7 +245,7 @@ class MotionManager {
     
     private func generateStreamInfo() -> [ImuStreamInfo] {
         let imuFrequency = Constants.Sensor.Imu.frequency
-        let imuFileEncoding = Constants.Sensor.Imu.encoding
+        let imuFileEncoding = "bin"
         let rotationRateStreamInfo = ImuStreamInfo(id: "rot_1", type: Constants.Sensor.Imu.RotationRate.type, encoding: imuFileEncoding, num_frames: numberOfMeasurements, frequency: imuFrequency)
         let userAccelerationStreamInfo = ImuStreamInfo(id: "acce_1", type: Constants.Sensor.Imu.UserAcceleration.type, encoding: imuFileEncoding, num_frames: numberOfMeasurements, frequency: imuFrequency)
         let magneticFieldStreamInfo = ImuStreamInfo(id: "mag_1", type: Constants.Sensor.Imu.MagneticField.type, encoding: imuFileEncoding, num_frames: numberOfMeasurements, frequency: imuFrequency)

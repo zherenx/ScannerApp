@@ -34,8 +34,6 @@ class CameraViewController: UIViewController {
     private var colorResolution: [Int]!
     private var focalLength: [Float]!
     private var principalPoint: [Float]!
-//    private var numColorFrames: Int!
-//    private var numImuMeasurements: Int!
     
     private var fileId: String!
     private var movieFilePath: String!
@@ -117,7 +115,7 @@ class CameraViewController: UIViewController {
             do {
                 try videoDevice.lockForConfiguration()
                 
-                let targetFrameDuration = CMTimeMake(value: 1, timescale: 30)
+                let targetFrameDuration = CMTimeMake(value: 1, timescale: Int32(Constants.Sensor.Camera.frequency))
                 videoDevice.activeVideoMaxFrameDuration = targetFrameDuration
                 videoDevice.activeVideoMinFrameDuration = targetFrameDuration
                 
@@ -358,7 +356,7 @@ class CameraViewController: UIViewController {
             self.motionManager.startRecording(dataPathString: dataPathString, fileId: self.fileId)
             
             // Video
-            self.movieFilePath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("mp4")!)
+            self.movieFilePath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension(Constants.Sensor.Camera.fileExtension)!)
             self.movieFileOutput.startRecording(to: URL(fileURLWithPath: self.movieFilePath), recordingDelegate: self)
         }
     }
@@ -374,7 +372,7 @@ class CameraViewController: UIViewController {
             var streamInfo: [StreamInfo] = self.motionManager.stopRecordingAndReturnStreamInfo()
             
             let numColorFrames = self.getNumberOfFrames(videoUrl: URL(fileURLWithPath: self.movieFilePath))
-            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: "color_camera", encoding: "h264", frequency: 30, num_frames: numColorFrames, resolution: self.colorResolution, focal_length: self.focalLength, principal_point: self.principalPoint, extrinsics_matrix: nil)
+            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: Constants.Sensor.Camera.type, encoding: "h264", frequency: Constants.Sensor.Camera.frequency, num_frames: numColorFrames, resolution: self.colorResolution, focal_length: self.focalLength, principal_point: self.principalPoint, extrinsics_matrix: nil)
             
             streamInfo.append(cameraStreamInfo)
             

@@ -74,13 +74,19 @@ struct Constants {
             }
             
             static let frequency = 60
-            static let encoding = "bin"
+            
+            // ??
+            // I think it doesn't make too much sense to include 'encoding' as a config param
+            // because we will not be able to change the encoding by just changing this param here
+//            static let encoding = "bin"
         }
         
-//        struct Camera {
-//            static let frequency = 30
+        struct Camera {
+            static let type = "color_camera"
+            static let fileExtension: String = "mp4"
+            static let frequency = 30
 //            static let encoding = "h264"
-//        }
+        }
     }
     
     struct Server {
