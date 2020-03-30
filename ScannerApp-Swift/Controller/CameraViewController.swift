@@ -367,8 +367,16 @@ class CameraViewController: UIViewController {
             
             var streamInfo: [StreamInfo] = self.motionManager.stopRecordingAndReturnStreamInfo()
             
-            let numColorFrames = self.getNumberOfFrames(videoUrl: URL(fileURLWithPath: self.movieFilePath))
-            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: Constants.Sensor.Camera.type, encoding: "h264", frequency: Constants.Sensor.Camera.frequency, num_frames: numColorFrames, resolution: self.colorResolution, focal_length: self.focalLength, principal_point: self.principalPoint, extrinsics_matrix: nil)
+            while !self.videoIsReady {
+                // this is a heck
+                // wait until video is ready
+                print("waiting for video ...")
+                usleep(10000)
+            }
+            // get number of frames when video is ready
+            let numColorFrames = Helper.getNumberOfFrames(videoUrl: URL(fileURLWithPath: self.movieFilePath))
+            
+            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: Constants.Sensor.Camera.type, encoding: Constants.EncodingCode.h264, frequency: Constants.Sensor.Camera.frequency, num_frames: numColorFrames, resolution: self.colorResolution, focal_length: self.focalLength, principal_point: self.principalPoint, extrinsics_matrix: nil)
             
             streamInfo.append(cameraStreamInfo)
             
@@ -385,6 +393,7 @@ class CameraViewController: UIViewController {
         videoIsReady = false
     }
     
+    // TODO: Move this to Helper
     private func updateGpsLocation() {
         gpsLocation = [] // Do we want to enforce valid gps location?
 //        locationManager.requestWhenInUseAuthorization()
@@ -394,47 +403,6 @@ class CameraViewController: UIViewController {
                 gpsLocation = [coordinate.latitude, coordinate.longitude]
             }
         }
-    }
-    
-    // https://stackoverflow.com/questions/29506411/ios-determine-number-of-frames-in-video
-    private func getNumberOfFrames(videoUrl url: URL) -> Int {
-        
-        while !videoIsReady {
-            // this is a heck
-            // wait until video is ready
-//            print("waiting for video ...")
-            usleep(10000)
-        }
-        
-        let asset = AVURLAsset(url: url, options: nil)
-        do {
-            let reader = try AVAssetReader(asset: asset)
-            //AVAssetReader(asset: asset, error: nil)
-            
-            let videoTrack = asset.tracks(withMediaType: AVMediaType.video)[0]
-            
-            let readerOutput = AVAssetReaderTrackOutput(track: videoTrack, outputSettings: nil)
-            reader.add(readerOutput)
-            reader.startReading()
-            
-            var nFrames = 0
-            
-            while true {
-                let sampleBuffer = readerOutput.copyNextSampleBuffer()
-                if sampleBuffer == nil {
-                    break
-                }
-                
-                nFrames += 1
-            }
-            
-            return nFrames
-            
-        } catch {
-            print("Error: \(error)")
-        }
-        
-        return 0
     }
     
 }

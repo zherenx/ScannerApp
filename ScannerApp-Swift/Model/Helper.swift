@@ -6,6 +6,7 @@
 //  Copyright © 2020 jx16. All rights reserved.
 //
 
+import AVFoundation
 import CommonCrypto
 import Foundation
 import UIKit
@@ -76,6 +77,40 @@ struct Helper {
             return identifier + String(UnicodeScalar(UInt8(value)))
         }
         return identifier
+    }
+    
+// https://stackoverflow.com/questions/29506411/ios-determine-number-of-frames-in-video
+    static func getNumberOfFrames(videoUrl url: URL) -> Int {
+        
+        let asset = AVURLAsset(url: url, options: nil)
+        do {
+            let reader = try AVAssetReader(asset: asset)
+            //AVAssetReader(asset: asset, error: nil)
+            
+            let videoTrack = asset.tracks(withMediaType: AVMediaType.video)[0]
+            
+            let readerOutput = AVAssetReaderTrackOutput(track: videoTrack, outputSettings: nil)
+            reader.add(readerOutput)
+            reader.startReading()
+            
+            var nFrames = 0
+            
+            while true {
+                let sampleBuffer = readerOutput.copyNextSampleBuffer()
+                if sampleBuffer == nil {
+                    break
+                }
+                
+                nFrames += 1
+            }
+            
+            return nFrames
+            
+        } catch {
+            print("Error: \(error)")
+        }
+        
+        return 0
     }
     
     // https://medium.com/@rushikeshT/displaying-simple-toast-in-ios-swift-57014cbb9ffa
