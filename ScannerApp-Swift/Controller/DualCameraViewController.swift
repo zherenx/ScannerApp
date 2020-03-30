@@ -277,7 +277,7 @@ class DualCameraViewController: UIViewController {
 //                let metadataPath = (documentsDirectory as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("txt")!)
 //                let metadata = Metadata(colorWidth: 16, colorHeight: 9, depthWidth: 16, depthHeight: 9, deviceId: "0001", deviceName: "device", sceneLabel: "?", sceneType: "?", username: "Hello world")
 //                //                metadata.display()
-//                metadata.writeToFile(filepath: metadataPath)
+//                metadata.writeToFileInBinaryFormat(filepath: metadataPath)
                 
                 // TODO:
                 // Camera data
@@ -289,7 +289,7 @@ class DualCameraViewController: UIViewController {
 //                    if let validData = data {
 //                        let motionData = MotionData(deviceMotion: validData)
 //                        //                        motionData.display()
-//                        motionData.writeToFile(filePointer: self.imuFilePointer!)
+//                        motionData.writeToFileInBinaryFormat(filePointer: self.imuFilePointer!)
 //                    } else {
 //                        print("there is some problem with motion data")
 //                    }

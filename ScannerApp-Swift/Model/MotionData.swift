@@ -91,7 +91,7 @@ class MotionData {
         print("Gravity: \(self.gravX), \(self.gravY), \(self.gravZ)")
     }
     
-    func writeToFile(filePointer: UnsafeMutablePointer<FILE>) {
+    func writeToFileInBinaryFormat(filePointer: UnsafeMutablePointer<FILE>) {
         fwrite(UnsafePointer<Int64>([self.timestamp.littleEndian]), 8, 1, filePointer)
         fwrite(UnsafePointer<UInt64>([self.rotX.bitPattern.littleEndian]), 8, 1, filePointer)
         fwrite(UnsafePointer<UInt64>([self.rotY.bitPattern.littleEndian]), 8, 1, filePointer)
@@ -112,7 +112,7 @@ class MotionData {
         fflush(filePointer)
     }
     
-    func writeToFiles(rotationRateFilePointer: UnsafeMutablePointer<FILE>, userAccelerationFilePointer: UnsafeMutablePointer<FILE>, magneticFieldFilePointer: UnsafeMutablePointer<FILE>, attitudeFilePointer: UnsafeMutablePointer<FILE>, gravityFilePointer: UnsafeMutablePointer<FILE>) {
+    func writeToFileInBinaryFormat(rotationRateFilePointer: UnsafeMutablePointer<FILE>, userAccelerationFilePointer: UnsafeMutablePointer<FILE>, magneticFieldFilePointer: UnsafeMutablePointer<FILE>, attitudeFilePointer: UnsafeMutablePointer<FILE>, gravityFilePointer: UnsafeMutablePointer<FILE>) {
         
         fwrite(UnsafePointer<Int64>([self.timestamp.littleEndian]), 8, 1, rotationRateFilePointer)
         fwrite(UnsafePointer<UInt64>([self.rotX.bitPattern.littleEndian]), 8, 1, rotationRateFilePointer)
@@ -143,5 +143,72 @@ class MotionData {
         fwrite(UnsafePointer<UInt64>([self.gravY.bitPattern.littleEndian]), 8, 1, gravityFilePointer)
         fwrite(UnsafePointer<UInt64>([self.gravZ.bitPattern.littleEndian]), 8, 1, gravityFilePointer)
         fflush(gravityFilePointer)
+    }
+    
+    func writeToFileInAsciiFormat(rotationRateFileUrl: URL) {
+        
+//        do {
+//            try "\(timestamp) \(rotX) \(rotY) \(rotZ)\n".data(using: .ascii)?.write(to: rotationRateFileUrl)
+//
+//        } catch {
+//            print(error)
+//        }
+        
+        do {
+            let fileHandle = try FileHandle(forWritingTo: rotationRateFileUrl)
+            fileHandle.seekToEndOfFile()
+            fileHandle.write("\(timestamp) \(rotX) \(rotY) \(rotZ)\n".data(using: .ascii)!)
+            fileHandle.closeFile()
+        } catch {
+            print(error)
+        }
+    }
+    
+    func writeToFileInAsciiFormat(rotationRateFileUrl: URL, userAccelerationFileUrl: URL, magneticFieldFileUrl: URL, attitudeFileUrl: URL, gravityFileUrl: URL) {
+         
+        do {
+            let fileHandle = try FileHandle(forWritingTo: rotationRateFileUrl)
+            fileHandle.seekToEndOfFile()
+            fileHandle.write("\(timestamp) \(rotX) \(rotY) \(rotZ)\n".data(using: .ascii)!)
+            fileHandle.closeFile()
+        } catch {
+            print(error)
+        }
+        
+        do {
+            let fileHandle = try FileHandle(forWritingTo: userAccelerationFileUrl)
+            fileHandle.seekToEndOfFile()
+            fileHandle.write("\(timestamp) \(accX) \(accY) \(accZ)\n".data(using: .ascii)!)
+            fileHandle.closeFile()
+        } catch {
+            print(error)
+        }
+        
+        do {
+            let fileHandle = try FileHandle(forWritingTo: magneticFieldFileUrl)
+            fileHandle.seekToEndOfFile()
+            fileHandle.write("\(timestamp) \(magX) \(magY) \(magZ)\n".data(using: .ascii)!)
+            fileHandle.closeFile()
+        } catch {
+            print(error)
+        }
+        
+        do {
+            let fileHandle = try FileHandle(forWritingTo: attitudeFileUrl)
+            fileHandle.seekToEndOfFile()
+            fileHandle.write("\(timestamp) \(roll) \(pitch) \(yaw)\n".data(using: .ascii)!)
+            fileHandle.closeFile()
+        } catch {
+            print(error)
+        }
+        
+        do {
+            let fileHandle = try FileHandle(forWritingTo: gravityFileUrl)
+            fileHandle.seekToEndOfFile()
+            fileHandle.write("\(timestamp) \(gravX) \(gravY) \(gravZ)\n".data(using: .ascii)!)
+            fileHandle.closeFile()
+        } catch {
+            print(error)
+        }
     }
 }
