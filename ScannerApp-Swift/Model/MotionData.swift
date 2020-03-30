@@ -91,58 +91,66 @@ class MotionData {
         print("Gravity: \(self.gravX), \(self.gravY), \(self.gravZ)")
     }
     
-    func writeToFileInBinaryFormat(filePointer: UnsafeMutablePointer<FILE>) {
-        fwrite(UnsafePointer<Int64>([self.timestamp.littleEndian]), 8, 1, filePointer)
-        fwrite(UnsafePointer<UInt64>([self.rotX.bitPattern.littleEndian]), 8, 1, filePointer)
-        fwrite(UnsafePointer<UInt64>([self.rotY.bitPattern.littleEndian]), 8, 1, filePointer)
-        fwrite(UnsafePointer<UInt64>([self.rotZ.bitPattern.littleEndian]), 8, 1, filePointer)
-        fwrite(UnsafePointer<UInt64>([self.accX.bitPattern.littleEndian]), 8, 1, filePointer)
-        fwrite(UnsafePointer<UInt64>([self.accY.bitPattern.littleEndian]), 8, 1, filePointer)
-        fwrite(UnsafePointer<UInt64>([self.accZ.bitPattern.littleEndian]), 8, 1, filePointer)
-        fwrite(UnsafePointer<UInt64>([self.magX.bitPattern.littleEndian]), 8, 1, filePointer)
-        fwrite(UnsafePointer<UInt64>([self.magY.bitPattern.littleEndian]), 8, 1, filePointer)
-        fwrite(UnsafePointer<UInt64>([self.magZ.bitPattern.littleEndian]), 8, 1, filePointer)
-        fwrite(UnsafePointer<UInt64>([self.roll.bitPattern.littleEndian]), 8, 1, filePointer)
-        fwrite(UnsafePointer<UInt64>([self.pitch.bitPattern.littleEndian]), 8, 1, filePointer)
-        fwrite(UnsafePointer<UInt64>([self.yaw.bitPattern.littleEndian]), 8, 1, filePointer)
-        fwrite(UnsafePointer<UInt64>([self.gravX.bitPattern.littleEndian]), 8, 1, filePointer)
-        fwrite(UnsafePointer<UInt64>([self.gravY.bitPattern.littleEndian]), 8, 1, filePointer)
-        fwrite(UnsafePointer<UInt64>([self.gravZ.bitPattern.littleEndian]), 8, 1, filePointer)
-
-        fflush(filePointer)
-    }
-    
-    func writeToFileInBinaryFormat(rotationRateFilePointer: UnsafeMutablePointer<FILE>, userAccelerationFilePointer: UnsafeMutablePointer<FILE>, magneticFieldFilePointer: UnsafeMutablePointer<FILE>, attitudeFilePointer: UnsafeMutablePointer<FILE>, gravityFilePointer: UnsafeMutablePointer<FILE>) {
+    func writeToFileInBinaryFormat(rotationRateFileUrl: URL, userAccelerationFileUrl: URL, magneticFieldFileUrl: URL, attitudeFileUrl: URL, gravityFileUrl: URL) {
+        do {
+            let fileHandle = try FileHandle(forWritingTo: rotationRateFileUrl)
+            fileHandle.seekToEndOfFile()
+            fileHandle.write(Data(bytes: [self.timestamp.littleEndian], count: 8))
+            fileHandle.write(Data(bytes: [self.rotX.bitPattern.littleEndian], count: 8))
+            fileHandle.write(Data(bytes: [self.rotY.bitPattern.littleEndian], count: 8))
+            fileHandle.write(Data(bytes: [self.rotZ.bitPattern.littleEndian], count: 8))
+            fileHandle.closeFile()
+        } catch {
+            print(error)
+        }
         
-        fwrite(UnsafePointer<Int64>([self.timestamp.littleEndian]), 8, 1, rotationRateFilePointer)
-        fwrite(UnsafePointer<UInt64>([self.rotX.bitPattern.littleEndian]), 8, 1, rotationRateFilePointer)
-        fwrite(UnsafePointer<UInt64>([self.rotY.bitPattern.littleEndian]), 8, 1, rotationRateFilePointer)
-        fwrite(UnsafePointer<UInt64>([self.rotZ.bitPattern.littleEndian]), 8, 1, rotationRateFilePointer)
-        fflush(rotationRateFilePointer)
+        do {
+            let fileHandle = try FileHandle(forWritingTo: userAccelerationFileUrl)
+            fileHandle.seekToEndOfFile()
+            fileHandle.write(Data(bytes: [self.timestamp.littleEndian], count: 8))
+            fileHandle.write(Data(bytes: [self.accX.bitPattern.littleEndian], count: 8))
+            fileHandle.write(Data(bytes: [self.accY.bitPattern.littleEndian], count: 8))
+            fileHandle.write(Data(bytes: [self.accZ.bitPattern.littleEndian], count: 8))
+            fileHandle.closeFile()
+        } catch {
+            print(error)
+        }
         
-        fwrite(UnsafePointer<Int64>([self.timestamp.littleEndian]), 8, 1, userAccelerationFilePointer)
-        fwrite(UnsafePointer<UInt64>([self.accX.bitPattern.littleEndian]), 8, 1, userAccelerationFilePointer)
-        fwrite(UnsafePointer<UInt64>([self.accY.bitPattern.littleEndian]), 8, 1, userAccelerationFilePointer)
-        fwrite(UnsafePointer<UInt64>([self.accZ.bitPattern.littleEndian]), 8, 1, userAccelerationFilePointer)
-        fflush(userAccelerationFilePointer)
-
-        fwrite(UnsafePointer<Int64>([self.timestamp.littleEndian]), 8, 1, magneticFieldFilePointer)
-        fwrite(UnsafePointer<UInt64>([self.magX.bitPattern.littleEndian]), 8, 1, magneticFieldFilePointer)
-        fwrite(UnsafePointer<UInt64>([self.magY.bitPattern.littleEndian]), 8, 1, magneticFieldFilePointer)
-        fwrite(UnsafePointer<UInt64>([self.magZ.bitPattern.littleEndian]), 8, 1, magneticFieldFilePointer)
-        fflush(magneticFieldFilePointer)
-
-        fwrite(UnsafePointer<Int64>([self.timestamp.littleEndian]), 8, 1, attitudeFilePointer)
-        fwrite(UnsafePointer<UInt64>([self.roll.bitPattern.littleEndian]), 8, 1, attitudeFilePointer)
-        fwrite(UnsafePointer<UInt64>([self.pitch.bitPattern.littleEndian]), 8, 1, attitudeFilePointer)
-        fwrite(UnsafePointer<UInt64>([self.yaw.bitPattern.littleEndian]), 8, 1, attitudeFilePointer)
-        fflush(attitudeFilePointer)
-
-        fwrite(UnsafePointer<Int64>([self.timestamp.littleEndian]), 8, 1, gravityFilePointer)
-        fwrite(UnsafePointer<UInt64>([self.gravX.bitPattern.littleEndian]), 8, 1, gravityFilePointer)
-        fwrite(UnsafePointer<UInt64>([self.gravY.bitPattern.littleEndian]), 8, 1, gravityFilePointer)
-        fwrite(UnsafePointer<UInt64>([self.gravZ.bitPattern.littleEndian]), 8, 1, gravityFilePointer)
-        fflush(gravityFilePointer)
+        do {
+            let fileHandle = try FileHandle(forWritingTo: magneticFieldFileUrl)
+            fileHandle.seekToEndOfFile()
+            fileHandle.write(Data(bytes: [self.timestamp.littleEndian], count: 8))
+            fileHandle.write(Data(bytes: [self.magX.bitPattern.littleEndian], count: 8))
+            fileHandle.write(Data(bytes: [self.magY.bitPattern.littleEndian], count: 8))
+            fileHandle.write(Data(bytes: [self.magZ.bitPattern.littleEndian], count: 8))
+            fileHandle.closeFile()
+        } catch {
+            print(error)
+        }
+        
+        do {
+            let fileHandle = try FileHandle(forWritingTo: attitudeFileUrl)
+            fileHandle.seekToEndOfFile()
+            fileHandle.write(Data(bytes: [self.timestamp.littleEndian], count: 8))
+            fileHandle.write(Data(bytes: [self.roll.bitPattern.littleEndian], count: 8))
+            fileHandle.write(Data(bytes: [self.pitch.bitPattern.littleEndian], count: 8))
+            fileHandle.write(Data(bytes: [self.yaw.bitPattern.littleEndian], count: 8))
+            fileHandle.closeFile()
+        } catch {
+            print(error)
+        }
+        
+        do {
+            let fileHandle = try FileHandle(forWritingTo: gravityFileUrl)
+            fileHandle.seekToEndOfFile()
+            fileHandle.write(Data(bytes: [self.timestamp.littleEndian], count: 8))
+            fileHandle.write(Data(bytes: [self.gravX.bitPattern.littleEndian], count: 8))
+            fileHandle.write(Data(bytes: [self.gravY.bitPattern.littleEndian], count: 8))
+            fileHandle.write(Data(bytes: [self.gravZ.bitPattern.littleEndian], count: 8))
+            fileHandle.closeFile()
+        } catch {
+            print(error)
+        }
     }
     
     func writeToFileInAsciiFormat(rotationRateFileUrl: URL, userAccelerationFileUrl: URL, magneticFieldFileUrl: URL, attitudeFileUrl: URL, gravityFileUrl: URL) {

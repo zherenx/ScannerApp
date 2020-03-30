@@ -38,12 +38,6 @@ class MotionManager {
     private var attitudeAsciiFileUrl: URL!
     private var gravityAsciiFileUrl: URL!
     
-    private var rotationRateFilePointer: UnsafeMutablePointer<FILE>!
-    private var userAccelerationFilePointer: UnsafeMutablePointer<FILE>!
-    private var magneticFieldFilePointer: UnsafeMutablePointer<FILE>!
-    private var attitudeFilePointer: UnsafeMutablePointer<FILE>!
-    private var gravityFilePointer: UnsafeMutablePointer<FILE>!
-    
     private init() {
         motionManager.deviceMotionUpdateInterval = 1.0 / Double(Constants.Sensor.Imu.frequency)
         motionQueue.maxConcurrentOperationCount = 1
@@ -68,16 +62,12 @@ class MotionManager {
         rotationRateAsciiFileUrl = URL(fileURLWithPath: (rotationRatePath as NSString).appendingPathExtension("txt")!)
         createEmptyFile(fileUrl: rotationRateAsciiFileUrl)
 
-        rotationRateFilePointer = fopen(rotationRatePath, "a")
-        
         let userAccelerationPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.UserAcceleration.fileExtension)!)
         userAccelerationFileUrl = URL(fileURLWithPath: userAccelerationPath)
         createEmptyFile(fileUrl: userAccelerationFileUrl)
         
         userAccelerationAsciiFileUrl = URL(fileURLWithPath: (userAccelerationPath as NSString).appendingPathExtension("txt")!)
         createEmptyFile(fileUrl: userAccelerationAsciiFileUrl)
-
-        userAccelerationFilePointer = fopen(userAccelerationPath, "a")
 
         let magneticFieldPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.MagneticField.fileExtension)!)
         magneticFieldFileUrl = URL(fileURLWithPath: magneticFieldPath)
@@ -86,8 +76,6 @@ class MotionManager {
         magneticFieldAsciiFileUrl = URL(fileURLWithPath: (magneticFieldPath as NSString).appendingPathExtension("txt")!)
         createEmptyFile(fileUrl: magneticFieldAsciiFileUrl)
 
-        magneticFieldFilePointer = fopen(magneticFieldPath, "a")
-
         let attitudePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.Attitude.fileExtension)!)
         attitudeFileUrl = URL(fileURLWithPath: attitudePath)
         createEmptyFile(fileUrl: attitudeFileUrl)
@@ -95,16 +83,12 @@ class MotionManager {
         attitudeAsciiFileUrl = URL(fileURLWithPath: (attitudePath as NSString).appendingPathExtension("txt")!)
         createEmptyFile(fileUrl: attitudeAsciiFileUrl)
 
-        attitudeFilePointer = fopen(attitudePath, "a")
-
         let gravityPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.Gravity.fileExtension)!)
         gravityFileUrl = URL(fileURLWithPath: gravityPath)
         createEmptyFile(fileUrl: gravityFileUrl)
         
         gravityAsciiFileUrl = URL(fileURLWithPath: (gravityPath as NSString).appendingPathExtension("txt")!)
         createEmptyFile(fileUrl: gravityAsciiFileUrl)
-
-        gravityFilePointer = fopen(gravityPath, "a")
         
         self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
             if let validData = data {
@@ -114,7 +98,7 @@ class MotionManager {
                 
                 motionData.display()
                 
-                motionData.writeToFileInBinaryFormat(rotationRateFilePointer: self.rotationRateFilePointer!, userAccelerationFilePointer: self.userAccelerationFilePointer!, magneticFieldFilePointer: self.magneticFieldFilePointer!, attitudeFilePointer: self.attitudeFilePointer!, gravityFilePointer: self.gravityFilePointer!)
+                motionData.writeToFileInBinaryFormat(rotationRateFileUrl: self.rotationRateFileUrl, userAccelerationFileUrl: self.userAccelerationFileUrl, magneticFieldFileUrl: self.magneticFieldFileUrl, attitudeFileUrl: self.attitudeFileUrl, gravityFileUrl: self.gravityFileUrl)
                 
                 motionData.writeToFileInAsciiFormat(rotationRateFileUrl: self.rotationRateAsciiFileUrl, userAccelerationFileUrl: self.userAccelerationAsciiFileUrl, magneticFieldFileUrl: self.magneticFieldAsciiFileUrl, attitudeFileUrl: self.attitudeAsciiFileUrl, gravityFileUrl: self.gravityAsciiFileUrl)
             } else {
@@ -156,12 +140,6 @@ class MotionManager {
         self.motionManager.stopDeviceMotionUpdates()
         
         isRecording = false
-        
-        fclose(rotationRateFilePointer)
-        fclose(userAccelerationFilePointer)
-        fclose(magneticFieldFilePointer)
-        fclose(attitudeFilePointer)
-        fclose(gravityFilePointer)
         
         let binEncoding = Constants.EncodingCode.binary
         addHeaderToFile(fileUrl: rotationRateFileUrl, encoding: binEncoding, sensorType: Constants.Sensor.Imu.RotationRate.type, numOfFrames: numberOfMeasurements)
