@@ -145,25 +145,6 @@ class MotionData {
         fflush(gravityFilePointer)
     }
     
-    func writeToFileInAsciiFormat(rotationRateFileUrl: URL) {
-        
-//        do {
-//            try "\(timestamp) \(rotX) \(rotY) \(rotZ)\n".data(using: .ascii)?.write(to: rotationRateFileUrl)
-//
-//        } catch {
-//            print(error)
-//        }
-        
-        do {
-            let fileHandle = try FileHandle(forWritingTo: rotationRateFileUrl)
-            fileHandle.seekToEndOfFile()
-            fileHandle.write("\(timestamp) \(rotX) \(rotY) \(rotZ)\n".data(using: .ascii)!)
-            fileHandle.closeFile()
-        } catch {
-            print(error)
-        }
-    }
-    
     func writeToFileInAsciiFormat(rotationRateFileUrl: URL, userAccelerationFileUrl: URL, magneticFieldFileUrl: URL, attitudeFileUrl: URL, gravityFileUrl: URL) {
          
         do {
