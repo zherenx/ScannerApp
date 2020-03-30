@@ -92,109 +92,42 @@ class MotionData {
     }
     
     func writeToFileInBinaryFormat(rotationRateFileUrl: URL, userAccelerationFileUrl: URL, magneticFieldFileUrl: URL, attitudeFileUrl: URL, gravityFileUrl: URL) {
-        do {
-            let fileHandle = try FileHandle(forWritingTo: rotationRateFileUrl)
-            fileHandle.seekToEndOfFile()
-            fileHandle.write(Data(bytes: [self.timestamp.littleEndian], count: 8))
-            fileHandle.write(Data(bytes: [self.rotX.bitPattern.littleEndian], count: 8))
-            fileHandle.write(Data(bytes: [self.rotY.bitPattern.littleEndian], count: 8))
-            fileHandle.write(Data(bytes: [self.rotZ.bitPattern.littleEndian], count: 8))
-            fileHandle.closeFile()
-        } catch {
-            print(error)
-        }
         
+        writeToFileInBinaryFormat(fileUrl: rotationRateFileUrl, t: timestamp.littleEndian, x: rotX.bitPattern.littleEndian, y: rotY.bitPattern.littleEndian, z: rotZ.bitPattern.littleEndian)
+        writeToFileInBinaryFormat(fileUrl: userAccelerationFileUrl, t: timestamp.littleEndian, x: accX.bitPattern.littleEndian, y: accY.bitPattern.littleEndian, z: accZ.bitPattern.littleEndian)
+        writeToFileInBinaryFormat(fileUrl: magneticFieldFileUrl, t: timestamp.littleEndian, x: magX.bitPattern.littleEndian, y: magY.bitPattern.littleEndian, z: magZ.bitPattern.littleEndian)
+        writeToFileInBinaryFormat(fileUrl: attitudeFileUrl, t: timestamp.littleEndian, x: roll.bitPattern.littleEndian, y: pitch.bitPattern.littleEndian, z: yaw.bitPattern.littleEndian)
+        writeToFileInBinaryFormat(fileUrl: gravityFileUrl, t: timestamp.littleEndian, x: gravX.bitPattern.littleEndian, y: gravY.bitPattern.littleEndian, z: gravZ.bitPattern.littleEndian)
+    }
+    
+    func writeToFileInAsciiFormat(rotationRateFileUrl: URL, userAccelerationFileUrl: URL, magneticFieldFileUrl: URL, attitudeFileUrl: URL, gravityFileUrl: URL) {
+         
+        writeToFileInAsciiFormat(fileUrl: rotationRateFileUrl, t: timestamp, x: rotX, y: rotY, z: rotZ)
+        writeToFileInAsciiFormat(fileUrl: userAccelerationFileUrl, t: timestamp, x: accX, y: accY, z: accZ)
+        writeToFileInAsciiFormat(fileUrl: magneticFieldFileUrl, t: timestamp, x: magX, y: magY, z: magZ)
+        writeToFileInAsciiFormat(fileUrl: attitudeFileUrl, t: timestamp, x: roll, y: pitch, z: yaw)
+        writeToFileInAsciiFormat(fileUrl: gravityFileUrl, t: timestamp, x: gravX, y: gravY, z: gravZ)
+    }
+    
+    private func writeToFileInBinaryFormat(fileUrl: URL, t: Int64, x: UInt64, y: UInt64, z: UInt64) {
         do {
-            let fileHandle = try FileHandle(forWritingTo: userAccelerationFileUrl)
+            let fileHandle = try FileHandle(forWritingTo: fileUrl)
             fileHandle.seekToEndOfFile()
-            fileHandle.write(Data(bytes: [self.timestamp.littleEndian], count: 8))
-            fileHandle.write(Data(bytes: [self.accX.bitPattern.littleEndian], count: 8))
-            fileHandle.write(Data(bytes: [self.accY.bitPattern.littleEndian], count: 8))
-            fileHandle.write(Data(bytes: [self.accZ.bitPattern.littleEndian], count: 8))
-            fileHandle.closeFile()
-        } catch {
-            print(error)
-        }
-        
-        do {
-            let fileHandle = try FileHandle(forWritingTo: magneticFieldFileUrl)
-            fileHandle.seekToEndOfFile()
-            fileHandle.write(Data(bytes: [self.timestamp.littleEndian], count: 8))
-            fileHandle.write(Data(bytes: [self.magX.bitPattern.littleEndian], count: 8))
-            fileHandle.write(Data(bytes: [self.magY.bitPattern.littleEndian], count: 8))
-            fileHandle.write(Data(bytes: [self.magZ.bitPattern.littleEndian], count: 8))
-            fileHandle.closeFile()
-        } catch {
-            print(error)
-        }
-        
-        do {
-            let fileHandle = try FileHandle(forWritingTo: attitudeFileUrl)
-            fileHandle.seekToEndOfFile()
-            fileHandle.write(Data(bytes: [self.timestamp.littleEndian], count: 8))
-            fileHandle.write(Data(bytes: [self.roll.bitPattern.littleEndian], count: 8))
-            fileHandle.write(Data(bytes: [self.pitch.bitPattern.littleEndian], count: 8))
-            fileHandle.write(Data(bytes: [self.yaw.bitPattern.littleEndian], count: 8))
-            fileHandle.closeFile()
-        } catch {
-            print(error)
-        }
-        
-        do {
-            let fileHandle = try FileHandle(forWritingTo: gravityFileUrl)
-            fileHandle.seekToEndOfFile()
-            fileHandle.write(Data(bytes: [self.timestamp.littleEndian], count: 8))
-            fileHandle.write(Data(bytes: [self.gravX.bitPattern.littleEndian], count: 8))
-            fileHandle.write(Data(bytes: [self.gravY.bitPattern.littleEndian], count: 8))
-            fileHandle.write(Data(bytes: [self.gravZ.bitPattern.littleEndian], count: 8))
+            fileHandle.write(Data(bytes: [t], count: 8))
+            fileHandle.write(Data(bytes: [x], count: 8))
+            fileHandle.write(Data(bytes: [y], count: 8))
+            fileHandle.write(Data(bytes: [z], count: 8))
             fileHandle.closeFile()
         } catch {
             print(error)
         }
     }
     
-    func writeToFileInAsciiFormat(rotationRateFileUrl: URL, userAccelerationFileUrl: URL, magneticFieldFileUrl: URL, attitudeFileUrl: URL, gravityFileUrl: URL) {
-         
+    private func writeToFileInAsciiFormat(fileUrl: URL, t: Int64, x: Double, y: Double, z: Double) {
         do {
-            let fileHandle = try FileHandle(forWritingTo: rotationRateFileUrl)
+            let fileHandle = try FileHandle(forWritingTo: fileUrl)
             fileHandle.seekToEndOfFile()
-            fileHandle.write("\(timestamp) \(rotX) \(rotY) \(rotZ)\n".data(using: .ascii)!)
-            fileHandle.closeFile()
-        } catch {
-            print(error)
-        }
-        
-        do {
-            let fileHandle = try FileHandle(forWritingTo: userAccelerationFileUrl)
-            fileHandle.seekToEndOfFile()
-            fileHandle.write("\(timestamp) \(accX) \(accY) \(accZ)\n".data(using: .ascii)!)
-            fileHandle.closeFile()
-        } catch {
-            print(error)
-        }
-        
-        do {
-            let fileHandle = try FileHandle(forWritingTo: magneticFieldFileUrl)
-            fileHandle.seekToEndOfFile()
-            fileHandle.write("\(timestamp) \(magX) \(magY) \(magZ)\n".data(using: .ascii)!)
-            fileHandle.closeFile()
-        } catch {
-            print(error)
-        }
-        
-        do {
-            let fileHandle = try FileHandle(forWritingTo: attitudeFileUrl)
-            fileHandle.seekToEndOfFile()
-            fileHandle.write("\(timestamp) \(roll) \(pitch) \(yaw)\n".data(using: .ascii)!)
-            fileHandle.closeFile()
-        } catch {
-            print(error)
-        }
-        
-        do {
-            let fileHandle = try FileHandle(forWritingTo: gravityFileUrl)
-            fileHandle.seekToEndOfFile()
-            fileHandle.write("\(timestamp) \(gravX) \(gravY) \(gravZ)\n".data(using: .ascii)!)
+            fileHandle.write("\(t) \(x) \(y) \(z)\n".data(using: .ascii)!)
             fileHandle.closeFile()
         } catch {
             print(error)
