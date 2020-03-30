@@ -24,7 +24,6 @@
 		FE09458523B1C020003A1CA5 /* DualCameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09458423B1C020003A1CA5 /* DualCameraViewController.swift */; };
 		FE176A7C23DCEFB10050F551 /* DepthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE176A7B23DCEFB10050F551 /* DepthViewController.swift */; };
 		FE19F8BA23B6070F00CF174E /* Metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE19F8B923B6070F00CF174E /* Metadata.swift */; };
-		FE19F8BC23B7544C00CF174E /* CameraData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE19F8BB23B7544C00CF174E /* CameraData.swift */; };
 		FE19F8BE23B754BD00CF174E /* MotionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE19F8BD23B754BD00CF174E /* MotionData.swift */; };
 		FE1E41CE242451CE00216886 /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE1E41CD242451CE00216886 /* MotionManager.swift */; };
 		FE82409623BB42C500ADB6CC /* HttpRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE82409523BB42C500ADB6CC /* HttpRequestHandler.swift */; };
@@ -50,7 +49,6 @@
 		FE09458423B1C020003A1CA5 /* DualCameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DualCameraViewController.swift; sourceTree = "<group>"; };
 		FE176A7B23DCEFB10050F551 /* DepthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthViewController.swift; sourceTree = "<group>"; };
 		FE19F8B923B6070F00CF174E /* Metadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metadata.swift; sourceTree = "<group>"; };
-		FE19F8BB23B7544C00CF174E /* CameraData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraData.swift; sourceTree = "<group>"; };
 		FE19F8BD23B754BD00CF174E /* MotionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionData.swift; sourceTree = "<group>"; };
 		FE1E41CD242451CE00216886 /* MotionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
 		FE82409523BB42C500ADB6CC /* HttpRequestHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpRequestHandler.swift; sourceTree = "<group>"; };
@@ -113,7 +111,6 @@
 			isa = PBXGroup;
 			children = (
 				FE19F8B923B6070F00CF174E /* Metadata.swift */,
-				FE19F8BB23B7544C00CF174E /* CameraData.swift */,
 				FE19F8BD23B754BD00CF174E /* MotionData.swift */,
 				FE82409523BB42C500ADB6CC /* HttpRequestHandler.swift */,
 				FE02EE2C23F1D102000BD9EE /* Helper.swift */,
@@ -208,7 +205,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FE19F8BC23B7544C00CF174E /* CameraData.swift in Sources */,
 				FE02EE2F23F61A9C000BD9EE /* Constants.swift in Sources */,
 				FE09457723AE05C3003A1CA5 /* PreviewView.swift in Sources */,
 				FE09457E23B19A6F003A1CA5 /* ScanTableViewCell.swift in Sources */,
