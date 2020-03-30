@@ -8,6 +8,15 @@
 
 struct Constants {
     
+    // this struct stores the encoding code (String) used in this project
+    // and in the output files of this project (e.g. metadata)
+    // the purpose of this is mainly for consistency
+    struct EncodingCode {
+        static let ascii: String = "ascii"
+        static let binary: String = "bin"
+        static let h264: String = "h264"
+    }
+    
 //    static let sceneTypes: [String] = ["Please Select A Scene Type",
 //                                       "Dining Room",
 //                                       "Office",
