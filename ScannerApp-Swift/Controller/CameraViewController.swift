@@ -18,11 +18,11 @@ class CameraViewController: UIViewController {
     private let locationManager = CLLocationManager()
     private let motionManager = MotionManager.instance
     
-    private let firstNameKey = Constants.UserDefaultsKeys.firstNameKey
-    private let lastNameKey = Constants.UserDefaultsKeys.lastNameKey
-    private let userInputDescriptionKey = Constants.UserDefaultsKeys.userInputDescriptionKey
-    private let sceneTypeIndexKey = Constants.UserDefaultsKeys.sceneTypeIndexKey
-    private let sceneTypeKey = Constants.UserDefaultsKeys.sceneTypeKey
+    private let firstNameKey = Constants.UserDefaultsKeys.firstName
+    private let lastNameKey = Constants.UserDefaultsKeys.lastName
+    private let userInputDescriptionKey = Constants.UserDefaultsKeys.userInputDescription
+    private let sceneTypeIndexKey = Constants.UserDefaultsKeys.sceneTypeIndex
+    private let sceneTypeKey = Constants.UserDefaultsKeys.sceneType
     
     private let sceneTypes = Constants.sceneTypes
 

@@ -12,11 +12,11 @@ class ConfigurationViewController: UIViewController {
 
     private let defaults = UserDefaults.standard
     
-    private let firstNameKey = Constants.UserDefaultsKeys.firstNameKey
-    private let lastNameKey = Constants.UserDefaultsKeys.lastNameKey
+    private let firstNameKey = Constants.UserDefaultsKeys.firstName
+    private let lastNameKey = Constants.UserDefaultsKeys.lastName
     
-    private let sceneTypeIndexKey = Constants.UserDefaultsKeys.sceneTypeIndexKey
-    private let sceneTypeKey = Constants.UserDefaultsKeys.sceneTypeKey
+    private let sceneTypeIndexKey = Constants.UserDefaultsKeys.sceneTypeIndex
+    private let sceneTypeKey = Constants.UserDefaultsKeys.sceneType
     
     private let sceneTypes = Constants.sceneTypes
     

@@ -118,10 +118,10 @@ struct Constants {
     }
     
     struct UserDefaultsKeys {
-        static let firstNameKey = "firstName"
-        static let lastNameKey = "lastName"
-        static let sceneTypeIndexKey = "sceneTypeIndex"
-        static let sceneTypeKey = "sceneType"
-        static let userInputDescriptionKey = "userInputDescription"
+        static let firstName = "first_name_key"
+        static let lastName = "last_name_key"
+        static let sceneTypeIndex = "scene_type_index_key"
+        static let sceneType = "sceneTypeKey"
+        static let userInputDescription = "user_input_description_key"
     }
 }
