@@ -27,6 +27,7 @@
 		FE19F8BE23B754BD00CF174E /* MotionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE19F8BD23B754BD00CF174E /* MotionData.swift */; };
 		FE1E41CE242451CE00216886 /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE1E41CD242451CE00216886 /* MotionManager.swift */; };
 		FE82409623BB42C500ADB6CC /* HttpRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE82409523BB42C500ADB6CC /* HttpRequestHandler.swift */; };
+		FE975BAD245107DE00DAB6CB /* UserDefaultsExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE975BAC245107DE00DAB6CB /* UserDefaultsExtension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 		FE19F8BD23B754BD00CF174E /* MotionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionData.swift; sourceTree = "<group>"; };
 		FE1E41CD242451CE00216886 /* MotionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
 		FE82409523BB42C500ADB6CC /* HttpRequestHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpRequestHandler.swift; sourceTree = "<group>"; };
+		FE975BAC245107DE00DAB6CB /* UserDefaultsExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsExtension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +118,7 @@
 				FE02EE2C23F1D102000BD9EE /* Helper.swift */,
 				FE02EE2E23F61A9C000BD9EE /* Constants.swift */,
 				FE1E41CD242451CE00216886 /* MotionManager.swift */,
+				FE975BAC245107DE00DAB6CB /* UserDefaultsExtension.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -216,6 +219,7 @@
 				FE02EE2B23F0C750000BD9EE /* ConfigurationViewController.swift in Sources */,
 				FE19F8BE23B754BD00CF174E /* MotionData.swift in Sources */,
 				FE09456123AD7061003A1CA5 /* AppDelegate.swift in Sources */,
+				FE975BAD245107DE00DAB6CB /* UserDefaultsExtension.swift in Sources */,
 				FE1E41CE242451CE00216886 /* MotionManager.swift in Sources */,
 				FE09457923B0ACBD003A1CA5 /* LibraryViewController.swift in Sources */,
 				FE82409623BB42C500ADB6CC /* HttpRequestHandler.swift in Sources */,
