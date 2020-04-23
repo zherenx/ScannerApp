@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="L1p-2W-pSb">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="L1p-2W-pSb">
     <device id="retina6_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -17,7 +17,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="ble-zw-gJc">
-                                <rect key="frame" x="20" y="261" width="374" height="374"/>
+                                <rect key="frame" x="20" y="404" width="374" height="88"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="42" translatesAutoresizingMaskIntoConstraints="NO" id="dmn-7K-DjT">
                                         <rect key="frame" x="0.0" y="0.0" width="374" height="34"/>
@@ -51,27 +51,6 @@
                                             </textField>
                                         </subviews>
                                     </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="6ke-hD-hUV">
-                                        <rect key="frame" x="0.0" y="108" width="374" height="30"/>
-                                        <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Scene Type" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yYG-4R-gh1">
-                                                <rect key="frame" x="0.0" y="0.0" width="89.666666666666671" height="30"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3iS-ef-4eq">
-                                                <rect key="frame" x="109.66666666666666" y="0.0" width="264.33333333333337" height="30"/>
-                                                <state key="normal" title="---- Please Select ----"/>
-                                                <connections>
-                                                    <action selector="selectSceneTypeButtonTapped:" destination="HH8-a4-OXI" eventType="touchUpInside" id="YsT-w9-iou"/>
-                                                </connections>
-                                            </button>
-                                        </subviews>
-                                    </stackView>
-                                    <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="S52-oU-gA5">
-                                        <rect key="frame" x="0.0" y="158" width="374" height="216"/>
-                                    </pickerView>
                                 </subviews>
                             </stackView>
                         </subviews>
@@ -88,8 +67,6 @@
                     <connections>
                         <outlet property="firstNameTextField" destination="TmV-XF-18Y" id="O23-4V-7hZ"/>
                         <outlet property="lastNameTextField" destination="kyT-9V-gPV" id="j4H-3V-Psg"/>
-                        <outlet property="sceneTypePickerView" destination="S52-oU-gA5" id="2li-OE-SbV"/>
-                        <outlet property="selectSceneTypeButton" destination="3iS-ef-4eq" id="0mV-Gz-hqm"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vfG-w8-IpY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

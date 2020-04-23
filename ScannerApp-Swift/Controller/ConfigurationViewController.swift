@@ -22,10 +22,6 @@ class ConfigurationViewController: UIViewController {
     
     @IBOutlet weak var firstNameTextField: UITextField!
     @IBOutlet weak var lastNameTextField: UITextField!
-
-    @IBOutlet weak var selectSceneTypeButton: UIButton!
-    
-    @IBOutlet weak var sceneTypePickerView: UIPickerView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,25 +38,6 @@ class ConfigurationViewController: UIViewController {
         
         firstNameTextField.text = firstName
         lastNameTextField.text = lastName
-        
-        // setup picker view
-        sceneTypePickerView.delegate = self
-        sceneTypePickerView.dataSource = self
-
-        sceneTypePickerView.isHidden = true
-        
-        let currentSceneTypeIndex = defaults.integer(forKey: sceneTypeIndexKey)
-        selectSceneTypeButton.setTitle(sceneTypes[currentSceneTypeIndex], for: .normal)
-        
-        sceneTypePickerView.selectRow(currentSceneTypeIndex, inComponent: 0, animated: false)
-    }
-
-    @IBAction func selectSceneTypeButtonTapped(_ sender: Any) {
-        if sceneTypePickerView.isHidden {
-            sceneTypePickerView.isHidden = false
-        } else {
-            sceneTypePickerView.isHidden = true
-        }
     }
 
 }
@@ -95,25 +72,5 @@ extension ConfigurationViewController: UITextFieldDelegate {
         default:
             print("text field with tag \(textField.tag) is not found.")
         }
-    }
-}
-
-extension ConfigurationViewController: UIPickerViewDelegate, UIPickerViewDataSource {
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1;
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return sceneTypes.count
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return sceneTypes[row]
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        defaults.set(row, forKey: sceneTypeIndexKey)
-//        defaults.set(sceneTypes[row], forKey: sceneTypeKey)
-        selectSceneTypeButton.setTitle(sceneTypes[row], for: .normal)
     }
 }
