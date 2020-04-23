@@ -7,7 +7,6 @@
 //
 
 import CoreMotion
-import Foundation
 
 class MotionManager {
     
@@ -25,6 +24,7 @@ class MotionManager {
     
     private var isRecording: Bool = false
     private var numberOfMeasurements: Int = 0
+    private var isDebugMode: Bool = false
     
     private var rotationRateBinaryFileUrl: URL!
     private var userAccelerationBinaryFileUrl: URL!
@@ -54,41 +54,44 @@ class MotionManager {
         
         isRecording = true // should i move this to later?
         numberOfMeasurements = 0
+        isDebugMode = UserDefaults.debugFlag
         
         let rotationRatePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.RotationRate.fileExtension)!)
         rotationRateBinaryFileUrl = URL(fileURLWithPath: rotationRatePath)
         createEmptyFile(fileUrl: rotationRateBinaryFileUrl)
-        
-        rotationRateAsciiFileUrl = URL(fileURLWithPath: (rotationRatePath as NSString).appendingPathExtension("txt")!)
-        createEmptyFile(fileUrl: rotationRateAsciiFileUrl)
 
         let userAccelerationPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.UserAcceleration.fileExtension)!)
         userAccelerationBinaryFileUrl = URL(fileURLWithPath: userAccelerationPath)
         createEmptyFile(fileUrl: userAccelerationBinaryFileUrl)
-        
-        userAccelerationAsciiFileUrl = URL(fileURLWithPath: (userAccelerationPath as NSString).appendingPathExtension("txt")!)
-        createEmptyFile(fileUrl: userAccelerationAsciiFileUrl)
 
         let magneticFieldPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.MagneticField.fileExtension)!)
         magneticFieldBinaryFileUrl = URL(fileURLWithPath: magneticFieldPath)
         createEmptyFile(fileUrl: magneticFieldBinaryFileUrl)
-        
-        magneticFieldAsciiFileUrl = URL(fileURLWithPath: (magneticFieldPath as NSString).appendingPathExtension("txt")!)
-        createEmptyFile(fileUrl: magneticFieldAsciiFileUrl)
 
         let attitudePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.Attitude.fileExtension)!)
         attitudeBinaryFileUrl = URL(fileURLWithPath: attitudePath)
         createEmptyFile(fileUrl: attitudeBinaryFileUrl)
-        
-        attitudeAsciiFileUrl = URL(fileURLWithPath: (attitudePath as NSString).appendingPathExtension("txt")!)
-        createEmptyFile(fileUrl: attitudeAsciiFileUrl)
 
         let gravityPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.Gravity.fileExtension)!)
         gravityBinaryFileUrl = URL(fileURLWithPath: gravityPath)
         createEmptyFile(fileUrl: gravityBinaryFileUrl)
         
-        gravityAsciiFileUrl = URL(fileURLWithPath: (gravityPath as NSString).appendingPathExtension("txt")!)
-        createEmptyFile(fileUrl: gravityAsciiFileUrl)
+        if isDebugMode {
+            rotationRateAsciiFileUrl = URL(fileURLWithPath: (rotationRatePath as NSString).appendingPathExtension("txt")!)
+            createEmptyFile(fileUrl: rotationRateAsciiFileUrl)
+            
+            userAccelerationAsciiFileUrl = URL(fileURLWithPath: (userAccelerationPath as NSString).appendingPathExtension("txt")!)
+            createEmptyFile(fileUrl: userAccelerationAsciiFileUrl)
+            
+            magneticFieldAsciiFileUrl = URL(fileURLWithPath: (magneticFieldPath as NSString).appendingPathExtension("txt")!)
+            createEmptyFile(fileUrl: magneticFieldAsciiFileUrl)
+            
+            attitudeAsciiFileUrl = URL(fileURLWithPath: (attitudePath as NSString).appendingPathExtension("txt")!)
+            createEmptyFile(fileUrl: attitudeAsciiFileUrl)
+            
+            gravityAsciiFileUrl = URL(fileURLWithPath: (gravityPath as NSString).appendingPathExtension("txt")!)
+            createEmptyFile(fileUrl: gravityAsciiFileUrl)
+        }
         
         self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
             if let validData = data {
@@ -100,7 +103,10 @@ class MotionManager {
                 
                 motionData.writeToFileInBinaryFormat(rotationRateFileUrl: self.rotationRateBinaryFileUrl, userAccelerationFileUrl: self.userAccelerationBinaryFileUrl, magneticFieldFileUrl: self.magneticFieldBinaryFileUrl, attitudeFileUrl: self.attitudeBinaryFileUrl, gravityFileUrl: self.gravityBinaryFileUrl)
                 
-                motionData.writeToFileInAsciiFormat(rotationRateFileUrl: self.rotationRateAsciiFileUrl, userAccelerationFileUrl: self.userAccelerationAsciiFileUrl, magneticFieldFileUrl: self.magneticFieldAsciiFileUrl, attitudeFileUrl: self.attitudeAsciiFileUrl, gravityFileUrl: self.gravityAsciiFileUrl)
+                if self.isDebugMode {
+                    motionData.writeToFileInAsciiFormat(rotationRateFileUrl: self.rotationRateAsciiFileUrl, userAccelerationFileUrl: self.userAccelerationAsciiFileUrl, magneticFieldFileUrl: self.magneticFieldAsciiFileUrl, attitudeFileUrl: self.attitudeAsciiFileUrl, gravityFileUrl: self.gravityAsciiFileUrl)
+                }
+                
             } else {
                 print("there is some problem with motion data")
             }
@@ -148,12 +154,15 @@ class MotionManager {
         addHeaderToFile(fileUrl: attitudeBinaryFileUrl, encoding: binEncoding, sensorType: Constants.Sensor.Imu.Attitude.type, numOfFrames: numberOfMeasurements)
         addHeaderToFile(fileUrl: gravityBinaryFileUrl, encoding: binEncoding, sensorType: Constants.Sensor.Imu.Gravity.type, numOfFrames: numberOfMeasurements)
         
-        let asciiEncoding = Constants.EncodingCode.ascii
-        addHeaderToFile(fileUrl: rotationRateAsciiFileUrl, encoding: asciiEncoding, sensorType: Constants.Sensor.Imu.RotationRate.type, numOfFrames: numberOfMeasurements)
-        addHeaderToFile(fileUrl: userAccelerationAsciiFileUrl, encoding: asciiEncoding, sensorType: Constants.Sensor.Imu.UserAcceleration.type, numOfFrames: numberOfMeasurements)
-        addHeaderToFile(fileUrl: magneticFieldAsciiFileUrl, encoding: asciiEncoding, sensorType: Constants.Sensor.Imu.MagneticField.type, numOfFrames: numberOfMeasurements)
-        addHeaderToFile(fileUrl: attitudeAsciiFileUrl, encoding: asciiEncoding, sensorType: Constants.Sensor.Imu.Attitude.type, numOfFrames: numberOfMeasurements)
-        addHeaderToFile(fileUrl: gravityAsciiFileUrl, encoding: asciiEncoding, sensorType: Constants.Sensor.Imu.Gravity.type, numOfFrames: numberOfMeasurements)
+        if isDebugMode {
+            let asciiEncoding = Constants.EncodingCode.ascii
+            addHeaderToFile(fileUrl: rotationRateAsciiFileUrl, encoding: asciiEncoding, sensorType: Constants.Sensor.Imu.RotationRate.type, numOfFrames: numberOfMeasurements)
+            addHeaderToFile(fileUrl: userAccelerationAsciiFileUrl, encoding: asciiEncoding, sensorType: Constants.Sensor.Imu.UserAcceleration.type, numOfFrames: numberOfMeasurements)
+            addHeaderToFile(fileUrl: magneticFieldAsciiFileUrl, encoding: asciiEncoding, sensorType: Constants.Sensor.Imu.MagneticField.type, numOfFrames: numberOfMeasurements)
+            addHeaderToFile(fileUrl: attitudeAsciiFileUrl, encoding: asciiEncoding, sensorType: Constants.Sensor.Imu.Attitude.type, numOfFrames: numberOfMeasurements)
+            addHeaderToFile(fileUrl: gravityAsciiFileUrl, encoding: asciiEncoding, sensorType: Constants.Sensor.Imu.Gravity.type, numOfFrames: numberOfMeasurements)
+        }
+        
     }
     
     private func createEmptyFile(fileUrl: URL) {

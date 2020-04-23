@@ -15,6 +15,7 @@ extension UserDefaults {
         static let lastName = "lastNameKey"
         static let sceneTypeIndex = "sceneTypeIndexKey"
         static let userInputDescription = "userInputDescriptionKey"
+        static let debugFlag = "debugFlagKey"
     }
     
     /// firstName
@@ -75,5 +76,16 @@ extension UserDefaults {
     class func set(userInputDescription: String) {
         let userDefaults = UserDefaults.standard
         userDefaults.set(userInputDescription, forKey: UserDefaults.Keys.userInputDescription)
+    }
+    
+    /// debugFlag
+    class var debugFlag: Bool {
+        let userDefaults = UserDefaults.standard
+        return userDefaults.bool(forKey: UserDefaults.Keys.debugFlag)
+    }
+    
+    class func set(debugFlag: Bool) {
+        let userDefaults = UserDefaults.standard
+        userDefaults.set(debugFlag, forKey: UserDefaults.Keys.debugFlag)
     }
 }

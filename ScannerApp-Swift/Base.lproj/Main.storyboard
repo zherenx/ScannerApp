@@ -17,7 +17,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="ble-zw-gJc">
-                                <rect key="frame" x="20" y="404" width="374" height="88"/>
+                                <rect key="frame" x="20" y="378.66666666666669" width="374" height="139.00000000000006"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="42" translatesAutoresizingMaskIntoConstraints="NO" id="dmn-7K-DjT">
                                         <rect key="frame" x="0.0" y="0.0" width="374" height="34"/>
@@ -51,6 +51,23 @@
                                             </textField>
                                         </subviews>
                                     </stackView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="46" translatesAutoresizingMaskIntoConstraints="NO" id="sxM-VV-RvT">
+                                        <rect key="frame" x="0.0" y="108" width="374" height="31"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Debug Mode" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1iu-EF-pr9">
+                                                <rect key="frame" x="0.0" y="0.0" width="279" height="31"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ftj-Rk-s1n">
+                                                <rect key="frame" x="325" y="0.0" width="51" height="31"/>
+                                                <connections>
+                                                    <action selector="debugModeSwitchValueChanged:" destination="HH8-a4-OXI" eventType="valueChanged" id="SiY-ff-BT0"/>
+                                                </connections>
+                                            </switch>
+                                        </subviews>
+                                    </stackView>
                                 </subviews>
                             </stackView>
                         </subviews>
@@ -65,13 +82,14 @@
                     </view>
                     <navigationItem key="navigationItem" title="Configuration" id="D5W-lD-ntQ"/>
                     <connections>
+                        <outlet property="debugModeSwitch" destination="Ftj-Rk-s1n" id="acl-aS-UkS"/>
                         <outlet property="firstNameTextField" destination="TmV-XF-18Y" id="O23-4V-7hZ"/>
                         <outlet property="lastNameTextField" destination="kyT-9V-gPV" id="j4H-3V-Psg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vfG-w8-IpY" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1048" y="-779"/>
+            <point key="canvasLocation" x="1047.8260869565217" y="-779.46428571428567"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">

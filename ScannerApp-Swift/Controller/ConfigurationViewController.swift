@@ -15,6 +15,8 @@ class ConfigurationViewController: UIViewController {
     @IBOutlet weak var firstNameTextField: UITextField!
     @IBOutlet weak var lastNameTextField: UITextField!
     
+    @IBOutlet weak var debugModeSwitch: UISwitch!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -30,8 +32,14 @@ class ConfigurationViewController: UIViewController {
         
         firstNameTextField.text = firstName
         lastNameTextField.text = lastName
+        
+        debugModeSwitch.isOn = UserDefaults.debugFlag
     }
 
+    @IBAction func debugModeSwitchValueChanged(_ sender: Any) {
+        UserDefaults.set(debugFlag: debugModeSwitch.isOn)
+    }
+    
 }
 
 extension ConfigurationViewController: UITextFieldDelegate {
