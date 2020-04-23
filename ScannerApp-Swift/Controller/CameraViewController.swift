@@ -9,26 +9,18 @@
 import AVFoundation
 import CoreLocation
 import CoreMotion
-import Foundation
 import UIKit
 
 class CameraViewController: UIViewController {
     
-    private let defaults = UserDefaults.standard
     private let locationManager = CLLocationManager()
     private let motionManager = MotionManager.instance
     
-    private let firstNameKey = Constants.UserDefaultsKeys.firstName
-    private let lastNameKey = Constants.UserDefaultsKeys.lastName
-    private let userInputDescriptionKey = Constants.UserDefaultsKeys.userInputDescription
-    private let sceneTypeIndexKey = Constants.UserDefaultsKeys.sceneTypeIndex
-    private let sceneTypeKey = Constants.UserDefaultsKeys.sceneType
-    
     private let sceneTypes = Constants.sceneTypes
 
-    private var firstName: String?
-    private var lastName: String?
-    private var userInputDescription: String?
+    private var firstName: String = ""
+    private var lastName: String = ""
+    private var userInputDescription: String = ""
     private var sceneType: String?
     private var gpsLocation: [Double]!
     private var colorResolution: [Int]!
@@ -194,10 +186,10 @@ class CameraViewController: UIViewController {
     
     private func loadUserDefaults() {
         
-        firstName = defaults.string(forKey: firstNameKey)
-        lastName = defaults.string(forKey: lastNameKey)
+        firstName = UserDefaults.firstName
+        lastName = UserDefaults.lastName
         
-        userInputDescription = defaults.string(forKey: userInputDescriptionKey)
+        userInputDescription = UserDefaults.userInputDescription
         
         updateSceneType()
         
@@ -206,7 +198,7 @@ class CameraViewController: UIViewController {
     }
     
     private func updateSceneType() {
-        let currentSceneTypeIndex = defaults.integer(forKey: sceneTypeIndexKey)
+        let currentSceneTypeIndex = UserDefaults.sceneTypeIndex
         if currentSceneTypeIndex == 0 {
             sceneType = nil
         } else {
@@ -225,9 +217,9 @@ class CameraViewController: UIViewController {
         lastNameTextField.tag = Constants.Tag.lastNameTag
         descriptionTextField.tag = Constants.Tag.descriptionTag
         
-        firstName = defaults.string(forKey: firstNameKey)
-        lastName = defaults.string(forKey: lastNameKey)
-        userInputDescription = defaults.string(forKey: userInputDescriptionKey)
+        firstName = UserDefaults.firstName
+        lastName = UserDefaults.lastName
+        userInputDescription = UserDefaults.userInputDescription
         
         firstNameTextField.text = firstName
         lastNameTextField.text = lastName
@@ -239,7 +231,7 @@ class CameraViewController: UIViewController {
 
         sceneTypePickerView.isHidden = true
         
-        let currentSceneTypeIndex = defaults.integer(forKey: sceneTypeIndexKey)
+        let currentSceneTypeIndex = UserDefaults.sceneTypeIndex
         selectSceneTypeButton.setTitle(sceneTypes[currentSceneTypeIndex], for: .normal)
         
         sceneTypePickerView.selectRow(currentSceneTypeIndex, inComponent: 0, animated: false)
@@ -293,9 +285,9 @@ class CameraViewController: UIViewController {
     }
     
     private func hasAllRequiredProperties() -> Bool {
-        if self.firstName != nil && !self.firstName!.isEmpty
-            && self.lastName != nil && !self.lastName!.isEmpty
-            && self.userInputDescription != nil && !self.userInputDescription!.isEmpty
+        if !self.firstName.isEmpty
+            && !self.lastName.isEmpty
+            && !self.userInputDescription.isEmpty
             && self.sceneType != nil {
             return true
         } else {
@@ -380,8 +372,8 @@ class CameraViewController: UIViewController {
             
             streamInfo.append(cameraStreamInfo)
             
-            let username = self.firstName! + " " + self.lastName!
-            let metadata = Metadata(username: username, userInputDescription: self.userInputDescription!, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: streamInfo)
+            let username = self.firstName + " " + self.lastName
+            let metadata = Metadata(username: username, userInputDescription: self.userInputDescription, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: streamInfo)
             
             metadata.display()
             metadata.writeToFile(filepath: self.metadataPath)
@@ -470,22 +462,18 @@ extension CameraViewController: UITextFieldDelegate {
     private func textFieldDidUpdate(_ textField: UITextField) {
         textField.resignFirstResponder()
         
-        var text = textField.text?.trimmingCharacters(in: .whitespaces)
-
-        if text != nil && text!.isEmpty {
-            text = nil
-        }
+        let text: String = (textField.text ?? "").trimmingCharacters(in: .whitespaces)
         
         switch textField.tag {
         case Constants.Tag.firstNameTag:
             firstName = text
-            defaults.set(text, forKey: firstNameKey)
+            UserDefaults.set(firstName: text)
         case Constants.Tag.lastNameTag:
             lastName = text
-            defaults.set(text, forKey: lastNameKey)
+            UserDefaults.set(lastName: text)
         case Constants.Tag.descriptionTag:
             userInputDescription = text
-            defaults.set(text, forKey: userInputDescriptionKey)
+            UserDefaults.set(userInputDescription: text)
         default:
             print("text field with tag \(textField.tag) is not found.")
         }
@@ -508,7 +496,7 @@ extension CameraViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        defaults.set(row, forKey: sceneTypeIndexKey)
+        UserDefaults.set(sceneTypeIndex: row)
         selectSceneTypeButton.setTitle(sceneTypes[row], for: .normal)
         
         updateSceneType()

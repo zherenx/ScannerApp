@@ -9,14 +9,6 @@
 import UIKit
 
 class ConfigurationViewController: UIViewController {
-
-    private let defaults = UserDefaults.standard
-    
-    private let firstNameKey = Constants.UserDefaultsKeys.firstName
-    private let lastNameKey = Constants.UserDefaultsKeys.lastName
-    
-    private let sceneTypeIndexKey = Constants.UserDefaultsKeys.sceneTypeIndex
-    private let sceneTypeKey = Constants.UserDefaultsKeys.sceneType
     
     private let sceneTypes = Constants.sceneTypes
     
@@ -33,8 +25,8 @@ class ConfigurationViewController: UIViewController {
         firstNameTextField.tag = Constants.Tag.firstNameTag
         lastNameTextField.tag = Constants.Tag.lastNameTag
         
-        let firstName = defaults.string(forKey: firstNameKey)
-        let lastName = defaults.string(forKey: lastNameKey)
+        let firstName = UserDefaults.firstName
+        let lastName = UserDefaults.lastName
         
         firstNameTextField.text = firstName
         lastNameTextField.text = lastName
@@ -58,17 +50,13 @@ extension ConfigurationViewController: UITextFieldDelegate {
     private func textFieldDidUpdate(_ textField: UITextField) {
         textField.resignFirstResponder()
         
-        var text = textField.text?.trimmingCharacters(in: .whitespaces)
-
-        if text != nil && text!.isEmpty {
-            text = nil
-        }
+        let text: String = (textField.text ?? "").trimmingCharacters(in: .whitespaces)
         
         switch textField.tag {
         case Constants.Tag.firstNameTag:
-            defaults.set(text, forKey: firstNameKey)
+            UserDefaults.set(firstName: text)
         case Constants.Tag.lastNameTag:
-            defaults.set(text, forKey: lastNameKey)
+            UserDefaults.set(lastName: text)
         default:
             print("text field with tag \(textField.tag) is not found.")
         }
