@@ -9,17 +9,17 @@
 import AVFoundation
 import UIKit
 
-protocol ScanTableViewCellDelegate {
+protocol LibraryTableViewCellDelegate {
     func deleteSuccess(fileId: String)
     func deleteFailed(fileId: String)
     func didCompletedUploadWithError(fileId: String)
     func didCompletedUploadWithoutError(fileId: String)
 }
 
-class ScanTableViewCell: UITableViewCell {
+class LibraryTableViewCell: UITableViewCell {
 
     private var url: URL!
-    var scanTableViewCellDelegate: ScanTableViewCellDelegate!
+    var scanTableViewCellDelegate: LibraryTableViewCellDelegate!
     
     @IBOutlet weak var thumbnail: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
@@ -104,7 +104,7 @@ class ScanTableViewCell: UITableViewCell {
     }
 }
 
-extension ScanTableViewCell: HttpRequestHandlerDelegate {
+extension LibraryTableViewCell: HttpRequestHandlerDelegate {
     
     func didReceiveUploadProgressUpdate(progress: Float) {
 //        print(progress)

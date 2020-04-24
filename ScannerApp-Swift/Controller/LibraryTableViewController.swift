@@ -30,7 +30,7 @@ class LibraryTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! ScanTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! LibraryTableViewCell
 //        cell.textLabel?.text = fileURLs[indexPath.item].lastPathComponent
 //        cell.textLabel?.text = fileURLs[indexPath.item].absoluteString
         
@@ -54,7 +54,7 @@ class LibraryTableViewController: UITableViewController {
     }
 }
 
-extension LibraryTableViewController: ScanTableViewCellDelegate {
+extension LibraryTableViewController: LibraryTableViewCellDelegate {
     
     func deleteSuccess(fileId: String) {
         loadFiles()
