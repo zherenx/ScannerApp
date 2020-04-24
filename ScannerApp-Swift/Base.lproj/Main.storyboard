@@ -120,7 +120,7 @@
                                         <rect key="frame" x="0.0" y="51" width="94" height="30"/>
                                         <state key="normal" title="Library"/>
                                         <connections>
-                                            <segue destination="WDK-ge-CR7" kind="show" id="9lu-Hj-Rdd"/>
+                                            <segue destination="toN-jm-P7c" kind="show" id="783-6t-LQC"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2wX-Kn-hHC">
@@ -208,17 +208,111 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ho4-KC-jbu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2195.6521739130435" y="554.46428571428567"/>
+            <point key="canvasLocation" x="2196" y="376"/>
         </scene>
         <!--Library View Controller-->
-        <scene sceneID="Mel-yP-Uit">
+        <scene sceneID="CUe-ah-38R">
             <objects>
-                <viewController id="WDK-ge-CR7" userLabel="Library View Controller" customClass="LibraryViewController" customModule="ScannerApp_Swift" customModuleProvider="target" sceneMemberID="viewController">
-                    <navigationItem key="navigationItem" title="Library" id="65U-1P-G6N"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Bnd-tW-akx" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <tableViewController id="toN-jm-P7c" customClass="LibraryViewController" customModule="ScannerApp_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="t96-Ow-YMj">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="scanTableViewCell" rowHeight="150" id="fnb-SS-nu0" customClass="ScanTableViewCell" customModule="ScannerApp_Swift" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="414" height="150"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="fnb-SS-nu0" id="rWL-bx-t3R">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="150"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="0in-1v-Qxm">
+                                            <rect key="frame" x="0.0" y="-2" width="120" height="90"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aVC-eB-NNE" userLabel="Title">
+                                            <rect key="frame" x="128" y="8" width="278" height="20"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="20" id="FQL-A0-sCf"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="World" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Az9-AH-Osh" userLabel="Info">
+                                            <rect key="frame" x="128" y="32" width="278" height="40"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="40" id="NdP-fg-PA6"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F7y-O0-Anh">
+                                            <rect key="frame" x="361" y="118" width="45" height="24"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="24" id="QNL-Ub-PNG"/>
+                                                <constraint firstAttribute="width" constant="45" id="ct9-k5-qlW"/>
+                                            </constraints>
+                                            <state key="normal" title="Delete"/>
+                                            <connections>
+                                                <action selector="deleteButtonTapped:" destination="fnb-SS-nu0" eventType="touchUpInside" id="351-Ft-o4a"/>
+                                            </connections>
+                                        </button>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0bt-CB-BqD">
+                                            <rect key="frame" x="304" y="118" width="49" height="24"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="49" id="Wd7-Bc-LRy"/>
+                                                <constraint firstAttribute="height" constant="24" id="b1x-ci-Uzb"/>
+                                            </constraints>
+                                            <state key="normal" title="Upload"/>
+                                            <connections>
+                                                <action selector="uploadButtonTapped:" destination="fnb-SS-nu0" eventType="touchUpInside" id="IB4-ck-6Bp"/>
+                                            </connections>
+                                        </button>
+                                        <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TNI-sk-V3t">
+                                            <rect key="frame" x="8" y="130" width="278" height="2"/>
+                                        </progressView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="aVC-eB-NNE" firstAttribute="top" secondItem="rWL-bx-t3R" secondAttribute="top" constant="8" id="08S-V0-piy"/>
+                                        <constraint firstItem="TNI-sk-V3t" firstAttribute="leading" secondItem="rWL-bx-t3R" secondAttribute="leading" constant="8" id="2bL-JY-as0"/>
+                                        <constraint firstAttribute="trailing" secondItem="aVC-eB-NNE" secondAttribute="trailing" constant="8" id="M6A-iC-Vzb"/>
+                                        <constraint firstItem="F7y-O0-Anh" firstAttribute="leading" secondItem="0bt-CB-BqD" secondAttribute="trailing" constant="8" id="QFO-8Q-2sb"/>
+                                        <constraint firstItem="Az9-AH-Osh" firstAttribute="top" secondItem="aVC-eB-NNE" secondAttribute="bottom" constant="4" id="QzL-fA-cJG"/>
+                                        <constraint firstAttribute="bottom" secondItem="F7y-O0-Anh" secondAttribute="bottom" constant="8" id="Ux7-wa-ner"/>
+                                        <constraint firstAttribute="bottom" secondItem="0bt-CB-BqD" secondAttribute="bottom" constant="8" id="WLB-BG-izu"/>
+                                        <constraint firstItem="aVC-eB-NNE" firstAttribute="leading" secondItem="0in-1v-Qxm" secondAttribute="trailing" constant="8" id="Y8p-Sc-L42"/>
+                                        <constraint firstAttribute="trailing" secondItem="Az9-AH-Osh" secondAttribute="trailing" constant="8" id="emg-77-dPb"/>
+                                        <constraint firstAttribute="trailing" secondItem="TNI-sk-V3t" secondAttribute="trailing" constant="128" id="eyY-It-ax9"/>
+                                        <constraint firstAttribute="trailing" secondItem="F7y-O0-Anh" secondAttribute="trailing" constant="8" id="fxY-I4-wgY"/>
+                                        <constraint firstItem="Az9-AH-Osh" firstAttribute="leading" secondItem="0in-1v-Qxm" secondAttribute="trailing" constant="8" id="gh6-0o-Tng"/>
+                                        <constraint firstItem="aVC-eB-NNE" firstAttribute="leading" secondItem="0in-1v-Qxm" secondAttribute="trailing" constant="8" id="ieN-19-GV3"/>
+                                        <constraint firstAttribute="bottom" secondItem="TNI-sk-V3t" secondAttribute="bottom" constant="18" id="zOr-LT-Unp"/>
+                                    </constraints>
+                                    <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
+                                </tableViewCellContentView>
+                                <viewLayoutGuide key="safeArea" id="Fq5-kc-HC1"/>
+                                <connections>
+                                    <outlet property="deleteButton" destination="F7y-O0-Anh" id="ajH-id-jFn"/>
+                                    <outlet property="infoLabel" destination="Az9-AH-Osh" id="FQb-PY-bvL"/>
+                                    <outlet property="thumbnail" destination="0in-1v-Qxm" id="9Bw-wq-hle"/>
+                                    <outlet property="titleLabel" destination="aVC-eB-NNE" id="vxH-FH-kvh"/>
+                                    <outlet property="uploadButton" destination="0bt-CB-BqD" id="C0w-FL-SyY"/>
+                                    <outlet property="uploadProgressView" destination="TNI-sk-V3t" id="P5a-C7-ief"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="toN-jm-P7c" id="N3o-O8-Kh9"/>
+                            <outlet property="delegate" destination="toN-jm-P7c" id="mze-ja-9G7"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="Atw-aj-Qn8"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SDN-f3-Ni7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1048" y="954"/>
+            <point key="canvasLocation" x="1048" y="1108"/>
         </scene>
         <!--test-->
         <scene sceneID="zEi-Op-7At">
@@ -260,7 +354,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5qG-ED-1a2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2196" y="1345"/>
+            <point key="canvasLocation" x="138" y="992"/>
         </scene>
         <!--Camera View Controller-->
         <scene sceneID="BxD-mn-6TA">

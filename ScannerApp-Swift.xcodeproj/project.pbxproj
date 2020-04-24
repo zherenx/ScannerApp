@@ -20,7 +20,6 @@
 		FE09457723AE05C3003A1CA5 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09457623AE05C3003A1CA5 /* PreviewView.swift */; };
 		FE09457923B0ACBD003A1CA5 /* LibraryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09457823B0ACBD003A1CA5 /* LibraryViewController.swift */; };
 		FE09457E23B19A6F003A1CA5 /* ScanTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09457C23B19A6F003A1CA5 /* ScanTableViewCell.swift */; };
-		FE09457F23B19A6F003A1CA5 /* ScanTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FE09457D23B19A6F003A1CA5 /* ScanTableViewCell.xib */; };
 		FE09458523B1C020003A1CA5 /* DualCameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE09458423B1C020003A1CA5 /* DualCameraViewController.swift */; };
 		FE176A7C23DCEFB10050F551 /* DepthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE176A7B23DCEFB10050F551 /* DepthViewController.swift */; };
 		FE19F8BA23B6070F00CF174E /* Metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE19F8B923B6070F00CF174E /* Metadata.swift */; };
@@ -46,7 +45,6 @@
 		FE09457623AE05C3003A1CA5 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		FE09457823B0ACBD003A1CA5 /* LibraryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryViewController.swift; sourceTree = "<group>"; };
 		FE09457C23B19A6F003A1CA5 /* ScanTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanTableViewCell.swift; sourceTree = "<group>"; };
-		FE09457D23B19A6F003A1CA5 /* ScanTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ScanTableViewCell.xib; sourceTree = "<group>"; };
 		FE09458423B1C020003A1CA5 /* DualCameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DualCameraViewController.swift; sourceTree = "<group>"; };
 		FE176A7B23DCEFB10050F551 /* DepthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepthViewController.swift; sourceTree = "<group>"; };
 		FE19F8B923B6070F00CF174E /* Metadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metadata.swift; sourceTree = "<group>"; };
@@ -104,7 +102,6 @@
 			children = (
 				FE09457623AE05C3003A1CA5 /* PreviewView.swift */,
 				FE09457C23B19A6F003A1CA5 /* ScanTableViewCell.swift */,
-				FE09457D23B19A6F003A1CA5 /* ScanTableViewCell.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -196,7 +193,6 @@
 			files = (
 				FE09456D23AD7066003A1CA5 /* LaunchScreen.storyboard in Resources */,
 				FE09456A23AD7066003A1CA5 /* Assets.xcassets in Resources */,
-				FE09457F23B19A6F003A1CA5 /* ScanTableViewCell.xib in Resources */,
 				FE09456823AD7061003A1CA5 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

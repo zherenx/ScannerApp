@@ -20,8 +20,8 @@ class LibraryViewController: UITableViewController {
         
         loadFiles()
         
-        let scanTableViewCell = UINib(nibName: "ScanTableViewCell", bundle: nil)
-        tableView.register(scanTableViewCell, forCellReuseIdentifier: cellIdentifier)
+//        let scanTableViewCell = UINib(nibName: "ScanTableViewCell", bundle: nil)
+//        tableView.register(scanTableViewCell, forCellReuseIdentifier: cellIdentifier)
         
     }
     
