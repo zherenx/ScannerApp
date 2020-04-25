@@ -27,6 +27,7 @@
 		FE1E41CE242451CE00216886 /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE1E41CD242451CE00216886 /* MotionManager.swift */; };
 		FE82409623BB42C500ADB6CC /* HttpRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE82409523BB42C500ADB6CC /* HttpRequestHandler.swift */; };
 		FE975BAD245107DE00DAB6CB /* UserDefaultsExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE975BAC245107DE00DAB6CB /* UserDefaultsExtension.swift */; };
+		FE975BAF245396E900DAB6CB /* RecordingDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE975BAE245396E900DAB6CB /* RecordingDetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +53,7 @@
 		FE1E41CD242451CE00216886 /* MotionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
 		FE82409523BB42C500ADB6CC /* HttpRequestHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpRequestHandler.swift; sourceTree = "<group>"; };
 		FE975BAC245107DE00DAB6CB /* UserDefaultsExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsExtension.swift; sourceTree = "<group>"; };
+		FE975BAE245396E900DAB6CB /* RecordingDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingDetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,8 +129,9 @@
 				FE09457423ADFAAF003A1CA5 /* CameraViewController.swift */,
 				FE09458423B1C020003A1CA5 /* DualCameraViewController.swift */,
 				FE09457823B0ACBD003A1CA5 /* LibraryTableViewController.swift */,
-				FE176A7B23DCEFB10050F551 /* DepthViewController.swift */,
+				FE975BAE245396E900DAB6CB /* RecordingDetailViewController.swift */,
 				FE02EE2A23F0C750000BD9EE /* ConfigurationViewController.swift */,
+				FE176A7B23DCEFB10050F551 /* DepthViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -217,6 +220,7 @@
 				FE09456123AD7061003A1CA5 /* AppDelegate.swift in Sources */,
 				FE975BAD245107DE00DAB6CB /* UserDefaultsExtension.swift in Sources */,
 				FE1E41CE242451CE00216886 /* MotionManager.swift in Sources */,
+				FE975BAF245396E900DAB6CB /* RecordingDetailViewController.swift in Sources */,
 				FE09457923B0ACBD003A1CA5 /* LibraryTableViewController.swift in Sources */,
 				FE82409623BB42C500ADB6CC /* HttpRequestHandler.swift in Sources */,
 				FE09456323AD7061003A1CA5 /* SceneDelegate.swift in Sources */,

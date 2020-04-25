@@ -25,6 +25,30 @@ class LibraryTableViewController: UITableViewController {
         
     }
     
+//    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        let selectedRecordingUrl = fileURLs[indexPath.row]
+//
+//        // iOS 13.0+
+////        if let viewController = storyboard?.instantiateViewController(identifier: "RecordingDetailViewController") as? RecordingDetailViewController {
+////            viewController.recordingUrl = selectedRecordingUrl
+////            navigationController?.pushViewController(viewController, animated: true)
+////        }
+//
+//        if let viewController = storyboard?.instantiateViewController(withIdentifier: "RecordingDetailViewController") as? RecordingDetailViewController {
+//            viewController.recordingUrl = selectedRecordingUrl
+//            navigationController?.pushViewController(viewController, animated: true)
+//        }
+//    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "ShowRecordingDetail" {
+            let selectedRecordingUrl = fileURLs[tableView.indexPathForSelectedRow!.row]
+            if let viewController = segue.destination as? RecordingDetailViewController {
+                viewController.recordingUrl = selectedRecordingUrl
+            }
+        }
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return fileURLs.count
     }
