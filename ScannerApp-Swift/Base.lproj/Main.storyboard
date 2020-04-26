@@ -230,7 +230,7 @@
                                             <rect key="frame" x="0.0" y="-2" width="120" height="90"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hello" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aVC-eB-NNE" userLabel="Title">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Filename" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aVC-eB-NNE" userLabel="Title">
                                             <rect key="frame" x="128" y="8" width="278" height="20"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="20" id="FQL-A0-sCf"/>
@@ -239,7 +239,7 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="World" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Az9-AH-Osh" userLabel="Info">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="List of file ext." lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Az9-AH-Osh" userLabel="Info">
                                             <rect key="frame" x="128" y="32" width="278" height="40"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="40" id="NdP-fg-PA6"/>
@@ -249,22 +249,14 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F7y-O0-Anh">
-                                            <rect key="frame" x="361" y="118" width="45" height="24"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="24" id="QNL-Ub-PNG"/>
-                                                <constraint firstAttribute="width" constant="45" id="ct9-k5-qlW"/>
-                                            </constraints>
+                                            <rect key="frame" x="361" y="112" width="45" height="30"/>
                                             <state key="normal" title="Delete"/>
                                             <connections>
                                                 <action selector="deleteButtonTapped:" destination="fnb-SS-nu0" eventType="touchUpInside" id="351-Ft-o4a"/>
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0bt-CB-BqD">
-                                            <rect key="frame" x="304" y="118" width="49" height="24"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="49" id="Wd7-Bc-LRy"/>
-                                                <constraint firstAttribute="height" constant="24" id="b1x-ci-Uzb"/>
-                                            </constraints>
+                                            <rect key="frame" x="304" y="112" width="49" height="30"/>
                                             <state key="normal" title="Upload"/>
                                             <connections>
                                                 <action selector="uploadButtonTapped:" destination="fnb-SS-nu0" eventType="touchUpInside" id="IB4-ck-6Bp"/>
@@ -288,6 +280,7 @@
                                         <constraint firstAttribute="trailing" secondItem="F7y-O0-Anh" secondAttribute="trailing" constant="8" id="fxY-I4-wgY"/>
                                         <constraint firstItem="Az9-AH-Osh" firstAttribute="leading" secondItem="0in-1v-Qxm" secondAttribute="trailing" constant="8" id="gh6-0o-Tng"/>
                                         <constraint firstItem="aVC-eB-NNE" firstAttribute="leading" secondItem="0in-1v-Qxm" secondAttribute="trailing" constant="8" id="ieN-19-GV3"/>
+                                        <constraint firstItem="0bt-CB-BqD" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="rWL-bx-t3R" secondAttribute="leading" constant="20" symbolic="YES" id="uMf-jE-NE4"/>
                                         <constraint firstAttribute="bottom" secondItem="TNI-sk-V3t" secondAttribute="bottom" constant="18" id="zOr-LT-Unp"/>
                                     </constraints>
                                     <edgeInsets key="layoutMargins" top="0.0" left="0.0" bottom="0.0" right="0.0"/>
