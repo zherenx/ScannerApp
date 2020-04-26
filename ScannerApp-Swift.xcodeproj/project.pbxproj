@@ -28,6 +28,7 @@
 		FE82409623BB42C500ADB6CC /* HttpRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE82409523BB42C500ADB6CC /* HttpRequestHandler.swift */; };
 		FE975BAD245107DE00DAB6CB /* UserDefaultsExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE975BAC245107DE00DAB6CB /* UserDefaultsExtension.swift */; };
 		FE975BAF245396E900DAB6CB /* RecordingDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE975BAE245396E900DAB6CB /* RecordingDetailViewController.swift */; };
+		FE975BB12453BFF800DAB6CB /* VideoHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE975BB02453BFF800DAB6CB /* VideoHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +55,7 @@
 		FE82409523BB42C500ADB6CC /* HttpRequestHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpRequestHandler.swift; sourceTree = "<group>"; };
 		FE975BAC245107DE00DAB6CB /* UserDefaultsExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsExtension.swift; sourceTree = "<group>"; };
 		FE975BAE245396E900DAB6CB /* RecordingDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingDetailViewController.swift; sourceTree = "<group>"; };
+		FE975BB02453BFF800DAB6CB /* VideoHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,10 +116,11 @@
 				FE19F8B923B6070F00CF174E /* Metadata.swift */,
 				FE19F8BD23B754BD00CF174E /* MotionData.swift */,
 				FE82409523BB42C500ADB6CC /* HttpRequestHandler.swift */,
-				FE02EE2C23F1D102000BD9EE /* Helper.swift */,
-				FE02EE2E23F61A9C000BD9EE /* Constants.swift */,
 				FE1E41CD242451CE00216886 /* MotionManager.swift */,
 				FE975BAC245107DE00DAB6CB /* UserDefaultsExtension.swift */,
+				FE02EE2E23F61A9C000BD9EE /* Constants.swift */,
+				FE02EE2C23F1D102000BD9EE /* Helper.swift */,
+				FE975BB02453BFF800DAB6CB /* VideoHelper.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -216,6 +219,7 @@
 				FE02EE2D23F1D102000BD9EE /* Helper.swift in Sources */,
 				FE09457523ADFAAF003A1CA5 /* CameraViewController.swift in Sources */,
 				FE02EE2B23F0C750000BD9EE /* ConfigurationViewController.swift in Sources */,
+				FE975BB12453BFF800DAB6CB /* VideoHelper.swift in Sources */,
 				FE19F8BE23B754BD00CF174E /* MotionData.swift in Sources */,
 				FE09456123AD7061003A1CA5 /* AppDelegate.swift in Sources */,
 				FE975BAD245107DE00DAB6CB /* UserDefaultsExtension.swift in Sources */,

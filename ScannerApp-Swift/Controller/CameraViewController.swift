@@ -366,7 +366,7 @@ class CameraViewController: UIViewController {
                 usleep(10000)
             }
             // get number of frames when video is ready
-            let numColorFrames = Helper.getNumberOfFrames(videoUrl: URL(fileURLWithPath: self.movieFilePath))
+            let numColorFrames = VideoHelper.getNumberOfFrames(videoUrl: URL(fileURLWithPath: self.movieFilePath))
             
             let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: Constants.Sensor.Camera.type, encoding: Constants.EncodingCode.h264, frequency: Constants.Sensor.Camera.frequency, num_frames: numColorFrames, resolution: self.colorResolution, focal_length: self.focalLength, principal_point: self.principalPoint, extrinsics_matrix: nil)
             

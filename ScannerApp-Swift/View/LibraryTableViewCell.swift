@@ -58,7 +58,8 @@ class LibraryTableViewCell: UITableViewCell {
                 infoText = infoText + extention + " "
                 
                 if extention == "mp4" {
-                    generateThumbnail(videoUrl: fileUrl)
+                    let cgImage = VideoHelper.generateThumbnail(videoUrl: fileUrl)
+                    self.thumbnail.image = UIImage(cgImage: cgImage)
                 }
             }
             
@@ -71,14 +72,6 @@ class LibraryTableViewCell: UITableViewCell {
         self.infoLabel.textColor = .darkGray
         
         self.uploadProgressView.isHidden = true
-    }
-    
-    private func generateThumbnail(videoUrl: URL) {
-        let asset = AVAsset(url: videoUrl)
-        let generator = AVAssetImageGenerator.init(asset: asset)
-        let cgImage = try! generator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
-        self.thumbnail.image = UIImage(cgImage: cgImage)
-//        firstFrame.image = UIImage(cgImage: cgImage)
     }
     
     // TODO: behavior related stuff probably should be in a controller class
