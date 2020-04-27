@@ -316,50 +316,59 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Khz-0Q-sPV">
-                                <rect key="frame" x="20" y="108" width="374" height="211"/>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6Z5-qT-KdC">
+                                <rect key="frame" x="0.0" y="88" width="414" height="774"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Khz-0Q-sPV">
+                                        <rect key="frame" x="10" y="10" width="394" height="222.33333333333334"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" secondItem="Khz-0Q-sPV" secondAttribute="height" multiplier="319:180" id="R7j-Jn-wTo"/>
+                                            <constraint firstAttribute="width" secondItem="Khz-0Q-sPV" secondAttribute="height" multiplier="319:180" id="z0M-IS-qwJ"/>
+                                        </constraints>
+                                    </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Detail" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3YY-YL-82i">
+                                        <rect key="frame" x="12" y="276.66666666666669" width="414" height="20.333333333333314"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Recording Id" textAlignment="center" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="etM-X6-9SO">
+                                        <rect key="frame" x="8" y="240.33333333333331" width="398" height="20.333333333333314"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="Khz-0Q-sPV" secondAttribute="height" multiplier="319:180" id="R7j-Jn-wTo"/>
-                                    <constraint firstAttribute="width" secondItem="Khz-0Q-sPV" secondAttribute="height" multiplier="319:180" id="z0M-IS-qwJ"/>
+                                    <constraint firstItem="Khz-0Q-sPV" firstAttribute="leading" secondItem="4ju-Ao-526" secondAttribute="leading" constant="10" id="2F2-SO-y4d"/>
+                                    <constraint firstItem="3YY-YL-82i" firstAttribute="top" secondItem="etM-X6-9SO" secondAttribute="bottom" constant="16" id="7UR-T0-CKQ"/>
+                                    <constraint firstItem="4ju-Ao-526" firstAttribute="trailing" secondItem="etM-X6-9SO" secondAttribute="trailing" constant="8" id="C8R-7W-6QI"/>
+                                    <constraint firstItem="Khz-0Q-sPV" firstAttribute="top" secondItem="4ju-Ao-526" secondAttribute="top" constant="10" id="DVI-qB-Pjh"/>
+                                    <constraint firstItem="etM-X6-9SO" firstAttribute="leading" secondItem="4ju-Ao-526" secondAttribute="leading" constant="8" id="Qd3-3p-WEW"/>
+                                    <constraint firstItem="3YY-YL-82i" firstAttribute="leading" secondItem="4ju-Ao-526" secondAttribute="leading" constant="12" id="fDm-4w-Vnj"/>
+                                    <constraint firstItem="4ju-Ao-526" firstAttribute="trailing" secondItem="Khz-0Q-sPV" secondAttribute="trailing" constant="10" id="gtY-ul-kge"/>
+                                    <constraint firstItem="etM-X6-9SO" firstAttribute="top" secondItem="Khz-0Q-sPV" secondAttribute="bottom" constant="8" id="m9m-Fh-UCe"/>
+                                    <constraint firstItem="3YY-YL-82i" firstAttribute="trailing" secondItem="4ju-Ao-526" secondAttribute="trailing" constant="12" id="vhd-Cy-doG"/>
                                 </constraints>
-                            </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Recording Id" textAlignment="center" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="etM-X6-9SO">
-                                <rect key="frame" x="10" y="327" width="394" height="20.333333333333314"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Detail" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3YY-YL-82i">
-                                <rect key="frame" x="20" y="367.33333333333331" width="374" height="20.333333333333314"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                                <viewLayoutGuide key="contentLayoutGuide" id="IYS-vX-vkh"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="4ju-Ao-526"/>
+                            </scrollView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <constraints>
-                            <constraint firstItem="3YY-YL-82i" firstAttribute="leading" secondItem="HnN-ee-TjK" secondAttribute="leading" constant="20" id="HDI-Kh-bao"/>
-                            <constraint firstItem="HnN-ee-TjK" firstAttribute="trailing" secondItem="Khz-0Q-sPV" secondAttribute="trailing" constant="20" id="Nf5-FU-TGi"/>
-                            <constraint firstItem="3YY-YL-82i" firstAttribute="top" secondItem="etM-X6-9SO" secondAttribute="bottom" constant="20" id="VbB-fi-rCl"/>
-                            <constraint firstItem="HnN-ee-TjK" firstAttribute="trailing" secondItem="3YY-YL-82i" secondAttribute="trailing" constant="20" id="YPD-Zz-bSA"/>
-                            <constraint firstItem="Khz-0Q-sPV" firstAttribute="top" secondItem="HnN-ee-TjK" secondAttribute="top" constant="20" id="gxl-1R-rbO"/>
-                            <constraint firstItem="Khz-0Q-sPV" firstAttribute="leading" secondItem="HnN-ee-TjK" secondAttribute="leading" constant="20" id="jri-hP-WWI"/>
-                            <constraint firstItem="etM-X6-9SO" firstAttribute="leading" secondItem="HnN-ee-TjK" secondAttribute="leading" constant="10" id="t6q-rk-mEr"/>
-                            <constraint firstItem="HnN-ee-TjK" firstAttribute="trailing" secondItem="etM-X6-9SO" secondAttribute="trailing" constant="10" id="tB9-yN-cKl"/>
-                            <constraint firstItem="etM-X6-9SO" firstAttribute="top" secondItem="Khz-0Q-sPV" secondAttribute="bottom" constant="8" id="zOV-X7-pxk"/>
-                        </constraints>
                         <viewLayoutGuide key="safeArea" id="HnN-ee-TjK"/>
                     </view>
                     <navigationItem key="navigationItem" title="Recording Detail" id="M5t-rk-5Rs"/>
                     <connections>
                         <outlet property="recordingDetailLabel" destination="3YY-YL-82i" id="yw7-gO-J78"/>
                         <outlet property="recordingIdLabel" destination="etM-X6-9SO" id="flE-aH-AjV"/>
+                        <outlet property="scrollView" destination="6Z5-qT-KdC" id="jWC-h3-SBj"/>
                         <outlet property="thumbnailImageView" destination="Khz-0Q-sPV" id="fVa-r0-EqF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VSr-UI-BZp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1987" y="1108"/>
+            <point key="canvasLocation" x="1986.9565217391305" y="1106.9196428571429"/>
         </scene>
         <!--test-->
         <scene sceneID="zEi-Op-7At">
