@@ -210,7 +210,7 @@
             </objects>
             <point key="canvasLocation" x="2196" y="376"/>
         </scene>
-        <!--Library Table View Controller-->
+        <!--Library-->
         <scene sceneID="CUe-ah-38R">
             <objects>
                 <tableViewController id="toN-jm-P7c" customClass="LibraryTableViewController" customModule="ScannerApp_Swift" customModuleProvider="target" sceneMemberID="viewController">
@@ -302,13 +302,13 @@
                             <outlet property="delegate" destination="toN-jm-P7c" id="mze-ja-9G7"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="Atw-aj-Qn8"/>
+                    <navigationItem key="navigationItem" title="Library" id="Atw-aj-Qn8"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SDN-f3-Ni7" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1048" y="1108"/>
         </scene>
-        <!--Recording Detail View Controller-->
+        <!--Recording Detail-->
         <scene sceneID="YqO-fL-nf6">
             <objects>
                 <viewController storyboardIdentifier="RecordingDetailViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="F1R-QL-NwA" customClass="RecordingDetailViewController" customModule="ScannerApp_Swift" customModuleProvider="target" sceneMemberID="viewController">
@@ -316,20 +316,45 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="hello world" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="etM-X6-9SO">
-                                <rect key="frame" x="106" y="202" width="83" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Khz-0Q-sPV">
+                                <rect key="frame" x="20" y="108" width="374" height="211"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="Khz-0Q-sPV" secondAttribute="height" multiplier="319:180" id="R7j-Jn-wTo"/>
+                                    <constraint firstAttribute="width" secondItem="Khz-0Q-sPV" secondAttribute="height" multiplier="319:180" id="z0M-IS-qwJ"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Recording Id" textAlignment="center" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="etM-X6-9SO">
+                                <rect key="frame" x="10" y="327" width="394" height="20.333333333333314"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Detail" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3YY-YL-82i">
+                                <rect key="frame" x="20" y="367.33333333333331" width="374" height="20.333333333333314"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="3YY-YL-82i" firstAttribute="leading" secondItem="HnN-ee-TjK" secondAttribute="leading" constant="20" id="HDI-Kh-bao"/>
+                            <constraint firstItem="HnN-ee-TjK" firstAttribute="trailing" secondItem="Khz-0Q-sPV" secondAttribute="trailing" constant="20" id="Nf5-FU-TGi"/>
+                            <constraint firstItem="3YY-YL-82i" firstAttribute="top" secondItem="etM-X6-9SO" secondAttribute="bottom" constant="20" id="VbB-fi-rCl"/>
+                            <constraint firstItem="HnN-ee-TjK" firstAttribute="trailing" secondItem="3YY-YL-82i" secondAttribute="trailing" constant="20" id="YPD-Zz-bSA"/>
+                            <constraint firstItem="Khz-0Q-sPV" firstAttribute="top" secondItem="HnN-ee-TjK" secondAttribute="top" constant="20" id="gxl-1R-rbO"/>
+                            <constraint firstItem="Khz-0Q-sPV" firstAttribute="leading" secondItem="HnN-ee-TjK" secondAttribute="leading" constant="20" id="jri-hP-WWI"/>
+                            <constraint firstItem="etM-X6-9SO" firstAttribute="leading" secondItem="HnN-ee-TjK" secondAttribute="leading" constant="10" id="t6q-rk-mEr"/>
+                            <constraint firstItem="HnN-ee-TjK" firstAttribute="trailing" secondItem="etM-X6-9SO" secondAttribute="trailing" constant="10" id="tB9-yN-cKl"/>
+                            <constraint firstItem="etM-X6-9SO" firstAttribute="top" secondItem="Khz-0Q-sPV" secondAttribute="bottom" constant="8" id="zOV-X7-pxk"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="HnN-ee-TjK"/>
                     </view>
-                    <navigationItem key="navigationItem" id="M5t-rk-5Rs"/>
+                    <navigationItem key="navigationItem" title="Recording Detail" id="M5t-rk-5Rs"/>
                     <connections>
-                        <outlet property="recordingUrlLabel" destination="etM-X6-9SO" id="flE-aH-AjV"/>
+                        <outlet property="recordingDetailLabel" destination="3YY-YL-82i" id="yw7-gO-J78"/>
+                        <outlet property="recordingIdLabel" destination="etM-X6-9SO" id="flE-aH-AjV"/>
+                        <outlet property="thumbnailImageView" destination="Khz-0Q-sPV" id="fVa-r0-EqF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VSr-UI-BZp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
