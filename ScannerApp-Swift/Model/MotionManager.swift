@@ -93,20 +93,21 @@ class MotionManager {
             createEmptyFile(fileUrl: gravityAsciiFileUrl)
         }
         
-        self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
+        self.motionManager.startDeviceMotionUpdates(using: .xArbitraryCorrectedZVertical, to: self.motionQueue) { (data, error) in
             if let validData = data {
                 self.numberOfMeasurements += 1
                 let motionData = MotionData(deviceMotion: validData)
 //                let motionData = MotionData(deviceMotion: validData, bootTime: self.bootTime)
-                
-                motionData.display()
-                
+
                 motionData.writeToFileInBinaryFormat(rotationRateFileUrl: self.rotationRateBinaryFileUrl, userAccelerationFileUrl: self.userAccelerationBinaryFileUrl, magneticFieldFileUrl: self.magneticFieldBinaryFileUrl, attitudeFileUrl: self.attitudeBinaryFileUrl, gravityFileUrl: self.gravityBinaryFileUrl)
-                
+
                 if self.isDebugMode {
+
+                    motionData.display()
+
                     motionData.writeToFileInAsciiFormat(rotationRateFileUrl: self.rotationRateAsciiFileUrl, userAccelerationFileUrl: self.userAccelerationAsciiFileUrl, magneticFieldFileUrl: self.magneticFieldAsciiFileUrl, attitudeFileUrl: self.attitudeAsciiFileUrl, gravityFileUrl: self.gravityAsciiFileUrl)
                 }
-                
+
             } else {
                 print("there is some problem with motion data")
             }
