@@ -13,7 +13,8 @@ class RecordingDetailViewController: UIViewController {
     var recordingUrl: URL?
     
     @IBOutlet weak var scrollView: UIScrollView!
-
+    @IBOutlet weak var contentView: UIView!
+    
     @IBOutlet weak var thumbnailImageView: UIImageView!
     
     @IBOutlet private weak var recordingIdLabel: UILabel!
@@ -24,7 +25,6 @@ class RecordingDetailViewController: UIViewController {
         super.viewDidLoad()
         
         populateView()
-        configurateScrollViewContentSize()
         
     }
 
@@ -72,18 +72,5 @@ class RecordingDetailViewController: UIViewController {
         } else {
             print("Internal error!\nRecording url is not valid.")
         }
-    }
-    
-    private func configurateScrollViewContentSize() {
-        
-        thumbnailImageView.sizeToFit()
-        recordingIdLabel.sizeToFit()
-        recordingDetailLabel.sizeToFit()
-        
-        let emptySpaceHeight = CGFloat(50)
-        let height = emptySpaceHeight + thumbnailImageView.frame.height + recordingIdLabel.frame.height + recordingDetailLabel.frame.height
-        let width = scrollView.frame.width
-
-        scrollView.contentSize = CGSize(width: width, height: height)
     }
 }
