@@ -52,7 +52,7 @@ Corresponding view controller
 
 * ```CameraViewController```
 
-```CameraViewController``` utilizes [```AVCaptureSession```](https://developer.apple.com/documentation/avfoundation/avcapturesession) to capture rgb video stream with built-in camera sensor (e.g. wide-angle camera). Please refer to [useful links](#useful-links-for-video-capturing-on-ios-devices) section below for more information about AVCaptureSession configuation and more.
+```CameraViewController``` utilizes [```AVCaptureSession```](https://developer.apple.com/documentation/avfoundation/avcapturesession) to capture rgb video stream with built-in camera sensor (e.g. wide-angle camera). Please refer to [useful links](#useful-links-for-video-capturing-on-ios-devices) section below for more information about iOS video capturing, configuation and more.
 
 #### viewDidLoad()
 
@@ -77,11 +77,11 @@ This function is called when "Stop" button is pressed. It ends the video and mot
 
 Related classes
 
-* [MotionManager](#motionmanager)
-* [MotionData](#motiondata)
-* [MetaData](#metadata)
-* [PreviewView](#previewview)
-* [UserDefaultsExtension](#userdefaultsextension)
+* [```MotionManager```](#motionmanager)
+* [```MotionData```](#motiondata)
+* [```MetaData```](#metadata)
+* [```PreviewView```](#previewview)
+* [```UserDefaultsExtension```](#userdefaultsextension)
 
 ### Dual Camera View
 
@@ -103,8 +103,8 @@ Corresponding view controller
 
 Related classes
 
-* [LibraryTableViewCell](#librarytableviewcell)
-* [HttpRequestHandler](#httprequesthandler)
+* [```LibraryTableViewCell```](#librarytableviewcell)
+* [```HttpRequestHandler```](#httprequesthandler)
 
 ### Configuration View
 
@@ -116,7 +116,7 @@ Corresponding view controller
 
 Related class
 
-* [UserDefaultsExtension](#userdefaultsextension)
+* [```UserDefaultsExtension```](#userdefaultsextension)
 
 ### Other Files
 
@@ -124,7 +124,7 @@ Related class
 
 ```MotionManager``` handles motion data recording for the project. To start and stop motion data recording, simply call ```startRecoring(dataPathString: String, fileId: String)```  and ```stopRecording()``` (use ```stopRecordingAndReturnNumberOfMeasurements()``` or ```stopRecordingAndReturnStreamInfo()``` when needed).
 
-While recording, whenever ```motionManager``` (a ```CMMotionManager``` instance) receives a valid reading of motion data, a [```MotionData```](#motiondata) object will be instantiated and writing to file operation will be performed. Please see ```startRecording()``` (where ```CMMotionManager.startDeviceMotionUpdates(...)``` is called) for implementation.
+While recording, whenever ```motionManager``` (a ```CMMotionManager``` instance) receives a valid reading of motion data, a [```MotionData```](#motiondata) object will be instantiated and writing to file operation will be performed. Please see ```startRecording()``` (near where ```CMMotionManager.startDeviceMotionUpdates(...)``` is called) for implementation.
 
 Useful links
 
