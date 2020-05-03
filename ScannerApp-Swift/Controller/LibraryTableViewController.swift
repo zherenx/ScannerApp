@@ -11,7 +11,7 @@ import UIKit
 class LibraryTableViewController: UITableViewController {
     
     private let fileManager = FileManager.default
-    private let cellIdentifier = "scanTableViewCell"
+    private let cellIdentifier = "libraryTableViewCell"
     
     private var fileURLs: [URL] = []
     

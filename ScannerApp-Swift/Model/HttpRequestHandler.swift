@@ -36,8 +36,8 @@ class HttpRequestHandler: NSObject {
     func upload(toUpload url: URL) {
         
         if url.hasDirectoryPath {
-            let fileURLs = getFilesInDirectorySortedByFileSize(dirUrl: url)
-            uploadAllFilesOneByOne(fileURLs: fileURLs)
+            let fileUrls = getFilesInDirectorySortedByFileSize(dirUrl: url)
+            uploadAllFilesOneByOne(fileUrls: fileUrls)
         } else {
             uploadOneFile(url: url)
         }
@@ -72,15 +72,15 @@ class HttpRequestHandler: NSObject {
         task.resume()
     }
     
-    func uploadAllFilesOneByOne(fileURLs: [URL]) {
-        if fileURLs.isEmpty {
+    func uploadAllFilesOneByOne(fileUrls: [URL]) {
+        if fileUrls.isEmpty {
             if let delegate = self.httpRequestHandlerDelegate {
                 delegate.didCompletedUploadWithoutError()
             }
             return
         }
         
-        let currentFileUrl = fileURLs[0]
+        let currentFileUrl = fileUrls[0]
         
         var uploadRequest = URLRequest(url: uploadUrl)
         uploadRequest.allowsCellularAccess = false
@@ -135,9 +135,9 @@ class HttpRequestHandler: NSObject {
                 
                 print("verified \(currentFileUrl.lastPathComponent)")
                 
-                var newFileList = fileURLs
+                var newFileList = fileUrls
                 newFileList.remove(at: 0)
-                self.uploadAllFilesOneByOne(fileURLs: newFileList)
+                self.uploadAllFilesOneByOne(fileUrls: newFileList)
             })
             
             verifyTask.resume()
@@ -147,12 +147,12 @@ class HttpRequestHandler: NSObject {
     }
     
     private func getFilesInDirectorySortedByFileSize(dirUrl: URL) -> [URL] {
-        var fileURLs: [URL] = []
+        var fileUrls: [URL] = []
         
         do {
-            fileURLs = try FileManager.default.contentsOfDirectory(at: dirUrl, includingPropertiesForKeys: [.fileSizeKey])
+            fileUrls = try FileManager.default.contentsOfDirectory(at: dirUrl, includingPropertiesForKeys: [.fileSizeKey])
             
-            fileURLs = fileURLs.sorted(by: { (url1: URL, url2: URL) -> Bool in
+            fileUrls = fileUrls.sorted(by: { (url1: URL, url2: URL) -> Bool in
                 do {
                     let size1 = try url1.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
                     let size2 = try url2.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
@@ -168,7 +168,7 @@ class HttpRequestHandler: NSObject {
             print("Error while enumerating files \(dirUrl.path): \(error.localizedDescription)")
         }
         
-        return fileURLs
+        return fileUrls
     }
     
 }

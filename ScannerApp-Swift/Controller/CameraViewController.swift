@@ -67,6 +67,10 @@ class CameraViewController: UIViewController {
         self.configurateSession()
         
         self.loadUserDefaults()
+        
+        gpsLocation = [] // Do we want to enforce valid gps location?
+        updateGpsLocation()
+        
         self.configPopUpView()
         
     }
@@ -192,9 +196,6 @@ class CameraViewController: UIViewController {
         userInputDescription = UserDefaults.userInputDescription
         
         updateSceneType()
-        
-        gpsLocation = [] // Do we want to enforce valid gps location?
-        updateGpsLocation()
     }
     
     private func updateSceneType() {
