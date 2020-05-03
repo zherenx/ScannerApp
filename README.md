@@ -36,11 +36,12 @@ Views to code review (and corresponding view controllers)
 
 * Camera view (CameraViewController.swift)
 * Library view (LibraryViewController.swift)
+* Recording detail view (RecordingDetailViewController.swift)
 * Configuartion view (ConfiguationViewController.swift)
 
 DualCameraViewController is responsible for dual camera capture, which is not ready for code review.
 
-DepthViewController is a cl that I used to test the depth related API, which will not be included in any releases.
+DepthViewController is a class that I used to test the depth related API, which will not be included in any releases.
 
 ## Development Notes
 
@@ -105,6 +106,15 @@ Related classes
 
 * [```LibraryTableViewCell```](#librarytableviewcell)
 * [```HttpRequestHandler```](#httprequesthandler)
+* [```RecordingDetailViewController```](#recording-detail-view)
+
+### Recording Detail View
+
+Recording detail view shows detail information of a recording. Currently, it shows the video thumbnail and content of the metadate file.
+
+Corresponding view controller
+
+* ```RecordingDetailViewController```
 
 ### Configuration View
 
