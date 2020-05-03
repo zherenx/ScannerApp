@@ -50,11 +50,11 @@ Camera view is responsible for (single camera) scanning.
 
 Corresponding view controller
 
-* CameraViewController
+* ```CameraViewController```
 
-CameraViewController utilizes [AVCaptureSession](https://developer.apple.com/documentation/avfoundation/avcapturesession) to capture rgb video stream with built-in camera sensor (e.g. wide-angle camera). Please refer to [useful links](#useful-links-for-video-capturing-on-ios-devices) section below for more information about AVCaptureSession configuation and more.
+```CameraViewController``` utilizes [```AVCaptureSession```](https://developer.apple.com/documentation/avfoundation/avcapturesession) to capture rgb video stream with built-in camera sensor (e.g. wide-angle camera). Please refer to [useful links](#useful-links-for-video-capturing-on-ios-devices) section below for more information about AVCaptureSession configuation and more.
 
-#### ViewDidLoad()
+#### viewDidLoad()
 
 * ```configurateSession()``` configurates things related to camera capture/AVCaptureSession
 * ```loadUserDefaults()``` reads from UserDefaults to class variables
@@ -68,7 +68,7 @@ CameraViewController utilizes [AVCaptureSession](https://developer.apple.com/doc
 When "Start" button (on the pop-up view) is pressed, ```startRecoring()``` is called and the recording is started. This function includes many things,
 
 * start rgb video capture
-* start motion data capture (using [MotionManager](#motionmanager))
+* start motion data capture (using [```MotionManager```](#motionmanager))
 * determine recording id and file save path
 
 #### stopRecording()
@@ -87,19 +87,19 @@ Related classes
 
 Corresponding view controller
 
-* DualCameraViewController
+* ```DualCameraViewController```
 
-DualCameraViewController utilizes [AVCaptureMultiCamSession](https://developer.apple.com/documentation/avfoundation/avcapturemulticamsession)
+```DualCameraViewController``` utilizes [```AVCaptureMultiCamSession```](https://developer.apple.com/documentation/avfoundation/avcapturemulticamsession)
 
 TODO:
 
-### Library Table View
+### Library View
 
-Library table view shows a list of previous recordings
+Library view shows a list of previous recordings
 
 Corresponding view controller
 
-* LibraryTableViewController
+* ```LibraryTableViewController```
 
 Related classes
 
@@ -112,7 +112,7 @@ Configuation view is for user input related
 
 Corresponding view controller
 
-* ConfiguationViewController
+* ```ConfiguationViewController```
 
 Related class
 
@@ -122,11 +122,9 @@ Related class
 
 #### MotionManager
 
-[link to file](ScannerApp-Swift/Model/MotionManager.swift)
+```MotionManager``` handles motion data recording for the project. To start and stop motion data recording, simply call ```startRecoring(dataPathString: String, fileId: String)```  and ```stopRecording()``` (use ```stopRecordingAndReturnNumberOfMeasurements()``` or ```stopRecordingAndReturnStreamInfo()``` when needed).
 
-MotionManager handles motion data recording for the project. To start and stop motion data recording, simply call ```startRecoring(dataPathString: String, fileId: String)```  and ```stopRecording()``` (use ```stopRecordingAndReturnNumberOfMeasurements()``` or ```stopRecordingAndReturnStreamInfo()``` when needed).
-
-While recording, whenever motionManager (a CMMotionManager instance) receives a valid reading of motion data, a [MotionData](#motiondata) object will be instantiated and writing to file operation will be performed. Please see ```startRecording()``` (where ```CMMotionManager.startDeviceMotionUpdates(...)``` is called) for implementation.
+While recording, whenever ```motionManager``` (a ```CMMotionManager``` instance) receives a valid reading of motion data, a [```MotionData```](#motiondata) object will be instantiated and writing to file operation will be performed. Please see ```startRecording()``` (where ```CMMotionManager.startDeviceMotionUpdates(...)``` is called) for implementation.
 
 Useful links
 
@@ -135,7 +133,7 @@ Useful links
 
 #### MotionData
 
-* a MotionData instance is constructed with a CMDeviceMotion instance (i.e. motion data from sensors)
+* a ```MotionData``` instance is constructed with a ```CMDeviceMotion``` instance (i.e. motion data from sensors)
 * has function to display itself and write to files (e.g. ```display()```, ```writeToFileInBinaryFormat()```, etc.)
 
 TODO: MotionData and MotionManager are somewhat coupled with each other, consider improve on this
@@ -146,17 +144,33 @@ TODO: MotionData and MotionManager are somewhat coupled with each other, conside
 * json encodable
 * has function to display itself and write to file (e.g. ```display()```, ```writeToFile()```)
 
+Some notes about metadata
+
+* device id
+  * the app is currently using [```identifierForVendor```](https://developer.apple.com/documentation/uikit/uidevice/1620059-identifierforvendor) as the unique identifier for a device
+* device model code
+  * ```Helper.getDeviceModelCode()``` is responsible for getting the model code (e.g. ```iPhone7,2```)
+  * the model code can be uniqlely mapped to an Apple device model (e.g. ```iPhone7,2``` is iPhone 6)
+
+Useful links
+
+* some device info is available in [UIDevice](https://developer.apple.com/documentation/uikit/uidevice)
+* some links related to getting device model code and model code mapping
+  * <https://stackoverflow.com/questions/26028918/how-to-determine-the-current-iphone-device-model>
+  * <https://www.tutorialspoint.com/how-to-determine-device-type-iphone-ipod-touch-with-iphone-sdk>
+  * <https://gist.github.com/adamawolf/3048717>
+
 #### HttpRequestHandler
 
 * handle http request related (e.g. upload, verify)
 * ```uploadAllFilesOneByOne(fileUrls: [URL])```
   * under current setup, the "upload" button on the library view is essentially calling this function
-  * this function uploads files specified by fileUrls from small to large recursively
+  * this function uploads files specified by ```fileUrls``` from small to large recursively
   * a verify request is sent after each upload request complete
 
 #### UserDefaultsExtension
 
-* an extension to the UserDefaults class
+* an extension to the ```UserDefaults``` class
 * contains implementation of project specific UserDefaults behavior
 * default value for UserDefaults (if necessary) can be specified here
 * nil value for UserDefaults can be prevented here (if necessary)
@@ -173,6 +187,10 @@ TODO: MotionData and MotionManager are somewhat coupled with each other, conside
 
 * this file copied from Apple's sample app
 * responsible for previewing color camera capturing
+
+#### LibraryTableViewCell
+
+* define behavior for cell in library view
 
 ## Useful Links for Video Capturing on iOS Devices
 
