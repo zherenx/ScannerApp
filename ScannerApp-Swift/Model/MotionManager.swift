@@ -46,7 +46,7 @@ class MotionManager {
 //        bootTime = Helper.bootTime()!
     }
     
-    func startRecording(dataPathString: String, fileId: String) {
+    func startRecording(dataPathString: String, recordingId: String) {
         if isRecording {
             // TODO: do something
             return
@@ -56,23 +56,23 @@ class MotionManager {
         numberOfMeasurements = 0
         isDebugMode = UserDefaults.debugFlag
         
-        let rotationRatePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.RotationRate.fileExtension)!)
+        let rotationRatePath = (dataPathString as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension(Constants.Sensor.Imu.RotationRate.fileExtension)!)
         rotationRateBinaryFileUrl = URL(fileURLWithPath: rotationRatePath)
         createEmptyFile(fileUrl: rotationRateBinaryFileUrl)
 
-        let userAccelerationPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.UserAcceleration.fileExtension)!)
+        let userAccelerationPath = (dataPathString as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension(Constants.Sensor.Imu.UserAcceleration.fileExtension)!)
         userAccelerationBinaryFileUrl = URL(fileURLWithPath: userAccelerationPath)
         createEmptyFile(fileUrl: userAccelerationBinaryFileUrl)
 
-        let magneticFieldPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.MagneticField.fileExtension)!)
+        let magneticFieldPath = (dataPathString as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension(Constants.Sensor.Imu.MagneticField.fileExtension)!)
         magneticFieldBinaryFileUrl = URL(fileURLWithPath: magneticFieldPath)
         createEmptyFile(fileUrl: magneticFieldBinaryFileUrl)
 
-        let attitudePath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.Attitude.fileExtension)!)
+        let attitudePath = (dataPathString as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension(Constants.Sensor.Imu.Attitude.fileExtension)!)
         attitudeBinaryFileUrl = URL(fileURLWithPath: attitudePath)
         createEmptyFile(fileUrl: attitudeBinaryFileUrl)
 
-        let gravityPath = (dataPathString as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension(Constants.Sensor.Imu.Gravity.fileExtension)!)
+        let gravityPath = (dataPathString as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension(Constants.Sensor.Imu.Gravity.fileExtension)!)
         gravityBinaryFileUrl = URL(fileURLWithPath: gravityPath)
         createEmptyFile(fileUrl: gravityBinaryFileUrl)
         

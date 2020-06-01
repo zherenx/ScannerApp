@@ -80,22 +80,22 @@ class LibraryTableViewController: UITableViewController {
 
 extension LibraryTableViewController: LibraryTableViewCellDelegate {
     
-    func deleteSuccess(fileId: String) {
+    func deleteSuccess(recordingId: String) {
         loadFiles()
         tableView.reloadData()
     }
     
-    func deleteFailed(fileId: String) {
+    func deleteFailed(recordingId: String) {
         loadFiles()
         tableView.reloadData()
-        Helper.showToast(controller: self, message: "Failed to delete \(fileId)", seconds: 1)
+        Helper.showToast(controller: self, message: "Failed to delete \(recordingId)", seconds: 1)
     }
     
-    func didCompletedUploadWithError(fileId: String) {
-        Helper.showToast(controller: self, message: "Failed to upload \(fileId)", seconds: 1)
+    func didCompletedUploadWithError(recordingId: String) {
+        Helper.showToast(controller: self, message: "Failed to upload \(recordingId)", seconds: 1)
     }
     
-    func didCompletedUploadWithoutError(fileId: String) {
-        Helper.showToast(controller: self, message: "All files in \(fileId) have been uploaded", seconds: 1)
+    func didCompletedUploadWithoutError(recordingId: String) {
+        Helper.showToast(controller: self, message: "All files in \(recordingId) have been uploaded", seconds: 1)
     }
 }

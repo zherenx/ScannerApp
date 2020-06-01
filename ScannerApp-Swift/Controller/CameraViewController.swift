@@ -27,7 +27,7 @@ class CameraViewController: UIViewController {
     private var focalLength: [Float]!
     private var principalPoint: [Float]!
     
-    private var fileId: String!
+    private var recordingId: String!
     private var movieFilePath: String!
     private var metadataPath: String!
     
@@ -321,13 +321,13 @@ class CameraViewController: UIViewController {
             dateFormatter.dateFormat = "yyyyMMdd'T'hhmmssZZZ"
             let dateString = dateFormatter.string(from: Date())
             
-            self.fileId = dateString + "_" + UIDevice.current.identifierForVendor!.uuidString
+            self.recordingId = dateString + "_" + UIDevice.current.identifierForVendor!.uuidString
             
             let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
             
             // create new directory for new recording
             let docURL = URL(string: documentsDirectory)!
-            let dataPath = docURL.appendingPathComponent(self.fileId)
+            let dataPath = docURL.appendingPathComponent(self.recordingId)
             if !FileManager.default.fileExists(atPath: dataPath.absoluteString) {
                 do {
                     try FileManager.default.createDirectory(atPath: dataPath.absoluteString, withIntermediateDirectories: true, attributes: nil)
@@ -339,16 +339,16 @@ class CameraViewController: UIViewController {
             let dataPathString = dataPath.absoluteString
             
             // save metadata path, it will be used when recording is finished
-            self.metadataPath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension("json")!)
+            self.metadataPath = (dataPathString as NSString).appendingPathComponent((self.recordingId as NSString).appendingPathExtension("json")!)
             
             // TODO:
             // Camera data
             
             // Motion data
-            self.motionManager.startRecording(dataPathString: dataPathString, fileId: self.fileId)
+            self.motionManager.startRecording(dataPathString: dataPathString, recordingId: self.recordingId)
             
             // Video
-            self.movieFilePath = (dataPathString as NSString).appendingPathComponent((self.fileId as NSString).appendingPathExtension(Constants.Sensor.Camera.fileExtension)!)
+            self.movieFilePath = (dataPathString as NSString).appendingPathComponent((self.recordingId as NSString).appendingPathExtension(Constants.Sensor.Camera.fileExtension)!)
             self.movieFileOutput.startRecording(to: URL(fileURLWithPath: self.movieFilePath), recordingDelegate: self)
         }
     }
@@ -381,7 +381,7 @@ class CameraViewController: UIViewController {
             
         }
         
-        Helper.showToast(controller: self, message: "Finish recording\nfile prefix: \(fileId)", seconds: 1)
+        Helper.showToast(controller: self, message: "Finish recording\nfile prefix: \(recordingId)", seconds: 1)
         
         videoIsReady = false
     }

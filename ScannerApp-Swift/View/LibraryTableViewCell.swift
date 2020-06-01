@@ -10,10 +10,10 @@ import AVFoundation
 import UIKit
 
 protocol LibraryTableViewCellDelegate {
-    func deleteSuccess(fileId: String)
-    func deleteFailed(fileId: String)
-    func didCompletedUploadWithError(fileId: String)
-    func didCompletedUploadWithoutError(fileId: String)
+    func deleteSuccess(recordingId: String)
+    func deleteFailed(recordingId: String)
+    func didCompletedUploadWithError(recordingId: String)
+    func didCompletedUploadWithoutError(recordingId: String)
 }
 
 class LibraryTableViewCell: UITableViewCell {
@@ -89,10 +89,10 @@ class LibraryTableViewCell: UITableViewCell {
     @IBAction func deleteButtonTapped(_ sender: Any) {
         do {
             try FileManager.default.removeItem(at: url)
-            scanTableViewCellDelegate.deleteSuccess(fileId: url.lastPathComponent)
+            scanTableViewCellDelegate.deleteSuccess(recordingId: url.lastPathComponent)
         } catch {
             print("failed to remove \(url.absoluteString)")
-            scanTableViewCellDelegate.deleteFailed(fileId: url.lastPathComponent)
+            scanTableViewCellDelegate.deleteFailed(recordingId: url.lastPathComponent)
         }
     }
 }
@@ -113,7 +113,7 @@ extension LibraryTableViewCell: HttpRequestHandlerDelegate {
             self.deleteButton.isEnabled = true
             self.uploadProgressView.isHidden = true
             
-            self.scanTableViewCellDelegate.didCompletedUploadWithError(fileId: self.url.lastPathComponent)
+            self.scanTableViewCellDelegate.didCompletedUploadWithError(recordingId: self.url.lastPathComponent)
         }
     }
     
@@ -123,7 +123,7 @@ extension LibraryTableViewCell: HttpRequestHandlerDelegate {
             self.deleteButton.isEnabled = true
             self.uploadProgressView.isHidden = true
             
-            self.scanTableViewCellDelegate.didCompletedUploadWithoutError(fileId: self.url.lastPathComponent)
+            self.scanTableViewCellDelegate.didCompletedUploadWithoutError(recordingId: self.url.lastPathComponent)
         }
     }
 }
