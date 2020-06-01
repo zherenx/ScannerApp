@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="L1p-2W-pSb">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="L1p-2W-pSb">
     <device id="retina6_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -100,38 +100,38 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="21" translatesAutoresizingMaskIntoConstraints="NO" id="Aa6-uh-Bj2">
-                                <rect key="frame" x="160" y="382" width="94" height="132"/>
+                                <rect key="frame" x="160" y="356.66666666666669" width="94" height="183.00000000000006"/>
                                 <subviews>
-                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KLC-Ov-bZB">
-                                        <rect key="frame" x="0.0" y="0.0" width="94" height="0.0"/>
+                                    <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KLC-Ov-bZB">
+                                        <rect key="frame" x="0.0" y="0.0" width="94" height="30"/>
                                         <state key="normal" title="DualCam"/>
                                         <connections>
                                             <segue destination="hbE-un-H6B" kind="show" id="ANJ-GO-kC7"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N9K-PD-rNb">
-                                        <rect key="frame" x="0.0" y="0.0" width="94" height="30"/>
+                                        <rect key="frame" x="0.0" y="51" width="94" height="30"/>
                                         <state key="normal" title="Camera"/>
                                         <connections>
                                             <segue destination="iQQ-Hf-ehR" kind="show" id="ETW-fh-zis"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZgB-2w-6UE">
-                                        <rect key="frame" x="0.0" y="51" width="94" height="30"/>
+                                        <rect key="frame" x="0.0" y="102" width="94" height="30"/>
                                         <state key="normal" title="Library"/>
                                         <connections>
                                             <segue destination="toN-jm-P7c" kind="show" id="783-6t-LQC"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2wX-Kn-hHC">
-                                        <rect key="frame" x="0.0" y="102" width="94" height="30"/>
+                                        <rect key="frame" x="0.0" y="153" width="94" height="30"/>
                                         <state key="normal" title="Configuration"/>
                                         <connections>
                                             <segue destination="HH8-a4-OXI" kind="show" id="LKU-Si-3IT"/>
                                         </connections>
                                     </button>
                                     <button hidden="YES" opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NfC-UT-yAp">
-                                        <rect key="frame" x="0.0" y="132" width="94" height="0.0"/>
+                                        <rect key="frame" x="0.0" y="182.99999999999994" width="94" height="0.0"/>
                                         <state key="normal" title="TEST DEPTH"/>
                                         <connections>
                                             <segue destination="8Cb-Uv-t0a" kind="show" id="Uc3-qm-ysY"/>

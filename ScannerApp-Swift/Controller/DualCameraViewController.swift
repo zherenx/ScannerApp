@@ -106,13 +106,13 @@ class DualCameraViewController: UIViewController {
             return
         }
         
-        do {
-            try dualCameraDevice.lockForConfiguration()
-            dualCameraDevice.videoZoomFactor = 1.0
-            dualCameraDevice.unlockForConfiguration()
-        } catch {
-            print("Error")
-        }
+//        do {
+//            try dualCameraDevice.lockForConfiguration()
+//            dualCameraDevice.videoZoomFactor = 1.0
+//            dualCameraDevice.unlockForConfiguration()
+//        } catch {
+//            print("Error")
+//        }
         
         if let wide = AVCaptureDevice.default(.builtInWideAngleCamera, for: nil, position: .back), let tele = AVCaptureDevice.default(.builtInTelephotoCamera, for: nil, position: .back) {
             self.extrinsics = AVCaptureDevice.extrinsicMatrix(from: tele, to: wide)
@@ -230,84 +230,67 @@ class DualCameraViewController: UIViewController {
         
         self.sessionQueue.async {
             if self.isRecording {
-                
-//                if !self.wideAngleCameraOutput.isRecording {
-//                    print("Error, wide-angle camera should be recording but it is not")
-//                }
-//                if !self.telephotoCameraOutput.isRecording {
-//                    print("Error, telephoto camera should be recording but it is not")
-//                }
-                
-                self.wideAngleCameraOutput.stopRecording()
-                self.telephotoCameraOutput.stopRecording()
-                
-//                self.motionManager.stopDeviceMotionUpdates()
-//                fclose(self.imuFilePointer)
+                self.stopRecording()
             } else {
-                
-//                if self.wideAngleCameraOutput.isRecording {
-//                    print("Error, wide-angle camera should not be recording at the moment")
-//                }
-//                if self.telephotoCameraOutput.isRecording {
-//                    print("Error, telephoto camera should not be recording at the moment")
-//                }
-                
-                if UIDevice.current.isMultitaskingSupported {
-                    self.backgroundRecordingID = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
-                }
-                
-                let wideAngleOutputConnection = self.wideAngleCameraOutput.connection(with: .video)
-//                wideAngleOutputConnection?.videoOrientation = .landscapeRight
-                let wideAngleAvailableVideoCodecTypes = self.wideAngleCameraOutput.availableVideoCodecTypes
-                if wideAngleAvailableVideoCodecTypes.contains(.hevc) {
-                    self.wideAngleCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: wideAngleOutputConnection!)
-                }
-                
-                let telephoteOutputConnection = self.telephotoCameraOutput.connection(with: .video)
-//                telephoteOutputConnection?.videoOrientation = .landscapeRight
-                let telephotoAvailableVideoCodecTypes = self.telephotoCameraOutput.availableVideoCodecTypes
-                if telephotoAvailableVideoCodecTypes.contains(.hevc) {
-                    self.telephotoCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: telephoteOutputConnection!)
-                }
-                
-                let fileId = NSUUID().uuidString
-                let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-                
-                // Metadata
-//                let metadataPath = (documentsDirectory as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("txt")!)
-//                let metadata = Metadata(colorWidth: 16, colorHeight: 9, depthWidth: 16, depthHeight: 9, deviceId: "0001", deviceName: "device", sceneLabel: "?", sceneType: "?", username: "Hello world")
-//                //                metadata.display()
-//                metadata.writeToFileInBinaryFormat(filepath: metadataPath)
-                
-                // TODO:
-                // Camera data
-                
-                // Motion data
-//                let motionDataPath = (documentsDirectory as NSString).appendingPathComponent((fileId as NSString).appendingPathExtension("imu")!)
-//                self.imuFilePointer = fopen(motionDataPath, "w")
-//                self.motionManager.startDeviceMotionUpdates(to: self.motionQueue) { (data, error) in
-//                    if let validData = data {
-//                        let motionData = MotionData(deviceMotion: validData)
-//                        //                        motionData.display()
-//                        motionData.writeToFileInBinaryFormat(filePointer: self.imuFilePointer!)
-//                    } else {
-//                        print("there is some problem with motion data")
-//                    }
-//                }
-                
-                // Video
-                let wideAngleFilename = fileId + "wide"
-                let wideAnglePath = (documentsDirectory as NSString).appendingPathComponent((wideAngleFilename as NSString).appendingPathExtension("mov")!)
-                
-                let telephotoFilename = fileId + "tele"
-                let telephotoPath = (documentsDirectory as NSString).appendingPathComponent((telephotoFilename as NSString).appendingPathExtension("mov")!)
-                
-                self.wideAngleCameraOutput.startRecording(to: URL(fileURLWithPath: wideAnglePath), recordingDelegate: self)
-                self.telephotoCameraOutput.startRecording(to: URL(fileURLWithPath: telephotoPath), recordingDelegate: self)
-                
-                self.isRecording = true
+                self.startRecoring()
             }
         }
+    }
+    
+    private func startRecoring() {
+        
+//        if self.wideAngleCameraOutput.isRecording {
+//            print("Error, wide-angle camera should not be recording at the moment")
+//        }
+//        if self.telephotoCameraOutput.isRecording {
+//            print("Error, telephoto camera should not be recording at the moment")
+//        }
+        
+        if UIDevice.current.isMultitaskingSupported {
+            self.backgroundRecordingID = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
+        }
+        
+        let wideAngleOutputConnection = self.wideAngleCameraOutput.connection(with: .video)
+        wideAngleOutputConnection?.videoOrientation = .landscapeRight
+        //                let wideAngleAvailableVideoCodecTypes = self.wideAngleCameraOutput.availableVideoCodecTypes
+        //                if wideAngleAvailableVideoCodecTypes.contains(.hevc) {
+        //                    self.wideAngleCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: wideAngleOutputConnection!)
+        //                }
+        
+        let telephoteOutputConnection = self.telephotoCameraOutput.connection(with: .video)
+        telephoteOutputConnection?.videoOrientation = .landscapeRight
+        //                let telephotoAvailableVideoCodecTypes = self.telephotoCameraOutput.availableVideoCodecTypes
+        //                if telephotoAvailableVideoCodecTypes.contains(.hevc) {
+        //                    self.telephotoCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: telephoteOutputConnection!)
+        //                }
+        
+        let recordingId = Helper.getRecordingId()
+        let recordingDataDirectoryPath = Helper.getRecordingDataDirectoryPath(recordingId: recordingId)
+        
+        // Video
+        let wideAngleFilename = recordingId + "-wide"
+        let wideAnglePath = (recordingDataDirectoryPath as NSString).appendingPathComponent((wideAngleFilename as NSString).appendingPathExtension("mp4")!)
+        
+        let telephotoFilename = recordingId + "-tele"
+        let telephotoPath = (recordingDataDirectoryPath as NSString).appendingPathComponent((telephotoFilename as NSString).appendingPathExtension("mp4")!)
+        
+        self.wideAngleCameraOutput.startRecording(to: URL(fileURLWithPath: wideAnglePath), recordingDelegate: self)
+        self.telephotoCameraOutput.startRecording(to: URL(fileURLWithPath: telephotoPath), recordingDelegate: self)
+        
+        self.isRecording = true
+    }
+    
+    private func stopRecording() {
+        
+//        if !self.wideAngleCameraOutput.isRecording {
+//            print("Error, wide-angle camera should be recording but it is not")
+//        }
+//        if !self.telephotoCameraOutput.isRecording {
+//            print("Error, telephoto camera should be recording but it is not")
+//        }
+        
+        self.wideAngleCameraOutput.stopRecording()
+        self.telephotoCameraOutput.stopRecording()
     }
 }
 
