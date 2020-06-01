@@ -431,10 +431,10 @@
             </objects>
             <point key="canvasLocation" x="138" y="992"/>
         </scene>
-        <!--Camera View Controller-->
+        <!--Single Camera View Controller-->
         <scene sceneID="BxD-mn-6TA">
             <objects>
-                <viewController id="iQQ-Hf-ehR" userLabel="Camera View Controller" customClass="CameraViewController" customModule="ScannerApp_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="iQQ-Hf-ehR" userLabel="Single Camera View Controller" customClass="SingleCameraViewController" customModule="ScannerApp_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Xwx-G2-6Vz">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

@@ -25,6 +25,7 @@
 		FE19F8BA23B6070F00CF174E /* Metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE19F8B923B6070F00CF174E /* Metadata.swift */; };
 		FE19F8BE23B754BD00CF174E /* MotionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE19F8BD23B754BD00CF174E /* MotionData.swift */; };
 		FE1E41CE242451CE00216886 /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE1E41CD242451CE00216886 /* MotionManager.swift */; };
+		FE4729352484EAA70093A98B /* SingleCameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE4729342484EAA70093A98B /* SingleCameraViewController.swift */; };
 		FE82409623BB42C500ADB6CC /* HttpRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE82409523BB42C500ADB6CC /* HttpRequestHandler.swift */; };
 		FE975BAD245107DE00DAB6CB /* UserDefaultsExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE975BAC245107DE00DAB6CB /* UserDefaultsExtension.swift */; };
 		FE975BAF245396E900DAB6CB /* RecordingDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE975BAE245396E900DAB6CB /* RecordingDetailViewController.swift */; };
@@ -52,6 +53,7 @@
 		FE19F8B923B6070F00CF174E /* Metadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metadata.swift; sourceTree = "<group>"; };
 		FE19F8BD23B754BD00CF174E /* MotionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionData.swift; sourceTree = "<group>"; };
 		FE1E41CD242451CE00216886 /* MotionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
+		FE4729342484EAA70093A98B /* SingleCameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleCameraViewController.swift; sourceTree = "<group>"; };
 		FE82409523BB42C500ADB6CC /* HttpRequestHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpRequestHandler.swift; sourceTree = "<group>"; };
 		FE975BAC245107DE00DAB6CB /* UserDefaultsExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsExtension.swift; sourceTree = "<group>"; };
 		FE975BAE245396E900DAB6CB /* RecordingDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingDetailViewController.swift; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 			children = (
 				FE09456423AD7061003A1CA5 /* ViewController.swift */,
 				FE09457423ADFAAF003A1CA5 /* CameraViewController.swift */,
+				FE4729342484EAA70093A98B /* SingleCameraViewController.swift */,
 				FE09458423B1C020003A1CA5 /* DualCameraViewController.swift */,
 				FE09457823B0ACBD003A1CA5 /* LibraryTableViewController.swift */,
 				FE975BAE245396E900DAB6CB /* RecordingDetailViewController.swift */,
@@ -224,6 +227,7 @@
 				FE09456123AD7061003A1CA5 /* AppDelegate.swift in Sources */,
 				FE975BAD245107DE00DAB6CB /* UserDefaultsExtension.swift in Sources */,
 				FE1E41CE242451CE00216886 /* MotionManager.swift in Sources */,
+				FE4729352484EAA70093A98B /* SingleCameraViewController.swift in Sources */,
 				FE975BAF245396E900DAB6CB /* RecordingDetailViewController.swift in Sources */,
 				FE09457923B0ACBD003A1CA5 /* LibraryTableViewController.swift in Sources */,
 				FE82409623BB42C500ADB6CC /* HttpRequestHandler.swift in Sources */,
