@@ -317,38 +317,21 @@ class CameraViewController: UIViewController {
             
             movieFileOutputConnection?.videoOrientation = .landscapeRight
             
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyyMMdd'T'hhmmssZZZ"
-            let dateString = dateFormatter.string(from: Date())
+            self.recordingId = Helper.getRecordingId()
             
-            self.recordingId = dateString + "_" + UIDevice.current.identifierForVendor!.uuidString
-            
-            let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-            
-            // create new directory for new recording
-            let docURL = URL(string: documentsDirectory)!
-            let dataPath = docURL.appendingPathComponent(self.recordingId)
-            if !FileManager.default.fileExists(atPath: dataPath.absoluteString) {
-                do {
-                    try FileManager.default.createDirectory(atPath: dataPath.absoluteString, withIntermediateDirectories: true, attributes: nil)
-                } catch {
-                    print(error.localizedDescription);
-                }
-            }
-            
-            let dataPathString = dataPath.absoluteString
+            let recordingDataDirectoryPath = Helper.getRecordingDataDirectoryPath(recordingId: self.recordingId)
             
             // save metadata path, it will be used when recording is finished
-            self.metadataPath = (dataPathString as NSString).appendingPathComponent((self.recordingId as NSString).appendingPathExtension("json")!)
+            self.metadataPath = (recordingDataDirectoryPath as NSString).appendingPathComponent((self.recordingId as NSString).appendingPathExtension("json")!)
             
             // TODO:
             // Camera data
             
             // Motion data
-            self.motionManager.startRecording(dataPathString: dataPathString, recordingId: self.recordingId)
+            self.motionManager.startRecording(dataPathString: recordingDataDirectoryPath, recordingId: self.recordingId)
             
             // Video
-            self.movieFilePath = (dataPathString as NSString).appendingPathComponent((self.recordingId as NSString).appendingPathExtension(Constants.Sensor.Camera.fileExtension)!)
+            self.movieFilePath = (recordingDataDirectoryPath as NSString).appendingPathComponent((self.recordingId as NSString).appendingPathExtension(Constants.Sensor.Camera.fileExtension)!)
             self.movieFileOutput.startRecording(to: URL(fileURLWithPath: self.movieFilePath), recordingDelegate: self)
         }
     }
