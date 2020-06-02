@@ -182,7 +182,7 @@ class CameraViewController: UIViewController {
                 self.backgroundRecordingID = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
             }
             
-            self.recordingId = self.getRecordingId()
+            self.recordingId = self.generateRecordingId()
             
             let recordingDataDirectoryPath = self.getRecordingDataDirectoryPath(recordingId: self.recordingId)
             
@@ -248,7 +248,7 @@ class CameraViewController: UIViewController {
 }
 
 extension CameraViewController {
-    private func getRecordingId() -> String {
+    private func generateRecordingId() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyyMMdd'T'hhmmssZZZ"
         let dateString = dateFormatter.string(from: Date())
