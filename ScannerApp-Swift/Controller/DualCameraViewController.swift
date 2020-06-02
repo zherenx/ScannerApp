@@ -103,14 +103,6 @@ class DualCameraViewController: CameraViewController {
             return
         }
         
-//        do {
-//            try dualCameraDevice.lockForConfiguration()
-//            dualCameraDevice.videoZoomFactor = 1.0
-//            dualCameraDevice.unlockForConfiguration()
-//        } catch {
-//            print("Error")
-//        }
-        
         if let wide = AVCaptureDevice.default(.builtInWideAngleCamera, for: nil, position: .back), let tele = AVCaptureDevice.default(.builtInTelephotoCamera, for: nil, position: .back) {
             self.extrinsics = AVCaptureDevice.extrinsicMatrix(from: tele, to: wide)
             
@@ -128,6 +120,40 @@ class DualCameraViewController: CameraViewController {
                 print("Could not add dual camera device input")
                 setupResult = .configurationFailed
                 return
+            }
+            
+            // config video quality
+            let formats = dualCameraInput.device.formats
+            for format in formats {
+                if format.isMultiCamSupported {
+//                    print(format.formatDescription)
+                    
+//                    let codec = CMFormatDescriptionGetMediaType(format.formatDescription)
+                    let dims = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+                    
+                    if dims.width == 1920 && dims.height == 1080 {
+                        
+                        do {
+                            try dualCameraInput.device.lockForConfiguration()
+                            dualCameraInput.device.activeFormat = format
+                            dualCameraInput.device.unlockForConfiguration()
+                            break
+                        } catch {
+                            print("Fail to set activeFormat.")
+                        }
+                    }
+                }
+            }
+            
+            let targetFrameDuration = CMTimeMake(value: 1, timescale: Int32(Constants.Sensor.Camera.frequency))
+            dualCameraInput.videoMinFrameDurationOverride = targetFrameDuration
+            do {
+                try dualCameraInput.device.lockForConfiguration()
+                dualCameraInput.device.activeVideoMaxFrameDuration = targetFrameDuration
+                dualCameraInput.device.activeVideoMinFrameDuration = targetFrameDuration
+                dualCameraInput.device.unlockForConfiguration()
+            } catch {
+                print("Fail to set frame rate.")
             }
             
             session.addInputWithNoConnections(dualCameraInput)
