@@ -182,9 +182,9 @@ class CameraViewController: UIViewController {
                 self.backgroundRecordingID = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
             }
             
-            self.recordingId = Helper.getRecordingId()
+            self.recordingId = self.getRecordingId()
             
-            let recordingDataDirectoryPath = Helper.getRecordingDataDirectoryPath(recordingId: self.recordingId)
+            let recordingDataDirectoryPath = self.getRecordingDataDirectoryPath(recordingId: self.recordingId)
             
             // save metadata path, it will be used when recording is finished
             self.metadataPath = (recordingDataDirectoryPath as NSString).appendingPathComponent((self.recordingId as NSString).appendingPathExtension("json")!)
@@ -245,6 +245,36 @@ class CameraViewController: UIViewController {
         }
     }
     
+}
+
+extension CameraViewController {
+    private func getRecordingId() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd'T'hhmmssZZZ"
+        let dateString = dateFormatter.string(from: Date())
+        
+        let recordingId = dateString + "_" + UIDevice.current.identifierForVendor!.uuidString
+        
+        return recordingId
+    }
+    
+    private func getRecordingDataDirectoryPath(recordingId: String) -> String {
+        let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+        
+        // create new directory for new recording
+        let documentsDirectoryUrl = URL(string: documentsDirectory)!
+        let recordingDataDirectoryUrl = documentsDirectoryUrl.appendingPathComponent(recordingId)
+        if !FileManager.default.fileExists(atPath: recordingDataDirectoryUrl.absoluteString) {
+            do {
+                try FileManager.default.createDirectory(atPath: recordingDataDirectoryUrl.absoluteString, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print(error.localizedDescription);
+            }
+        }
+        
+        let recordingDataDirectoryPath = recordingDataDirectoryUrl.absoluteString
+        return recordingDataDirectoryPath
+    }
 }
 
 extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
