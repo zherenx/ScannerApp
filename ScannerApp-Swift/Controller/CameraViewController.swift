@@ -23,17 +23,27 @@ class CameraViewController: UIViewController {
     private var userInputDescription: String = ""
     private var sceneType: String?
     private var gpsLocation: [Double]!
+    private var colorResolution: [Int]!
+    private var focalLength: [Float]!
+    private var principalPoint: [Float]!
     
     private var recordingId: String!
+    private var movieFilePath: String!
     private var metadataPath: String!
     
-    private var isRecording: Bool = false
+    private var videoIsReady: Bool = false // this is a heck, consider improve it
     
-    internal let sessionQueue = DispatchQueue(label: "session queue")
+    private let session = AVCaptureSession()
+    
+    private let sessionQueue = DispatchQueue(label: "session queue")
+    
+    private var defaultVideoDevice: AVCaptureDevice?
+
+    private let movieFileOutput = AVCaptureMovieFileOutput()
     
     private var backgroundRecordingID: UIBackgroundTaskIdentifier?
     
-//    @IBOutlet private weak var previewView: PreviewView!
+    @IBOutlet private weak var previewView: PreviewView!
     @IBOutlet private weak var recordButton: UIButton!
     
     // pop-up view
@@ -51,12 +61,131 @@ class CameraViewController: UIViewController {
         
         locationManager.requestWhenInUseAuthorization()
         
+        self.previewView.videoPreviewLayer.session = self.session
+        
+        // TODO: order of these function calls might matter, consider improve on this
+        self.configurateSession()
+        
         self.loadUserDefaults()
         
         gpsLocation = [] // Do we want to enforce valid gps location?
         updateGpsLocation()
         
         self.configPopUpView()
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.sessionQueue.async {
+            self.session.startRunning()
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        
+        self.sessionQueue.async {
+            self.session.stopRunning()
+        }
+        
+        super.viewWillDisappear(animated)
+    }
+
+    private func configurateSession() {
+        self.session.beginConfiguration()
+        
+        do {
+            // Choose the back dual camera, if available, otherwise default to a wide angle camera.
+            if let dualCameraDevice = AVCaptureDevice.default(.builtInDualCamera, for: .video, position: .back) {
+                defaultVideoDevice = dualCameraDevice
+            } else if let backCameraDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) {
+                defaultVideoDevice = backCameraDevice
+            }
+            guard let videoDevice = defaultVideoDevice else {
+                print("Default video device is unavailable.")
+                session.commitConfiguration()
+                return
+            }
+            
+            do {
+                try videoDevice.lockForConfiguration()
+                
+                let targetFrameDuration = CMTimeMake(value: 1, timescale: Int32(Constants.Sensor.Camera.frequency))
+                videoDevice.activeVideoMaxFrameDuration = targetFrameDuration
+                videoDevice.activeVideoMinFrameDuration = targetFrameDuration
+                
+                videoDevice.unlockForConfiguration()
+            } catch {
+                print("Error configurating video device")
+            }
+
+            let videoDeviceInput = try AVCaptureDeviceInput(device: videoDevice)
+
+            if self.session.canAddInput(videoDeviceInput) {
+                self.session.addInput(videoDeviceInput)
+            } else {
+                print("Couldn't add video device input to the session.")
+                self.session.commitConfiguration()
+                return
+            }
+        } catch {
+            print("Couldn't create video device input: \(error)")
+            self.session.commitConfiguration()
+            return
+        }
+        
+        if self.session.canAddOutput(self.movieFileOutput) {
+            self.session.addOutput(self.movieFileOutput)
+            
+//            self.session.sessionPreset = .photo
+            self.session.sessionPreset = .hd1920x1080
+
+            if let connection = self.movieFileOutput.connection(with: .video) {
+                if connection.isVideoStabilizationSupported {
+                    connection.preferredVideoStabilizationMode = .auto
+                }
+                
+                connection.videoOrientation = .landscapeRight
+            }
+        }
+        
+        let videoFormatDescription = defaultVideoDevice!.activeFormat.formatDescription
+        let dimensions = CMVideoFormatDescriptionGetDimensions(videoFormatDescription)
+        
+        let width = Int(dimensions.width)
+        let height = Int(dimensions.height)
+        colorResolution = [width, height]
+        
+        // TODO: calculate these
+        let fov = defaultVideoDevice!.activeFormat.videoFieldOfView
+        let aspect = Float(width) / Float(height)
+        let t = tan(0.5 * fov)
+        
+        //            float fx = 0.5f * width / t;
+        //            float fy = 0.5f * height / t * aspect;
+        //
+        //            float mx = (float)(width - 1.0f) / 2.0f;
+        //            float my = (float)(height - 1.0f) / 2.0f;
+        
+        let fx = 0.5 * Float(width) / t
+        let fy = 0.5 * Float(height) / t
+        
+        let mx = Float(width - 1) / 2.0
+        let my = Float(height - 1) / 2.0
+        
+        focalLength = [fx, fy]
+        principalPoint = [mx, my]
+        
+//        print(fov)
+//        print(aspect)
+//        print(width)
+//        print(height)
+//        print(focalLength)
+//        print(principalPoint)
+        
+        self.session.commitConfiguration()
+        
     }
     
     private func loadUserDefaults() {
@@ -115,9 +244,8 @@ class CameraViewController: UIViewController {
             self.recordButton.isEnabled = false
         }
         
-        if isRecording {
-            self.stopRecording()
-        } else {
+        if !self.movieFileOutput.isRecording {
+            
             self.updateGpsLocation()
             
             DispatchQueue.main.async {
@@ -125,6 +253,9 @@ class CameraViewController: UIViewController {
             }
             
             self.updateStartButton()
+            
+        } else {
+            self.stopRecording()
         }
 
     }
@@ -182,9 +313,13 @@ class CameraViewController: UIViewController {
                 self.backgroundRecordingID = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
             }
             
-            self.recordingId = self.generateRecordingId()
+            let movieFileOutputConnection = self.movieFileOutput.connection(with: .video)
             
-            let recordingDataDirectoryPath = self.getRecordingDataDirectoryPath(recordingId: self.recordingId)
+            movieFileOutputConnection?.videoOrientation = .landscapeRight
+            
+            self.recordingId = Helper.getRecordingId()
+            
+            let recordingDataDirectoryPath = Helper.getRecordingDataDirectoryPath(recordingId: self.recordingId)
             
             // save metadata path, it will be used when recording is finished
             self.metadataPath = (recordingDataDirectoryPath as NSString).appendingPathComponent((self.recordingId as NSString).appendingPathExtension("json")!)
@@ -196,24 +331,30 @@ class CameraViewController: UIViewController {
             self.motionManager.startRecording(dataPathString: recordingDataDirectoryPath, recordingId: self.recordingId)
             
             // Video
-            self.startVideoRecording(recordingDataDirectoryPath: recordingDataDirectoryPath, recordingId: self.recordingId)
-            
-            self.isRecording = true
+            self.movieFilePath = (recordingDataDirectoryPath as NSString).appendingPathComponent((self.recordingId as NSString).appendingPathExtension(Constants.Sensor.Camera.fileExtension)!)
+            self.movieFileOutput.startRecording(to: URL(fileURLWithPath: self.movieFilePath), recordingDelegate: self)
         }
-    }
-    
-    internal func startVideoRecording(recordingDataDirectoryPath: String, recordingId: String) {
-        // TODO: implement default behavior
     }
     
     private func stopRecording() {
         sessionQueue.async {
             
+            self.movieFileOutput.stopRecording()
+            
             var streamInfo: [StreamInfo] = self.motionManager.stopRecordingAndReturnStreamInfo()
             
-            let cameraStreamInfo = self.stopVideoRecordingAndReturnStreamInfo()
+            while !self.videoIsReady {
+                // this is a heck
+                // wait until video is ready
+                print("waiting for video ...")
+                usleep(10000)
+            }
+            // get number of frames when video is ready
+            let numColorFrames = VideoHelper.getNumberOfFrames(videoUrl: URL(fileURLWithPath: self.movieFilePath))
             
-            streamInfo.append(contentsOf: cameraStreamInfo)
+            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: Constants.Sensor.Camera.type, encoding: Constants.EncodingCode.h264, frequency: Constants.Sensor.Camera.frequency, num_frames: numColorFrames, resolution: self.colorResolution, focal_length: self.focalLength, principal_point: self.principalPoint, extrinsics_matrix: nil)
+            
+            streamInfo.append(cameraStreamInfo)
             
             let username = self.firstName + " " + self.lastName
             let metadata = Metadata(username: username, userInputDescription: self.userInputDescription, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: streamInfo)
@@ -221,16 +362,11 @@ class CameraViewController: UIViewController {
             metadata.display()
             metadata.writeToFile(filepath: self.metadataPath)
             
-            self.isRecording = false
-            
         }
         
         Helper.showToast(controller: self, message: "Finish recording\nfile prefix: \(recordingId)", seconds: 1)
-    }
-    
-    internal func stopVideoRecordingAndReturnStreamInfo() -> [CameraStreamInfo] {
-        // TODO: implement default behavior
-        return []
+        
+        videoIsReady = false
     }
     
     // TODO: Move this to Helper
@@ -245,36 +381,6 @@ class CameraViewController: UIViewController {
         }
     }
     
-}
-
-extension CameraViewController {
-    private func generateRecordingId() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyyMMdd'T'hhmmssZZZ"
-        let dateString = dateFormatter.string(from: Date())
-        
-        let recordingId = dateString + "_" + UIDevice.current.identifierForVendor!.uuidString
-        
-        return recordingId
-    }
-    
-    private func getRecordingDataDirectoryPath(recordingId: String) -> String {
-        let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-        
-        // create new directory for new recording
-        let documentsDirectoryUrl = URL(string: documentsDirectory)!
-        let recordingDataDirectoryUrl = documentsDirectoryUrl.appendingPathComponent(recordingId)
-        if !FileManager.default.fileExists(atPath: recordingDataDirectoryUrl.absoluteString) {
-            do {
-                try FileManager.default.createDirectory(atPath: recordingDataDirectoryUrl.absoluteString, withIntermediateDirectories: true, attributes: nil)
-            } catch {
-                print(error.localizedDescription);
-            }
-        }
-        
-        let recordingDataDirectoryPath = recordingDataDirectoryUrl.absoluteString
-        return recordingDataDirectoryPath
-    }
 }
 
 extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
@@ -319,6 +425,8 @@ extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
             self.recordButton.backgroundColor = .systemBlue
             self.recordButton.isEnabled = true
         }
+        
+        videoIsReady = true
     }
 }
 

@@ -78,6 +78,35 @@ struct Helper {
         return identifier
     }
     
+    // TODO: include this function in doc
+    static func getRecordingId() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyyMMdd'T'hhmmssZZZ"
+        let dateString = dateFormatter.string(from: Date())
+        
+        let recordingId = dateString + "_" + UIDevice.current.identifierForVendor!.uuidString
+        
+        return recordingId
+    }
+    
+    static func getRecordingDataDirectoryPath(recordingId: String) -> String {
+        let documentsDirectory = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+        
+        // create new directory for new recording
+        let documentsDirectoryUrl = URL(string: documentsDirectory)!
+        let recordingDataDirectoryUrl = documentsDirectoryUrl.appendingPathComponent(recordingId)
+        if !FileManager.default.fileExists(atPath: recordingDataDirectoryUrl.absoluteString) {
+            do {
+                try FileManager.default.createDirectory(atPath: recordingDataDirectoryUrl.absoluteString, withIntermediateDirectories: true, attributes: nil)
+            } catch {
+                print(error.localizedDescription);
+            }
+        }
+        
+        let recordingDataDirectoryPath = recordingDataDirectoryUrl.absoluteString
+        return recordingDataDirectoryPath
+    }
+    
     // https://medium.com/@rushikeshT/displaying-simple-toast-in-ios-swift-57014cbb9ffa
     static func showToast(controller: UIViewController, message : String, seconds: Double) {
         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
