@@ -65,7 +65,7 @@ class CameraInfoRecorder {
             
             self.count = 0
             
-            let filePath = (dirPath as NSString).appendingPathComponent((filename as NSString).appendingPathExtension("cam")!)
+            let filePath = (dirPath as NSString).appendingPathComponent((filename as NSString).appendingPathExtension("jsonl")!)
             self.fileUrl = URL(fileURLWithPath: filePath)
             FileManager.default.createFile(atPath: self.fileUrl!.path, contents: nil, attributes: nil)
             
@@ -82,7 +82,7 @@ class CameraInfoRecorder {
         cameraInfoQueue.async {
             print("Saving camera info \(self.count) ...")
             
-            print(cameraInfo.getJsonEncoding())
+//            print(cameraInfo.getJsonEncoding())
             self.fileHandle?.write((cameraInfo.getJsonEncoding() + "\n").data(using: .utf8)!)
             
             self.count += 1
