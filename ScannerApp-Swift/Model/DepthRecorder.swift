@@ -20,7 +20,7 @@ class DepthRecorder {
     
     private var count: Int32 = 0
     
-    func prepareForDepthRecording(dirPath: String, filename: String) {
+    func prepareForRecording(dirPath: String, filename: String) {
         
         depthQueue.async {
             
@@ -95,6 +95,8 @@ class DepthRecorder {
         
     }
     
+    // TODO: Float16 is available in iOS 14.0 or newer, which is unexpected, need to consider alternative if this method is needed
+    @available(iOS 14.0, *)
     private func displayDepthValues(buffer: CVPixelBuffer) {
         CVPixelBufferLockBaseAddress(buffer, .readOnly)
         
@@ -125,6 +127,7 @@ class DepthRecorder {
         CVPixelBufferUnlockBaseAddress(buffer, .readOnly)
     }
     
+    @available(iOS 14.0, *)
     private func convertF32DepthMapToF16PixelByPixelAndWriteToFile(buffer: CVPixelBuffer) {
         CVPixelBufferLockBaseAddress(buffer, .readOnly)
         

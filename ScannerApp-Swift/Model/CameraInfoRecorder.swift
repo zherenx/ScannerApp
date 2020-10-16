@@ -59,7 +59,7 @@ class CameraInfoRecorder {
     
     private var count: Int32 = 0
     
-    func prepareForDepthRecording(dirPath: String, filename: String) {
+    func prepareForRecording(dirPath: String, filename: String) {
         
         cameraInfoQueue.async {
             

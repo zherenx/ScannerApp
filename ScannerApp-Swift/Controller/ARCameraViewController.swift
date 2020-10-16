@@ -10,6 +10,7 @@ import ARKit
 import RealityKit
 import UIKit
 
+@available(iOS 14.0, *)
 class ARCameraViewController: UIViewController {
     
 //    let session = ARSession()
@@ -20,21 +21,17 @@ class ARCameraViewController: UIViewController {
     
     var count: Int32 = 0
     var dirUrl: URL!
+    var recordingId: String!
     var isRecording: Bool = false
     
     var cameraIntrinsic: simd_float3x3?
     
     @IBOutlet weak var arView: ARView!
     @IBOutlet weak var recordButton: UIButton!
-    @IBOutlet weak var uploadButton: UIButton!
-    @IBOutlet weak var deleteButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        
-        dirUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        print(dirUrl.absoluteString)
         
         arView.session.delegate = self
 //        session.delegate = self
@@ -55,77 +52,56 @@ class ARCameraViewController: UIViewController {
     
     @IBAction func recordButtonTapped(_ sender: Any) {
         if isRecording {
-            
-            print("post count: \(count)")
-            
-            isRecording = false
-            
-            depthRecorder.finishRecording()
-            movieRecorder.finishRecording()
-            cameraInfoRecorder.finishRecording()
-            
-            saveCameraIntrinsic()
-            
-            DispatchQueue.main.async {
-                self.recordButton.setTitle("Record", for: .normal)
-                self.recordButton.backgroundColor = .none
-            }
-            
+            stopRecording()
         } else {
-            count = 0
-            
-            cameraIntrinsic = arView.session.currentFrame?.camera.intrinsics
-            
-            print("pre1 count: \(count)")
-            
-            depthRecorder.prepareForDepthRecording(dirPath: dirUrl.path, filename: "testDepth")
-            movieRecorder.prepareForRecording(dirPath: dirUrl.path, filenameWithoutExt: "testVideo")
-            cameraInfoRecorder.prepareForDepthRecording(dirPath: dirUrl.path, filename: "testCamInfo")
-            
-            isRecording = true
-            DispatchQueue.main.async {
-                self.recordButton.setTitle("Recording...", for: .normal)
-                self.recordButton.backgroundColor = .systemRed
-            }
-            
-            print("pre2 count: \(count)")
-            
+            startRecording()
         }
     }
     
-    @IBAction func uploadButtonTapped(_ sender: Any) {
+    private func startRecording() {
+        count = 0
+        
+        cameraIntrinsic = arView.session.currentFrame?.camera.intrinsics
+        
+        print("pre1 count: \(count)")
+        
+        recordingId = Helper.getRecordingId()
+        dirUrl = URL(fileURLWithPath: Helper.getRecordingDataDirectoryPath(recordingId: recordingId))
+        
+        depthRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
+        movieRecorder.prepareForRecording(dirPath: dirUrl.path, filenameWithoutExt: recordingId)
+        cameraInfoRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
+        
+        isRecording = true
         DispatchQueue.main.async {
-            self.uploadButton.isEnabled = false
-            self.deleteButton.isEnabled = false
+            self.recordButton.setTitle("Recording...", for: .normal)
+            self.recordButton.backgroundColor = .systemRed
         }
         
-        let requestHandler = HttpRequestHandler(delegate: self)
-        requestHandler.upload(toUpload: dirUrl)
+        print("pre2 count: \(count)")
     }
     
-    @IBAction func deleteButtonTapped(_ sender: Any) {
+    private func stopRecording() {
+        print("post count: \(count)")
         
-        print("Removing files ...")
+        isRecording = false
         
-        do {
-            let fileUrls = try FileManager.default.contentsOfDirectory(at: dirUrl, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-            for fileUrl in fileUrls {
-                try FileManager.default.removeItem(at: fileUrl)
-                
-                print("Removed \(fileUrl.lastPathComponent).")
-                
-            }
-        } catch {
-            print(error)
-            
+        depthRecorder.finishRecording()
+        movieRecorder.finishRecording()
+        cameraInfoRecorder.finishRecording()
+        
+        saveCameraIntrinsic()
+        
+        DispatchQueue.main.async {
+            self.recordButton.setTitle("Record", for: .normal)
+            self.recordButton.backgroundColor = .none
         }
-        
     }
     
     private func saveCameraIntrinsic() {
         
         if cameraIntrinsic != nil {
-            let filePath = (dirUrl.path as NSString).appendingPathComponent(("testCameraIntrinsic" as NSString).appendingPathExtension("txt")!)
+            let filePath = (dirUrl.path as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("txt")!)
             let cameraIntrinsicArray = [cameraIntrinsic!.columns.0.x, cameraIntrinsic!.columns.0.y, cameraIntrinsic!.columns.0.z,
                                         cameraIntrinsic!.columns.1.x, cameraIntrinsic!.columns.1.y, cameraIntrinsic!.columns.1.z,
                                         cameraIntrinsic!.columns.2.x, cameraIntrinsic!.columns.2.y, cameraIntrinsic!.columns.2.z]
@@ -138,7 +114,8 @@ class ARCameraViewController: UIViewController {
     
 }
 
-extension ViewController: ARSessionDelegate {
+@available(iOS 14.0, *)
+extension ARCameraViewController: ARSessionDelegate {
     
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
         
@@ -159,80 +136,18 @@ extension ViewController: ARSessionDelegate {
         let timestamp: CMTime = CMTime(seconds: frame.timestamp, preferredTimescale: 1_000_000_000)
 
         print("**** @Controller: depth \(count) ****")
-//        depthRecorder.displayBufferInfo(buffer: depthMap)
         depthRecorder.update(buffer: depthMap)
 
         print("**** @Controller: color \(count) ****")
-//        depthRecorder.displayBufferInfo(buffer: colorImage)
         movieRecorder.update(buffer: colorImage, timestamp: timestamp)
         print()
     
-        
-        
-        
         let currentCameraInfo = CameraInfo(timestamp: frame.timestamp,
                                            transform: frame.camera.transform,
                                            eulerAngles: frame.camera.eulerAngles,
                                            exposureDuration: frame.camera.exposureDuration)
         cameraInfoRecorder.update(cameraInfo: currentCameraInfo)
         
-        
-        
-        
-        
-        // the smoothedSceneDepth thing does not work with the below code
-//        guard let depthData = frame.smoothedSceneDepth else {
-//            print("Failed to acquire depth data.")
-//            return
-//        }
-//
-//        let depthMap: CVPixelBuffer = depthData.depthMap
-//        depthRecorder.displayBufferInfo(buffer: depthMap)
-        
-        
-//        print("Saving color-\(count)...")
-//        savePixelBufferAsPng(cvPixelBuffer: colorImage, url: dirUrl.appendingPathComponent("color-\(count).png"))
-//
-//        print("Saving depth-\(count)...")
-//        savePixelBufferAsPng(cvPixelBuffer: depthMap, url: dirUrl.appendingPathComponent("depth-\(count).png"))
-        
         count += 1
-    }
-    
-    private func savePixelBufferAsPng(cvPixelBuffer: CVPixelBuffer, url: URL) {
-        let ciImage = CIImage.init(cvImageBuffer: cvPixelBuffer)
-        let data = UIImage.init(ciImage: ciImage).pngData()
-        
-        do {
-            try data?.write(to: url)
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-}
-
-extension ViewController: HttpRequestHandlerDelegate {
-    
-    func didReceiveUploadProgressUpdate(progress: Float) {
-        print("Uploading... \(progress)")
-    }
-    
-    func didCompletedUploadWithError() {
-
-        DispatchQueue.main.async {
-            self.uploadButton.isEnabled = true
-            self.deleteButton.isEnabled = true
-            
-            print("Upload failed.")
-        }
-    }
-    
-    func didCompletedUploadWithoutError() {
-        DispatchQueue.main.async {
-            self.uploadButton.isEnabled = true
-            self.deleteButton.isEnabled = true
-            
-            print("Upload Succeeded.")
-        }
     }
 }

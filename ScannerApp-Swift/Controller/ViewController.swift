@@ -7,11 +7,13 @@
 //
 
 import UIKit
+import ARKit
 import AVFoundation
 
 class ViewController: UIViewController {
     
     @IBOutlet weak var dualCamButton: UIButton!
+    @IBOutlet weak var lidarDepthButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,6 +21,14 @@ class ViewController: UIViewController {
         dualCamButton.isEnabled = false
         if #available(iOS 13.0, *), AVCaptureMultiCamSession.isMultiCamSupported {
             dualCamButton.isEnabled = true
+        } else {
+            dualCamButton.isEnabled = false
+        }
+        
+        if #available(iOS 14.0, *), ARWorldTrackingConfiguration.supportsFrameSemantics(.sceneDepth) {
+            lidarDepthButton.isEnabled = true
+        } else {
+            lidarDepthButton.isEnabled = false
         }
     }
     
