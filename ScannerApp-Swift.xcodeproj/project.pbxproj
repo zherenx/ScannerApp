@@ -30,7 +30,7 @@
 		FE975BAF245396E900DAB6CB /* RecordingDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE975BAE245396E900DAB6CB /* RecordingDetailViewController.swift */; };
 		FE975BB12453BFF800DAB6CB /* VideoHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE975BB02453BFF800DAB6CB /* VideoHelper.swift */; };
 		FEF6FD5025391AF900C3060B /* ARCameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEF6FD4F25391AF900C3060B /* ARCameraViewController.swift */; };
-		FEF6FD562539375300C3060B /* MovieRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEF6FD522539375200C3060B /* MovieRecorder.swift */; };
+		FEF6FD562539375300C3060B /* RGBRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEF6FD522539375200C3060B /* RGBRecorder.swift */; };
 		FEF6FD572539375300C3060B /* CameraInfoRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEF6FD532539375200C3060B /* CameraInfoRecorder.swift */; };
 		FEF6FD582539375300C3060B /* Compressor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEF6FD542539375300C3060B /* Compressor.swift */; };
 		FEF6FD592539375300C3060B /* DepthRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEF6FD552539375300C3060B /* DepthRecorder.swift */; };
@@ -62,7 +62,7 @@
 		FE975BAE245396E900DAB6CB /* RecordingDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingDetailViewController.swift; sourceTree = "<group>"; };
 		FE975BB02453BFF800DAB6CB /* VideoHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoHelper.swift; sourceTree = "<group>"; };
 		FEF6FD4F25391AF900C3060B /* ARCameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCameraViewController.swift; sourceTree = "<group>"; };
-		FEF6FD522539375200C3060B /* MovieRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieRecorder.swift; sourceTree = "<group>"; };
+		FEF6FD522539375200C3060B /* RGBRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RGBRecorder.swift; sourceTree = "<group>"; };
 		FEF6FD532539375200C3060B /* CameraInfoRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraInfoRecorder.swift; sourceTree = "<group>"; };
 		FEF6FD542539375300C3060B /* Compressor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Compressor.swift; sourceTree = "<group>"; };
 		FEF6FD552539375300C3060B /* DepthRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DepthRecorder.swift; sourceTree = "<group>"; };
@@ -130,7 +130,7 @@
 				FEF6FD532539375200C3060B /* CameraInfoRecorder.swift */,
 				FEF6FD542539375300C3060B /* Compressor.swift */,
 				FEF6FD552539375300C3060B /* DepthRecorder.swift */,
-				FEF6FD522539375200C3060B /* MovieRecorder.swift */,
+				FEF6FD522539375200C3060B /* RGBRecorder.swift */,
 				FE975BAC245107DE00DAB6CB /* UserDefaultsExtension.swift */,
 				FE02EE2E23F61A9C000BD9EE /* Constants.swift */,
 				FE02EE2C23F1D102000BD9EE /* Helper.swift */,
@@ -236,7 +236,7 @@
 				FE02EE2B23F0C750000BD9EE /* ConfigurationViewController.swift in Sources */,
 				FE975BB12453BFF800DAB6CB /* VideoHelper.swift in Sources */,
 				FEF6FD5025391AF900C3060B /* ARCameraViewController.swift in Sources */,
-				FEF6FD562539375300C3060B /* MovieRecorder.swift in Sources */,
+				FEF6FD562539375300C3060B /* RGBRecorder.swift in Sources */,
 				FE19F8BE23B754BD00CF174E /* MotionData.swift in Sources */,
 				FEF6FD582539375300C3060B /* Compressor.swift in Sources */,
 				FE09456123AD7061003A1CA5 /* AppDelegate.swift in Sources */,

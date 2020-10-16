@@ -11,7 +11,7 @@
 import AVFoundation
 import Foundation
 
-class MovieRecorder {
+class RGBRecorder {
     
     // I'm not sure if a separate queue is necessary
     private let movieQueue = DispatchQueue(label: "movie queue")

@@ -16,15 +16,17 @@ class ARCameraViewController: UIViewController {
 //    let session = ARSession()
     
     let depthRecorder = DepthRecorder()
-    let movieRecorder = MovieRecorder(videoSettings: [AVVideoCodecKey: AVVideoCodecType.h264, AVVideoHeightKey: NSNumber(value: 1440), AVVideoWidthKey: NSNumber(value: 1920)])
+    let rgbRecorder = RGBRecorder(videoSettings: [AVVideoCodecKey: AVVideoCodecType.h264, AVVideoHeightKey: NSNumber(value: 1440), AVVideoWidthKey: NSNumber(value: 1920)])
     let cameraInfoRecorder = CameraInfoRecorder()
     
-    var count: Int32 = 0
+    var numFrames: Int = 0
     var dirUrl: URL!
     var recordingId: String!
     var isRecording: Bool = false
     
     var cameraIntrinsic: simd_float3x3?
+    var colorFrameResolution: CGSize?
+    var frequency: Int?
     
     @IBOutlet weak var arView: ARView!
     @IBOutlet weak var recordButton: UIButton!
@@ -46,6 +48,10 @@ class ARCameraViewController: UIViewController {
 //        session.run(configuration)
         arView.session.run(configuration)
         
+        let videoFormat = configuration.videoFormat
+        frequency = videoFormat.framesPerSecond
+        colorFrameResolution = videoFormat.imageResolution
+        
         // The screen shouldn't dim during AR experiences.
         UIApplication.shared.isIdleTimerDisabled = true
     }
@@ -59,17 +65,21 @@ class ARCameraViewController: UIViewController {
     }
     
     private func startRecording() {
-        count = 0
+        numFrames = 0
         
-        cameraIntrinsic = arView.session.currentFrame?.camera.intrinsics
+        if let currentFrame = arView.session.currentFrame {
+            cameraIntrinsic = currentFrame.camera.intrinsics
+            
+                // TODO: maybe get depth format here?
+        }
         
-        print("pre1 count: \(count)")
+        print("pre1 count: \(numFrames)")
         
         recordingId = Helper.getRecordingId()
         dirUrl = URL(fileURLWithPath: Helper.getRecordingDataDirectoryPath(recordingId: recordingId))
         
         depthRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
-        movieRecorder.prepareForRecording(dirPath: dirUrl.path, filenameWithoutExt: recordingId)
+        rgbRecorder.prepareForRecording(dirPath: dirUrl.path, filenameWithoutExt: recordingId)
         cameraInfoRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
         
         isRecording = true
@@ -78,23 +88,24 @@ class ARCameraViewController: UIViewController {
             self.recordButton.backgroundColor = .systemRed
         }
         
-        print("pre2 count: \(count)")
+        print("pre2 count: \(numFrames)")
     }
     
     private func stopRecording() {
-        print("post count: \(count)")
+        print("post count: \(numFrames)")
         
         isRecording = false
         
         depthRecorder.finishRecording()
-        movieRecorder.finishRecording()
+        rgbRecorder.finishRecording()
         cameraInfoRecorder.finishRecording()
         
         saveCameraIntrinsic()
+        saveMetadata()
         
         DispatchQueue.main.async {
             self.recordButton.setTitle("Record", for: .normal)
-            self.recordButton.backgroundColor = .none
+            self.recordButton.backgroundColor = .systemBlue
         }
     }
     
@@ -109,6 +120,10 @@ class ARCameraViewController: UIViewController {
         } else {
             print("Camera intrinsic matrix not found.")
         }
+        
+    }
+    
+    private func saveMetadata() {
         
     }
     
@@ -135,11 +150,11 @@ extension ARCameraViewController: ARSessionDelegate {
 
         let timestamp: CMTime = CMTime(seconds: frame.timestamp, preferredTimescale: 1_000_000_000)
 
-        print("**** @Controller: depth \(count) ****")
+        print("**** @Controller: depth \(numFrames) ****")
         depthRecorder.update(buffer: depthMap)
 
-        print("**** @Controller: color \(count) ****")
-        movieRecorder.update(buffer: colorImage, timestamp: timestamp)
+        print("**** @Controller: color \(numFrames) ****")
+        rgbRecorder.update(buffer: colorImage, timestamp: timestamp)
         print()
     
         let currentCameraInfo = CameraInfo(timestamp: frame.timestamp,
@@ -148,6 +163,6 @@ extension ARCameraViewController: ARSessionDelegate {
                                            exposureDuration: frame.camera.exposureDuration)
         cameraInfoRecorder.update(cameraInfo: currentCameraInfo)
         
-        count += 1
+        numFrames += 1
     }
 }
