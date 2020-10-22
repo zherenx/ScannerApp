@@ -13,7 +13,7 @@ import UIKit
 @available(iOS 14.0, *)
 class ARCameraViewController: UIViewController {
     
-//    let session = ARSession()
+    let session = ARSession()
     
     let depthRecorder = DepthRecorder()
     let rgbRecorder = RGBRecorder(videoSettings: [AVVideoCodecKey: AVVideoCodecType.h264, AVVideoHeightKey: NSNumber(value: 1440), AVVideoWidthKey: NSNumber(value: 1920)])
@@ -35,8 +35,9 @@ class ARCameraViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        arView.session.delegate = self
-//        session.delegate = self
+//        arView.session.delegate = self
+        session.delegate = self
+        arView.session = session
 
     }
     
@@ -45,8 +46,8 @@ class ARCameraViewController: UIViewController {
         
         let configuration = ARWorldTrackingConfiguration()
         configuration.frameSemantics = .sceneDepth
-//        session.run(configuration)
-        arView.session.run(configuration)
+        session.run(configuration)
+//        arView.session.run(configuration)
         
         let videoFormat = configuration.videoFormat
         frequency = videoFormat.framesPerSecond
@@ -67,7 +68,7 @@ class ARCameraViewController: UIViewController {
     private func startRecording() {
         numFrames = 0
         
-        if let currentFrame = arView.session.currentFrame {
+        if let currentFrame = session.currentFrame {
             cameraIntrinsic = currentFrame.camera.intrinsics
             
                 // TODO: maybe get depth format here?
