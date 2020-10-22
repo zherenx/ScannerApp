@@ -34,6 +34,7 @@
 		FEF6FD572539375300C3060B /* CameraInfoRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEF6FD532539375200C3060B /* CameraInfoRecorder.swift */; };
 		FEF6FD582539375300C3060B /* Compressor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEF6FD542539375300C3060B /* Compressor.swift */; };
 		FEF6FD592539375300C3060B /* DepthRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEF6FD552539375300C3060B /* DepthRecorder.swift */; };
+		FEF6FD6625414CFA00C3060B /* PopUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEF6FD6525414CFA00C3060B /* PopUpView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -66,6 +67,7 @@
 		FEF6FD532539375200C3060B /* CameraInfoRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraInfoRecorder.swift; sourceTree = "<group>"; };
 		FEF6FD542539375300C3060B /* Compressor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Compressor.swift; sourceTree = "<group>"; };
 		FEF6FD552539375300C3060B /* DepthRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DepthRecorder.swift; sourceTree = "<group>"; };
+		FEF6FD6525414CFA00C3060B /* PopUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopUpView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +118,7 @@
 			children = (
 				FE09457623AE05C3003A1CA5 /* PreviewView.swift */,
 				FE09457C23B19A6F003A1CA5 /* LibraryTableViewCell.swift */,
+				FEF6FD6525414CFA00C3060B /* PopUpView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -240,6 +243,7 @@
 				FE19F8BE23B754BD00CF174E /* MotionData.swift in Sources */,
 				FEF6FD582539375300C3060B /* Compressor.swift in Sources */,
 				FE09456123AD7061003A1CA5 /* AppDelegate.swift in Sources */,
+				FEF6FD6625414CFA00C3060B /* PopUpView.swift in Sources */,
 				FE975BAD245107DE00DAB6CB /* UserDefaultsExtension.swift in Sources */,
 				FE1E41CE242451CE00216886 /* MotionManager.swift in Sources */,
 				FEF6FD592539375300C3060B /* DepthRecorder.swift in Sources */,
