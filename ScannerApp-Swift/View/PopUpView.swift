@@ -12,25 +12,27 @@ class PopUpView: UIView {
     
     private let sceneTypes = Constants.sceneTypes
 
-    private var firstName: String = ""
-    private var lastName: String = ""
-    private var userInputDescription: String = ""
-    private var sceneTypeIndex = 0
+    var firstName: String = ""
+    var lastName: String = ""
+    var userInputDescription: String = ""
+    var sceneTypeIndex = 0
 //    private var sceneType: String?
     
-    init(firstName: String, lastName: String, description: String, sceneTypeIndex: Int) {
+    init() {
         
-        self.firstName = firstName
-        self.lastName = lastName
-        self.userInputDescription = description
-        self.sceneTypeIndex = sceneTypeIndex
-        
-//        let frame = CGRect(x: 0, y: 0, width: <#T##Int#>, height: <#T##Int#>)
         super.init(frame: .zero)
         
-//        self.backgroundColor = .white
-//        self.alpha = 1
+        // load UserDefaults
+        firstName = UserDefaults.firstName
+        lastName = UserDefaults.lastName
+        userInputDescription = UserDefaults.userInputDescription
+        sceneTypeIndex = UserDefaults.sceneTypeIndex
         
+        firstNameTextField.text = firstName
+        lastNameTextField.text = lastName
+        descriptionTextField.text = userInputDescription
+        sceneTypePickerView.selectRow(sceneTypeIndex, inComponent: 0, animated: false)
+
         setupViews()
     }
     
@@ -56,47 +58,37 @@ class PopUpView: UIView {
         return lb
     }()
     
-//    let sceneTypeLabel: UILabel = {
-//        let lb = UILabel()
-//        lb.text = "Scene Type"
-//        return lb
-//    }()
-    
-    let firstNameTextField: UITextField = {
+    lazy var firstNameTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "Enter first name"
         tf.layer.borderColor = UIColor.lightGray.cgColor
         tf.layer.borderWidth = 1
+        tf.delegate = self
         return tf
     }()
     
-    let lastNameTextField: UITextField = {
+    lazy var lastNameTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "Enter last name"
         tf.layer.borderColor = UIColor.lightGray.cgColor
         tf.layer.borderWidth = 1
+        tf.delegate = self
         return tf
     }()
     
-    let descriptionTextField: UITextField = {
+    lazy var descriptionTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "Enter scene description"
         tf.layer.borderColor = UIColor.lightGray.cgColor
         tf.layer.borderWidth = 1
+        tf.delegate = self
         return tf
     }()
-    
-//    lazy var selectSceneTypeButton: UIButton = {
-//        let btn = UIButton(type: .system)
-//        btn.setTitle(sceneTypes[sceneTypeIndex], for: .normal)
-//        return btn
-//    }()
     
     lazy var sceneTypePickerView: UIPickerView = {
         let pv = UIPickerView()
         pv.delegate = self
         pv.dataSource = self
-//        pv.isHidden = true
         pv.selectRow(sceneTypeIndex, inComponent: 0, animated: false)
         return pv
     }()
@@ -116,7 +108,7 @@ class PopUpView: UIView {
     
     func setupViews() {
         
-//        self.translatesAutoresizingMaskIntoConstraints = false
+        self.translatesAutoresizingMaskIntoConstraints = false
         self.heightAnchor.constraint(equalToConstant: 420).isActive = true
         self.widthAnchor.constraint(equalToConstant: 330).isActive = true
         self.backgroundColor = UIColor(white: 1, alpha: 0.8)
@@ -191,6 +183,27 @@ class PopUpView: UIView {
         
     }
     
+    private func updateStartButton() {
+        DispatchQueue.main.async {
+            if self.hasAllRequiredUserInput() {
+                self.startButton.isEnabled = true
+            } else {
+                self.startButton.isEnabled = false
+            }
+        }
+    }
+    
+    private func hasAllRequiredUserInput() -> Bool {
+        if !firstName.isEmpty
+            && !lastName.isEmpty
+            && !userInputDescription.isEmpty
+            && sceneTypeIndex != 0 {
+            return true
+        } else {
+            return false
+        }
+    }
+    
 }
 
 extension PopUpView: UITextFieldDelegate {
@@ -211,21 +224,21 @@ extension PopUpView: UITextFieldDelegate {
         
         let text: String = (textField.text ?? "").trimmingCharacters(in: .whitespaces)
         
-        switch textField.tag {
-        case Constants.Tag.firstNameTag:
+        switch textField {
+        case firstNameTextField:
             firstName = text
             UserDefaults.set(firstName: text)
-        case Constants.Tag.lastNameTag:
+        case lastNameTextField:
             lastName = text
             UserDefaults.set(lastName: text)
-        case Constants.Tag.descriptionTag:
+        case descriptionTextField:
             userInputDescription = text
             UserDefaults.set(userInputDescription: text)
         default:
-            print("text field with tag \(textField.tag) is not found.")
+            print("text field '\(textField.description)' is not found.")
         }
         
-//        updateStartButton()
+        updateStartButton()
     }
 }
 
@@ -243,11 +256,10 @@ extension PopUpView: UIPickerViewDelegate, UIPickerViewDataSource {
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        sceneTypeIndex = row
         UserDefaults.set(sceneTypeIndex: row)
-//        selectSceneTypeButton.setTitle(sceneTypes[row], for: .normal)
-        
-//        updateSceneType()
-//        updateStartButton()
+
+        updateStartButton()
     }
 }
 
