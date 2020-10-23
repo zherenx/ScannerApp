@@ -160,27 +160,12 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
         rgbRecorder.finishRecording()
         cameraInfoRecorder.finishRecording()
         
-        saveCameraIntrinsic()
         saveMetadata()
         
         DispatchQueue.main.async {
             self.recordButton.setTitle("Record", for: .normal)
             self.recordButton.backgroundColor = .systemBlue
         }
-    }
-    
-    private func saveCameraIntrinsic() {
-        
-        if cameraIntrinsic != nil {
-            let filePath = (dirUrl.path as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("txt")!)
-            let cameraIntrinsicArray = [cameraIntrinsic!.columns.0.x, cameraIntrinsic!.columns.0.y, cameraIntrinsic!.columns.0.z,
-                                        cameraIntrinsic!.columns.1.x, cameraIntrinsic!.columns.1.y, cameraIntrinsic!.columns.1.z,
-                                        cameraIntrinsic!.columns.2.x, cameraIntrinsic!.columns.2.y, cameraIntrinsic!.columns.2.z]
-            FileManager.default.createFile(atPath: filePath, contents: "\(cameraIntrinsicArray)".data(using: .utf8), attributes: nil)
-        } else {
-            print("Camera intrinsic matrix not found.")
-        }
-        
     }
     
     private func saveMetadata() {
