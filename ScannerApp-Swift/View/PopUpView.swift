@@ -207,8 +207,13 @@ class PopUpView: UIView {
 }
 
 extension PopUpView: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textFieldDidUpdate(textField)
+    
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+
+        // disable start button when editing text field
+        DispatchQueue.main.async {
+            self.startButton.isEnabled = false
+        }
         
         return true
     }
