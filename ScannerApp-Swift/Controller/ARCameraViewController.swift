@@ -33,7 +33,8 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
     var gpsLocation: [Double] = []
     
     var cameraIntrinsic: simd_float3x3?
-    var colorFrameResolution: CGSize?
+    var colorFrameResolution: [Int] = []
+    var depthFrameResolution: [Int] = []
     var frequency: Int?
     
     @IBOutlet weak var arView: ARView!
@@ -81,7 +82,8 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
         
         let videoFormat = configuration.videoFormat
         frequency = videoFormat.framesPerSecond
-        colorFrameResolution = videoFormat.imageResolution
+        let imageResolution = videoFormat.imageResolution
+        colorFrameResolution = [Int(imageResolution.height), Int(imageResolution.width)]
         
         // The screen shouldn't dim during AR experiences.
         UIApplication.shared.isIdleTimerDisabled = true
@@ -110,7 +112,19 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
         if let currentFrame = session.currentFrame {
             cameraIntrinsic = currentFrame.camera.intrinsics
             
-                // TODO: maybe get depth format here?
+            // get depth resolution
+            if let depthData = currentFrame.sceneDepth {
+                
+                let depthMap: CVPixelBuffer = depthData.depthMap
+                let height = CVPixelBufferGetHeight(depthMap)
+                let width = CVPixelBufferGetWidth(depthMap)
+                
+                depthFrameResolution = [height, width]
+                
+            } else {
+                print("Unable to get depth resolution.")
+            }
+
         }
         
         print("pre1 count: \(numFrames)")
@@ -170,7 +184,22 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
     }
     
     private func saveMetadata() {
+        let username = popUpView.firstName + " " + popUpView.lastName
+        let sceneType = popUpView.sceneTypes[popUpView.sceneTypeIndex]
         
+        let cameraIntrinsicArray = [cameraIntrinsic!.columns.0.x, cameraIntrinsic!.columns.0.y, cameraIntrinsic!.columns.0.z,
+                                    cameraIntrinsic!.columns.1.x, cameraIntrinsic!.columns.1.y, cameraIntrinsic!.columns.1.z,
+                                    cameraIntrinsic!.columns.2.x, cameraIntrinsic!.columns.2.y, cameraIntrinsic!.columns.2.z]
+        let rgbStreamInfo = CameraStreamInfo(id: "color_back_1", type: "color_camera", encoding: "h264", frequency: frequency ?? 0, num_frames: numFrames, resolution: colorFrameResolution, intrinsics_matrix: cameraIntrinsicArray, extrinsics_matrix: nil)
+        let depthStreamInfo = CameraStreamInfo(id: "depth_back_1", type: "lidar_sensor", encoding: "float16_zlib", frequency: frequency ?? 0, num_frames: numFrames, resolution: depthFrameResolution, intrinsics_matrix: nil, extrinsics_matrix: nil)
+        let cameraInfoStreamInfo = StreamInfo(id: "camera_info_1", type: "camera_info", encoding: "jsonl", frequency: frequency ?? 0, num_frames: numFrames)
+        
+        let metadata = Metadata(username: username, userInputDescription: popUpView.userInputDescription, sceneType: sceneType, gpsLocation: gpsLocation, streams: [rgbStreamInfo, depthStreamInfo, cameraInfoStreamInfo])
+
+        let metadataPath = (dirUrl.path as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("json")!)
+        
+        metadata.display()
+        metadata.writeToFile(filepath: metadataPath)
     }
     
     // intended to be moved to Helper

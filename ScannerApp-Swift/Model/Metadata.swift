@@ -72,7 +72,7 @@ class CameraStreamInfo: StreamInfo {
         super.init(id: id, type: type, encoding: encoding, frequency: frequency, num_frames: num_frames)
     }
     
-    internal init(id: String, type: String, encoding: String, frequency: Int, num_frames: Int, resolution: [Int], intrinsics_matrix: [Float], extrinsics_matrix: [Float]?) {
+    internal init(id: String, type: String, encoding: String, frequency: Int, num_frames: Int, resolution: [Int], intrinsics_matrix: [Float]?, extrinsics_matrix: [Float]?) {
         self.resolution = resolution
         self.intrinsics_matrix = intrinsics_matrix
         self.extrinsics_matrix = extrinsics_matrix

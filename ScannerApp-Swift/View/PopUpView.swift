@@ -10,7 +10,7 @@ import UIKit
 
 class PopUpView: UIView {
     
-    private let sceneTypes = Constants.sceneTypes
+    let sceneTypes = Constants.sceneTypes
 
     var firstName: String = ""
     var lastName: String = ""
