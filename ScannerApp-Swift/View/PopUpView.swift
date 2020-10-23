@@ -18,6 +18,8 @@ class PopUpView: UIView {
     var sceneTypeIndex = 0
 //    private var sceneType: String?
     
+    private var textFieldIsBeingEdited: Bool = false
+    
     init() {
         
         super.init(frame: .zero)
@@ -200,7 +202,7 @@ class PopUpView: UIView {
     
     private func updateStartButton() {
         DispatchQueue.main.async {
-            if self.hasAllRequiredUserInput() {
+            if !self.textFieldIsBeingEdited && self.hasAllRequiredUserInput() {
                 self.startButton.isEnabled = true
             } else {
                 self.startButton.isEnabled = false
@@ -224,16 +226,17 @@ class PopUpView: UIView {
 extension PopUpView: UITextFieldDelegate {
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        
+        textFieldIsBeingEdited = true
 
         // disable start button when editing text field
-        DispatchQueue.main.async {
-            self.startButton.isEnabled = false
-        }
+        updateStartButton()
         
         return true
     }
     
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        textFieldIsBeingEdited = false
         textFieldDidUpdate(textField)
         
         return true
