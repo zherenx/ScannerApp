@@ -34,6 +34,7 @@ class PopUpView: UIView {
         sceneTypePickerView.selectRow(sceneTypeIndex, inComponent: 0, animated: false)
 
         setupViews()
+        updateStartButton()
     }
     
     required init?(coder: NSCoder) {
@@ -93,18 +94,32 @@ class PopUpView: UIView {
         return pv
     }()
     
+    weak var delegate: CameraViewControllerPopUpViewDelegate?
+    
     let cancelButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Cancel", for: .normal)
+        btn.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
         return btn
     }()
+    
+    @objc func cancelButtonTapped() {
+        print("Cancel button tapped")
+        delegate?.dismissPopUpView()
+    }
     
     let startButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setTitle("Start Recording", for: .normal)
         btn.isEnabled = false
+        btn.addTarget(self, action: #selector(startButtonTapped), for: .touchUpInside)
         return btn
     }()
+    
+    @objc func startButtonTapped() {
+        print("Start button tapped")
+        delegate?.startRecording()
+    }
     
     func setupViews() {
         
@@ -171,7 +186,7 @@ class PopUpView: UIView {
         cancelButton.topAnchor.constraint(equalTo: sceneTypePickerView.bottomAnchor, constant: 8).isActive = true
         cancelButton.leftAnchor.constraint(equalTo: leftAnchor, constant: 20).isActive = true
         cancelButton.rightAnchor.constraint(equalTo: centerXAnchor, constant: -20).isActive = true
-        cancelButton.backgroundColor = .yellow
+//        cancelButton.backgroundColor = .yellow
         
         addSubview(startButton)
         startButton.translatesAutoresizingMaskIntoConstraints = false
@@ -179,7 +194,7 @@ class PopUpView: UIView {
         startButton.topAnchor.constraint(equalTo: sceneTypePickerView.bottomAnchor, constant: 8).isActive = true
         startButton.leftAnchor.constraint(equalTo: centerXAnchor, constant: 20).isActive = true
         startButton.rightAnchor.constraint(equalTo: rightAnchor, constant: -20).isActive = true
-        startButton.backgroundColor = .yellow
+//        startButton.backgroundColor = .yellow
         
     }
     

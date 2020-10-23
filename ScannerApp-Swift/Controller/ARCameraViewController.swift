@@ -10,8 +10,13 @@ import ARKit
 import RealityKit
 import UIKit
 
+protocol CameraViewControllerPopUpViewDelegate: class {
+    func startRecording()
+    func dismissPopUpView()
+}
+
 @available(iOS 14.0, *)
-class ARCameraViewController: UIViewController {
+class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDelegate {
     
     let session = ARSession()
     
@@ -31,14 +36,37 @@ class ARCameraViewController: UIViewController {
     @IBOutlet weak var arView: ARView!
     @IBOutlet weak var recordButton: UIButton!
     
+    var popUpView: PopUpView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
+        setupPopUpView()
         
 //        arView.session.delegate = self
         session.delegate = self
         arView.session = session
 
+    }
+    
+    private func setupPopUpView() {
+        
+        popUpView = PopUpView()
+        popUpView.delegate = self
+        
+        view.addSubview(popUpView)
+        
+        popUpView.translatesAutoresizingMaskIntoConstraints = false
+        popUpView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        popUpView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+//        popUpView.widthAnchor.constraint(equalToConstant: 200).isActive = true
+//        popUpView.heightAnchor.constraint(equalToConstant: 200).isActive = true
+        
+        DispatchQueue.main.async {
+            self.popUpView.isHidden = true
+        }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -61,11 +89,18 @@ class ARCameraViewController: UIViewController {
         if isRecording {
             stopRecording()
         } else {
-            startRecording()
+            DispatchQueue.main.async {
+                self.popUpView.isHidden = false
+            }
         }
     }
     
-    private func startRecording() {
+    func startRecording() {
+        
+        DispatchQueue.main.async {
+            self.popUpView.isHidden = true
+        }
+        
         numFrames = 0
         
         if let currentFrame = session.currentFrame {
@@ -92,7 +127,13 @@ class ARCameraViewController: UIViewController {
         print("pre2 count: \(numFrames)")
     }
     
-    private func stopRecording() {
+    func dismissPopUpView() {
+        DispatchQueue.main.async {
+            self.popUpView.isHidden = true
+        }
+    }
+    
+    func stopRecording() {
         print("post count: \(numFrames)")
         
         isRecording = false
