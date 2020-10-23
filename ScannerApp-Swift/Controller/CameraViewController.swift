@@ -155,21 +155,15 @@ class CameraViewController: UIViewController {
         
         let width = Int(dimensions.width)
         let height = Int(dimensions.height)
-        colorResolution = [width, height]
+        colorResolution = [height, width]
         
-        // TODO: calculate these
         let fov = defaultVideoDevice!.activeFormat.videoFieldOfView
         let aspect = Float(width) / Float(height)
-        let t = tan(0.5 * fov)
-        
-        //            float fx = 0.5f * width / t;
-        //            float fy = 0.5f * height / t * aspect;
-        //
-        //            float mx = (float)(width - 1.0f) / 2.0f;
-        //            float my = (float)(height - 1.0f) / 2.0f;
+        let t = tan((0.5 * fov) * Float.pi / 180)
         
         let fx = 0.5 * Float(width) / t
-        let fy = 0.5 * Float(height) / t
+//        let fy = 0.5 * Float(height) / t
+        let fy = fx
         
         let mx = Float(width - 1) / 2.0
         let my = Float(height - 1) / 2.0
