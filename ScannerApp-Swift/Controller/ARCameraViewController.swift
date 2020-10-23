@@ -29,6 +29,9 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
     var recordingId: String!
     var isRecording: Bool = false
     
+    let locationManager = CLLocationManager()
+    var gpsLocation: [Double] = []
+    
     var cameraIntrinsic: simd_float3x3?
     var colorFrameResolution: CGSize?
     var frequency: Int?
@@ -48,6 +51,7 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
         session.delegate = self
         arView.session = session
 
+        locationManager.requestWhenInUseAuthorization()
     }
     
     private func setupPopUpView() {
@@ -60,8 +64,6 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
         popUpView.translatesAutoresizingMaskIntoConstraints = false
         popUpView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         popUpView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-//        popUpView.widthAnchor.constraint(equalToConstant: 200).isActive = true
-//        popUpView.heightAnchor.constraint(equalToConstant: 200).isActive = true
         
         DispatchQueue.main.async {
             self.popUpView.isHidden = true
@@ -100,6 +102,8 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
         DispatchQueue.main.async {
             self.popUpView.isHidden = true
         }
+        
+        gpsLocation = getGpsLocation()
         
         numFrames = 0
         
@@ -167,6 +171,24 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
     
     private func saveMetadata() {
         
+    }
+    
+    // intended to be moved to Helper
+    // this assume gps authorization has been done previously
+    private func getGpsLocation() -> [Double] {
+        let locationManager = CLLocationManager()
+//        locationManager.requestWhenInUseAuthorization()
+        
+        var gpsLocation: [Double] = []
+        
+        if (CLLocationManager.authorizationStatus() == .authorizedWhenInUse ||
+            CLLocationManager.authorizationStatus() == .authorizedAlways) {
+            if let coordinate = locationManager.location?.coordinate {
+                gpsLocation = [coordinate.latitude, coordinate.longitude]
+            }
+        }
+        
+        return gpsLocation
     }
     
 }
