@@ -81,7 +81,7 @@ struct Helper {
     // TODO: include this function in doc
     static func getRecordingId() -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyyMMdd'T'hhmmssZZZ"
+        dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ssZ"
         let dateString = dateFormatter.string(from: Date())
         
         let recordingId = dateString + "_" + UIDevice.current.identifierForVendor!.uuidString
