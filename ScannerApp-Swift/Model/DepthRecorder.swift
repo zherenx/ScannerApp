@@ -17,6 +17,7 @@ class DepthRecorder {
     
     private var fileHandle: FileHandle? = nil
     private var fileUrl: URL? = nil
+    private var compressedFileUrl: URL? = nil
     
     private var count: Int32 = 0
     
@@ -27,7 +28,9 @@ class DepthRecorder {
             self.count = 0
             
             let filePath = (dirPath as NSString).appendingPathComponent((filename as NSString).appendingPathExtension("depth")!)
+            let compressedFilePath = (dirPath as NSString).appendingPathComponent((filename as NSString).appendingPathExtension("zlib")!)
             self.fileUrl = URL(fileURLWithPath: filePath)
+            self.compressedFileUrl = URL(fileURLWithPath: compressedFilePath)
             FileManager.default.createFile(atPath: self.fileUrl!.path, contents: nil, attributes: nil)
             
             self.fileHandle = FileHandle(forUpdatingAtPath: self.fileUrl!.path)
@@ -217,17 +220,15 @@ class DepthRecorder {
     private func compressFile() {
         
         let algorithm = COMPRESSION_ZLIB
-//        let algorithm = COMPRESSION_LZMA
         let operation = COMPRESSION_STREAM_ENCODE
         
-        let compressedFilePath = (fileUrl!.path as NSString).appendingPathExtension("zlib")!
-//        let compressedFilePath = (fileUrl!.path as NSString).appendingPathExtension("lzma")!
+//        let compressedFilePath = (fileUrl!.path as NSString).appendingPathExtension("zlib")!
+//        let compressedFileUrl = URL(fileURLWithPath: compressedFilePath)
         
-        let compressedFileUrl = URL(fileURLWithPath: compressedFilePath)
-        FileManager.default.createFile(atPath: compressedFileUrl.path, contents: nil, attributes: nil)
+        FileManager.default.createFile(atPath: compressedFileUrl!.path, contents: nil, attributes: nil)
         
         if let sourceFileHandle = try? FileHandle(forReadingFrom: fileUrl!),
-           let destinationFileHandle = try? FileHandle(forWritingTo: compressedFileUrl) {
+           let destinationFileHandle = try? FileHandle(forWritingTo: compressedFileUrl!) {
             
             Compressor.streamingCompression(operation: operation,
                                             sourceFileHandle: sourceFileHandle,
