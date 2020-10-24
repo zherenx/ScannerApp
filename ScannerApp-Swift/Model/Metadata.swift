@@ -59,8 +59,9 @@ class StreamInfo: Encodable {
 
 class CameraStreamInfo: StreamInfo {
     private var resolution: [Int]
-    private var focal_length: [Float]
-    private var principal_point: [Float]
+    private var focal_length: [Float]?
+    private var principal_point: [Float]?
+    private var intrinsics_matrix: [Float]?
     private var extrinsics_matrix: [Float]?
     
     internal init(id: String, type: String, encoding: String, frequency: Int, num_frames: Int, resolution: [Int], focal_length: [Float], principal_point: [Float], extrinsics_matrix: [Float]?) {
@@ -71,12 +72,20 @@ class CameraStreamInfo: StreamInfo {
         super.init(id: id, type: type, encoding: encoding, frequency: frequency, num_frames: num_frames)
     }
     
+    internal init(id: String, type: String, encoding: String, frequency: Int, num_frames: Int, resolution: [Int], intrinsics_matrix: [Float]?, extrinsics_matrix: [Float]?) {
+        self.resolution = resolution
+        self.intrinsics_matrix = intrinsics_matrix
+        self.extrinsics_matrix = extrinsics_matrix
+        super.init(id: id, type: type, encoding: encoding, frequency: frequency, num_frames: num_frames)
+    }
+    
     override func encode(to encoder: Encoder) throws {
         try super.encode(to: encoder)
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(resolution, forKey: .resolution)
         try container.encode(focal_length, forKey: .focal_length)
         try container.encode(principal_point, forKey: .principal_point)
+        try container.encode(intrinsics_matrix, forKey: .intrinsics_matrix)
         try container.encode(extrinsics_matrix, forKey: .extrinsics_matrix)
     }
     
@@ -84,6 +93,7 @@ class CameraStreamInfo: StreamInfo {
         case resolution
         case focal_length
         case principal_point
+        case intrinsics_matrix
         case extrinsics_matrix
     }
 }
