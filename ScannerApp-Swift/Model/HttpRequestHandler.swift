@@ -16,7 +16,18 @@ protocol HttpRequestHandlerDelegate {
 
 class HttpRequestHandler: NSObject {
 
-    private let host = Constants.Server.host
+    private let origin: String = {
+        
+        let hostname = UserDefaults.hostname
+        let port = UserDefaults.port
+        
+        if port.isEmpty {
+            return "http://\(hostname)"
+        } else {
+            return "http://\(hostname):\(port)"
+        }
+    }()
+    
     private let uploadEndpoint = Constants.Server.Endpoints.upload
     private let verifyEndpoint = Constants.Server.Endpoints.verify
     
@@ -28,8 +39,8 @@ class HttpRequestHandler: NSObject {
     let httpRequestHandlerDelegate: HttpRequestHandlerDelegate!
     
     init(delegate: HttpRequestHandlerDelegate) {
-        uploadUrl = URL(string: host + uploadEndpoint)
-        verifyUrl = URLComponents(string: host + verifyEndpoint)
+        uploadUrl = URL(string: origin + uploadEndpoint)
+        verifyUrl = URLComponents(string: origin + verifyEndpoint)
         httpRequestHandlerDelegate = delegate
     }
     
