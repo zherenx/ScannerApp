@@ -15,6 +15,8 @@ class ConfigurationViewController: UIViewController {
     @IBOutlet weak var firstNameTextField: UITextField!
     @IBOutlet weak var lastNameTextField: UITextField!
     
+    @IBOutlet weak var serverAddressTextField: UITextField!
+   
     @IBOutlet weak var debugModeSwitch: UISwitch!
     
     override func viewDidLoad() {
@@ -24,14 +26,12 @@ class ConfigurationViewController: UIViewController {
         firstNameTextField.delegate = self
         lastNameTextField.delegate = self
         
-        firstNameTextField.tag = Constants.Tag.firstNameTag
-        lastNameTextField.tag = Constants.Tag.lastNameTag
+        serverAddressTextField.delegate = self
         
-        let firstName = UserDefaults.firstName
-        let lastName = UserDefaults.lastName
+        firstNameTextField.text = UserDefaults.firstName
+        lastNameTextField.text = UserDefaults.lastName
         
-        firstNameTextField.text = firstName
-        lastNameTextField.text = lastName
+        serverAddressTextField.text = UserDefaults.serverAddress
         
         debugModeSwitch.isOn = UserDefaults.debugFlag
     }
@@ -60,11 +60,16 @@ extension ConfigurationViewController: UITextFieldDelegate {
         
         let text: String = (textField.text ?? "").trimmingCharacters(in: .whitespaces)
         
-        switch textField.tag {
-        case Constants.Tag.firstNameTag:
+        switch textField {
+        case firstNameTextField:
+            print("setting first name")
             UserDefaults.set(firstName: text)
-        case Constants.Tag.lastNameTag:
+        case lastNameTextField:
+            print("setting last name.")
             UserDefaults.set(lastName: text)
+        case serverAddressTextField:
+            print("setting server address.")
+            UserDefaults.set(serverAddress: text)
         default:
             print("text field with tag \(textField.tag) is not found.")
         }
