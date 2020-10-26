@@ -15,6 +15,9 @@ class ConfigurationViewController: UIViewController {
     @IBOutlet weak var firstNameTextField: UITextField!
     @IBOutlet weak var lastNameTextField: UITextField!
     
+    @IBOutlet weak var hostnameTextField: UITextField!
+    @IBOutlet weak var portTextField: UITextField!
+    
     @IBOutlet weak var debugModeSwitch: UISwitch!
     
     override func viewDidLoad() {
@@ -24,14 +27,14 @@ class ConfigurationViewController: UIViewController {
         firstNameTextField.delegate = self
         lastNameTextField.delegate = self
         
-        firstNameTextField.tag = Constants.Tag.firstNameTag
-        lastNameTextField.tag = Constants.Tag.lastNameTag
+        hostnameTextField.delegate = self
+        portTextField.delegate = self
         
-        let firstName = UserDefaults.firstName
-        let lastName = UserDefaults.lastName
+        firstNameTextField.text = UserDefaults.firstName
+        lastNameTextField.text = UserDefaults.lastName
         
-        firstNameTextField.text = firstName
-        lastNameTextField.text = lastName
+        hostnameTextField.text = UserDefaults.hostname
+        portTextField.text = UserDefaults.port
         
         debugModeSwitch.isOn = UserDefaults.debugFlag
     }
@@ -60,11 +63,19 @@ extension ConfigurationViewController: UITextFieldDelegate {
         
         let text: String = (textField.text ?? "").trimmingCharacters(in: .whitespaces)
         
-        switch textField.tag {
-        case Constants.Tag.firstNameTag:
+        switch textField {
+        case firstNameTextField:
+            print("setting first name")
             UserDefaults.set(firstName: text)
-        case Constants.Tag.lastNameTag:
+        case lastNameTextField:
+            print("setting last name.")
             UserDefaults.set(lastName: text)
+        case hostnameTextField:
+            print("setting server address.")
+            UserDefaults.set(hostname: text)
+        case portTextField:
+            print("setting port.")
+            UserDefaults.set(port: text)
         default:
             print("text field with tag \(textField.tag) is not found.")
         }
