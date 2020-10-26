@@ -15,8 +15,9 @@ class ConfigurationViewController: UIViewController {
     @IBOutlet weak var firstNameTextField: UITextField!
     @IBOutlet weak var lastNameTextField: UITextField!
     
-    @IBOutlet weak var serverAddressTextField: UITextField!
-   
+    @IBOutlet weak var hostnameTextField: UITextField!
+    @IBOutlet weak var portTextField: UITextField!
+    
     @IBOutlet weak var debugModeSwitch: UISwitch!
     
     override func viewDidLoad() {
@@ -26,12 +27,14 @@ class ConfigurationViewController: UIViewController {
         firstNameTextField.delegate = self
         lastNameTextField.delegate = self
         
-        serverAddressTextField.delegate = self
+        hostnameTextField.delegate = self
+        portTextField.delegate = self
         
         firstNameTextField.text = UserDefaults.firstName
         lastNameTextField.text = UserDefaults.lastName
         
-        serverAddressTextField.text = UserDefaults.serverAddress
+        hostnameTextField.text = UserDefaults.hostname
+        portTextField.text = UserDefaults.port
         
         debugModeSwitch.isOn = UserDefaults.debugFlag
     }
@@ -67,9 +70,12 @@ extension ConfigurationViewController: UITextFieldDelegate {
         case lastNameTextField:
             print("setting last name.")
             UserDefaults.set(lastName: text)
-        case serverAddressTextField:
+        case hostnameTextField:
             print("setting server address.")
-            UserDefaults.set(serverAddress: text)
+            UserDefaults.set(hostname: text)
+        case portTextField:
+            print("setting port.")
+            UserDefaults.set(port: text)
         default:
             print("text field with tag \(textField.tag) is not found.")
         }

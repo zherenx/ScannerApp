@@ -16,7 +16,8 @@ extension UserDefaults {
         static let sceneTypeIndex = "sceneTypeIndexKey"
         static let userInputDescription = "userInputDescriptionKey"
         static let debugFlag = "debugFlagKey"
-        static let serverAddress = "serverAddressKey"
+        static let hostname = "hostnameKey"
+        static let port = "portKey"
     }
     
     /// firstName
@@ -90,14 +91,25 @@ extension UserDefaults {
         userDefaults.set(debugFlag, forKey: UserDefaults.Keys.debugFlag)
     }
     
-    /// serverAddress
-    class var serverAddress: String {
+    /// hostname
+    class var hostname: String {
         let userDefaults = UserDefaults.standard
-        return userDefaults.string(forKey: UserDefaults.Keys.serverAddress) ?? ""
+        return userDefaults.string(forKey: UserDefaults.Keys.hostname) ?? ""
     }
     
-    class func set(serverAddress: String) {
+    class func set(hostname: String) {
         let userDefaults = UserDefaults.standard
-        userDefaults.set(serverAddress, forKey: UserDefaults.Keys.serverAddress)
+        userDefaults.set(hostname, forKey: UserDefaults.Keys.hostname)
+    }
+    
+    /// port
+    class var port: String {
+        let userDefaults = UserDefaults.standard
+        return userDefaults.string(forKey: UserDefaults.Keys.port) ?? ""
+    }
+    
+    class func set(port: String) {
+        let userDefaults = UserDefaults.standard
+        userDefaults.set(port, forKey: UserDefaults.Keys.port)
     }
 }
