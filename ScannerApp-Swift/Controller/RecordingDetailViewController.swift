@@ -49,7 +49,9 @@ class RecordingDetailViewController: UIViewController {
                     switch extention {
                     case "mp4":
                         let thumbnail = VideoHelper.generateThumbnail(videoUrl: fileUrl)
-                        thumbnailImageView.image = UIImage(cgImage: thumbnail)
+                        if thumbnail != nil {
+                            thumbnailImageView.image = UIImage(cgImage: thumbnail!)
+                        }
                     case "json":
                         do {
 //                            let data = try Data(contentsOf: fileUrl)
