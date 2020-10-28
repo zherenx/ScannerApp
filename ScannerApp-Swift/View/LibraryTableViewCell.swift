@@ -59,7 +59,9 @@ class LibraryTableViewCell: UITableViewCell {
                 
                 if extention == "mp4" {
                     let cgImage = VideoHelper.generateThumbnail(videoUrl: fileUrl)
-                    self.thumbnail.image = UIImage(cgImage: cgImage)
+                    if cgImage != nil {
+                        self.thumbnail.image = UIImage(cgImage: cgImage!)
+                    }
                 }
             }
             

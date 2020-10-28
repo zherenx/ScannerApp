@@ -11,10 +11,10 @@ import Foundation
 
 struct VideoHelper {
     
-    static func generateThumbnail(videoUrl: URL) -> CGImage {
+    static func generateThumbnail(videoUrl: URL) -> CGImage? {
         let asset = AVAsset(url: videoUrl)
         let generator = AVAssetImageGenerator.init(asset: asset)
-        let cgImage = try! generator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
+        let cgImage = try? generator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
         return cgImage
     }
     
