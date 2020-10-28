@@ -239,6 +239,7 @@ extension ARCameraViewController: ARSessionDelegate {
         print("**** @Controller: depth \(numFrames) ****")
         depthRecorder.update(buffer: depthMap)
 
+        print("**** @Controller: confidence \(numFrames) ****")
         confidenceMapRecorder.update(buffer: confidenceMap)
         
         print("**** @Controller: color \(numFrames) ****")

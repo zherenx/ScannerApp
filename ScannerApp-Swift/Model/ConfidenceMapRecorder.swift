@@ -28,7 +28,6 @@ class ConfidenceMapRecorder {
             self.count = 0
             
             let filePath = (dirPath as NSString).appendingPathComponent((filename as NSString).appendingPathExtension("confidence")!)
-//            let compressedFilePath = (dirPath as NSString).appendingPathComponent((filename as NSString).appendingPathExtension("zlib")!)
             let compressedFilePath = (filePath as NSString).appendingPathExtension("zlib")!
             self.fileUrl = URL(fileURLWithPath: filePath)
             self.compressedFileUrl = URL(fileURLWithPath: compressedFilePath)
