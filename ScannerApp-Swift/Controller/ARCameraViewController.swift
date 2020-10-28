@@ -21,6 +21,7 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
     let session = ARSession()
     
     let depthRecorder = DepthRecorder()
+    let confidenceMapRecorder = ConfidenceMapRecorder()
     let rgbRecorder = RGBRecorder(videoSettings: [AVVideoCodecKey: AVVideoCodecType.h264, AVVideoHeightKey: NSNumber(value: 1440), AVVideoWidthKey: NSNumber(value: 1920)])
     let cameraInfoRecorder = CameraInfoRecorder()
     
@@ -133,6 +134,7 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
         dirUrl = URL(fileURLWithPath: Helper.getRecordingDataDirectoryPath(recordingId: recordingId))
         
         depthRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
+        confidenceMapRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
         rgbRecorder.prepareForRecording(dirPath: dirUrl.path, filenameWithoutExt: recordingId)
         cameraInfoRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
         
@@ -157,6 +159,7 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
         isRecording = false
         
         depthRecorder.finishRecording()
+        confidenceMapRecorder.finishRecording()
         rgbRecorder.finishRecording()
         cameraInfoRecorder.finishRecording()
         
@@ -225,12 +228,19 @@ extension ARCameraViewController: ARSessionDelegate {
 
         let depthMap: CVPixelBuffer = depthData.depthMap
         let colorImage: CVPixelBuffer = frame.capturedImage
+        
+        guard let confidenceMap = depthData.confidenceMap else {
+            print("Failed to get confidenceMap.")
+            return
+        }
 
         let timestamp: CMTime = CMTime(seconds: frame.timestamp, preferredTimescale: 1_000_000_000)
 
         print("**** @Controller: depth \(numFrames) ****")
         depthRecorder.update(buffer: depthMap)
 
+        confidenceMapRecorder.update(buffer: confidenceMap)
+        
         print("**** @Controller: color \(numFrames) ****")
         rgbRecorder.update(buffer: colorImage, timestamp: timestamp)
         print()
