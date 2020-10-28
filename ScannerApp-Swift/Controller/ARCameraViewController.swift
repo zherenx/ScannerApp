@@ -180,9 +180,10 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
                                     cameraIntrinsic!.columns.2.x, cameraIntrinsic!.columns.2.y, cameraIntrinsic!.columns.2.z]
         let rgbStreamInfo = CameraStreamInfo(id: "color_back_1", type: "color_camera", encoding: "h264", frequency: frequency ?? 0, num_frames: numFrames, resolution: colorFrameResolution, intrinsics_matrix: cameraIntrinsicArray, extrinsics_matrix: nil)
         let depthStreamInfo = CameraStreamInfo(id: "depth_back_1", type: "lidar_sensor", encoding: "float16_zlib", frequency: frequency ?? 0, num_frames: numFrames, resolution: depthFrameResolution, intrinsics_matrix: nil, extrinsics_matrix: nil)
-        let cameraInfoStreamInfo = StreamInfo(id: "camera_info_1", type: "camera_info", encoding: "jsonl", frequency: frequency ?? 0, num_frames: numFrames)
+        let confidenceMapStreamInfo = StreamInfo(id: "confidence_map", type: "confidence_map", encoding: "uint8_zlib", frequency: frequency ?? 0, num_frames: numFrames)
+        let cameraInfoStreamInfo = StreamInfo(id: "camera_info_color_back_1", type: "camera_info", encoding: "jsonl", frequency: frequency ?? 0, num_frames: numFrames)
         
-        let metadata = Metadata(username: username, userInputDescription: popUpView.userInputDescription, sceneType: sceneType, gpsLocation: gpsLocation, streams: [rgbStreamInfo, depthStreamInfo, cameraInfoStreamInfo])
+        let metadata = Metadata(username: username, userInputDescription: popUpView.userInputDescription, sceneType: sceneType, gpsLocation: gpsLocation, streams: [rgbStreamInfo, depthStreamInfo, confidenceMapStreamInfo, cameraInfoStreamInfo])
 
         let metadataPath = (dirUrl.path as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("json")!)
         
