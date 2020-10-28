@@ -28,7 +28,7 @@ class DepthRecorder {
             self.count = 0
             
             let filePath = (dirPath as NSString).appendingPathComponent((filename as NSString).appendingPathExtension("depth")!)
-            let compressedFilePath = (dirPath as NSString).appendingPathComponent((filename as NSString).appendingPathExtension("zlib")!)
+            let compressedFilePath = (filePath as NSString).appendingPathExtension("zlib")!
             self.fileUrl = URL(fileURLWithPath: filePath)
             self.compressedFileUrl = URL(fileURLWithPath: compressedFilePath)
             FileManager.default.createFile(atPath: self.fileUrl!.path, contents: nil, attributes: nil)

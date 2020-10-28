@@ -21,6 +21,7 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
     let session = ARSession()
     
     let depthRecorder = DepthRecorder()
+    let confidenceMapRecorder = ConfidenceMapRecorder()
     let rgbRecorder = RGBRecorder(videoSettings: [AVVideoCodecKey: AVVideoCodecType.h264, AVVideoHeightKey: NSNumber(value: 1440), AVVideoWidthKey: NSNumber(value: 1920)])
     let cameraInfoRecorder = CameraInfoRecorder()
     
@@ -133,6 +134,7 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
         dirUrl = URL(fileURLWithPath: Helper.getRecordingDataDirectoryPath(recordingId: recordingId))
         
         depthRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
+        confidenceMapRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
         rgbRecorder.prepareForRecording(dirPath: dirUrl.path, filenameWithoutExt: recordingId)
         cameraInfoRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
         
@@ -157,6 +159,7 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
         isRecording = false
         
         depthRecorder.finishRecording()
+        confidenceMapRecorder.finishRecording()
         rgbRecorder.finishRecording()
         cameraInfoRecorder.finishRecording()
         
@@ -177,9 +180,10 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
                                     cameraIntrinsic!.columns.2.x, cameraIntrinsic!.columns.2.y, cameraIntrinsic!.columns.2.z]
         let rgbStreamInfo = CameraStreamInfo(id: "color_back_1", type: "color_camera", encoding: "h264", frequency: frequency ?? 0, num_frames: numFrames, resolution: colorFrameResolution, intrinsics_matrix: cameraIntrinsicArray, extrinsics_matrix: nil)
         let depthStreamInfo = CameraStreamInfo(id: "depth_back_1", type: "lidar_sensor", encoding: "float16_zlib", frequency: frequency ?? 0, num_frames: numFrames, resolution: depthFrameResolution, intrinsics_matrix: nil, extrinsics_matrix: nil)
-        let cameraInfoStreamInfo = StreamInfo(id: "camera_info_1", type: "camera_info", encoding: "jsonl", frequency: frequency ?? 0, num_frames: numFrames)
+        let confidenceMapStreamInfo = StreamInfo(id: "confidence_map", type: "confidence_map", encoding: "uint8_zlib", frequency: frequency ?? 0, num_frames: numFrames)
+        let cameraInfoStreamInfo = StreamInfo(id: "camera_info_color_back_1", type: "camera_info", encoding: "jsonl", frequency: frequency ?? 0, num_frames: numFrames)
         
-        let metadata = Metadata(username: username, userInputDescription: popUpView.userInputDescription, sceneType: sceneType, gpsLocation: gpsLocation, streams: [rgbStreamInfo, depthStreamInfo, cameraInfoStreamInfo])
+        let metadata = Metadata(username: username, userInputDescription: popUpView.userInputDescription, sceneType: sceneType, gpsLocation: gpsLocation, streams: [rgbStreamInfo, depthStreamInfo, confidenceMapStreamInfo, cameraInfoStreamInfo])
 
         let metadataPath = (dirUrl.path as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("json")!)
         
@@ -225,12 +229,20 @@ extension ARCameraViewController: ARSessionDelegate {
 
         let depthMap: CVPixelBuffer = depthData.depthMap
         let colorImage: CVPixelBuffer = frame.capturedImage
+        
+        guard let confidenceMap = depthData.confidenceMap else {
+            print("Failed to get confidenceMap.")
+            return
+        }
 
         let timestamp: CMTime = CMTime(seconds: frame.timestamp, preferredTimescale: 1_000_000_000)
 
         print("**** @Controller: depth \(numFrames) ****")
         depthRecorder.update(buffer: depthMap)
 
+        print("**** @Controller: confidence \(numFrames) ****")
+        confidenceMapRecorder.update(buffer: confidenceMap)
+        
         print("**** @Controller: color \(numFrames) ****")
         rgbRecorder.update(buffer: colorImage, timestamp: timestamp)
         print()
