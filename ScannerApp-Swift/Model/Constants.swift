@@ -107,8 +107,8 @@ struct Constants {
             static let verify: String = "/verify"
         }
 
-//        static let origin: String = "http://aspis.cmpt.sfu.ca/multiscan"
-//        static let origin: String = "http://192.168.1.66:5000"
+        static let defaultHost: String = "aspis.cmpt.sfu.ca/multiscan"
+        static let defaultPort: String = "8000"
     }
     
     struct Tag {

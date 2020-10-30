@@ -18,14 +18,17 @@ class HttpRequestHandler: NSObject {
 
     private let origin: String = {
         
-        let hostname = UserDefaults.hostname
-        let port = UserDefaults.port
+        var hostname = UserDefaults.hostname
+        var port = UserDefaults.port
         
-        if port.isEmpty {
-            return "http://\(hostname)"
-        } else {
-            return "http://\(hostname):\(port)"
+        if hostname.isEmpty {
+            hostname = Constants.Server.defaultHost
         }
+        if port.isEmpty {
+            port = Constants.Server.defaultPort
+        }
+        
+        return "http://\(hostname):\(port)"
     }()
     
     private let uploadEndpoint = Constants.Server.Endpoints.upload

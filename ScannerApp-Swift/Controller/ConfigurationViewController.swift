@@ -36,7 +36,9 @@ class ConfigurationViewController: UIViewController {
         lastNameTextField.text = UserDefaults.lastName
         
         hostnameTextField.text = UserDefaults.hostname
+        hostnameTextField.placeholder = Constants.Server.defaultHost
         portTextField.text = UserDefaults.port
+        portTextField.placeholder = Constants.Server.defaultPort
         
         debugModeSwitch.isOn = UserDefaults.debugFlag
     }
