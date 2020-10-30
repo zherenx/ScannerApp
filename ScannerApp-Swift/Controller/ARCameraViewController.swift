@@ -54,6 +54,12 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
         arView.session = session
 
         locationManager.requestWhenInUseAuthorization()
+        
+        // dismiss keyboard when tap elsewhere
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tap)
     }
     
     private func setupPopUpView() {
@@ -71,6 +77,10 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
             self.popUpView.isHidden = true
         }
         
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -95,6 +105,7 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
             stopRecording()
         } else {
             DispatchQueue.main.async {
+                self.recordButton.isEnabled = false
                 self.popUpView.isHidden = false
             }
         }
@@ -104,6 +115,10 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
         
         DispatchQueue.main.async {
             self.popUpView.isHidden = true
+            
+            self.recordButton.setTitle("Stop", for: .normal)
+            self.recordButton.backgroundColor = .systemRed
+            self.recordButton.isEnabled = true
         }
         
         gpsLocation = getGpsLocation()
@@ -139,10 +154,6 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
         cameraInfoRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
         
         isRecording = true
-        DispatchQueue.main.async {
-            self.recordButton.setTitle("Recording...", for: .normal)
-            self.recordButton.backgroundColor = .systemRed
-        }
         
         print("pre2 count: \(numFrames)")
     }
@@ -150,6 +161,7 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
     func dismissPopUpView() {
         DispatchQueue.main.async {
             self.popUpView.isHidden = true
+            self.recordButton.isEnabled = true
         }
     }
     

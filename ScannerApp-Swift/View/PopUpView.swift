@@ -225,36 +225,29 @@ class PopUpView: UIView {
 
 extension PopUpView: UITextFieldDelegate {
     
-    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-        
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         textFieldIsBeingEdited = true
 
         // disable start button when editing text field
         updateStartButton()
-        
-        return true
     }
     
-    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+    func textFieldDidEndEditing(_ textField: UITextField) {
         textFieldIsBeingEdited = false
-        textFieldDidUpdate(textField)
-        
-        return true
-    }
-    
-    private func textFieldDidUpdate(_ textField: UITextField) {
-        textField.resignFirstResponder()
         
         let text: String = (textField.text ?? "").trimmingCharacters(in: .whitespaces)
         
         switch textField {
         case firstNameTextField:
+            print("setting first name to '\(text)'.")
             firstName = text
             UserDefaults.set(firstName: text)
         case lastNameTextField:
+            print("setting last name to '\(text)'.")
             lastName = text
             UserDefaults.set(lastName: text)
         case descriptionTextField:
+            print("setting description to '\(text)'.")
             userInputDescription = text
             UserDefaults.set(userInputDescription: text)
         default:
@@ -262,6 +255,12 @@ extension PopUpView: UITextFieldDelegate {
         }
         
         updateStartButton()
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        print("dismiss keyboard")
+        textField.resignFirstResponder()
+        return true
     }
 }
 

@@ -28,56 +28,63 @@ class ConfigurationViewController: UIViewController {
         lastNameTextField.delegate = self
         
         hostnameTextField.delegate = self
+        hostnameTextField.autocorrectionType = .no
         portTextField.delegate = self
+        portTextField.autocorrectionType = .no
         
         firstNameTextField.text = UserDefaults.firstName
         lastNameTextField.text = UserDefaults.lastName
         
         hostnameTextField.text = UserDefaults.hostname
+        hostnameTextField.placeholder = Constants.Server.defaultHost
         portTextField.text = UserDefaults.port
+        portTextField.placeholder = Constants.Server.defaultPort
         
         debugModeSwitch.isOn = UserDefaults.debugFlag
+        
+        // dismiss keyboard when tap elsewhere
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tap)
     }
 
     @IBAction func debugModeSwitchValueChanged(_ sender: Any) {
         UserDefaults.set(debugFlag: debugModeSwitch.isOn)
     }
     
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
 }
 
 extension ConfigurationViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textFieldDidUpdate(textField)
-        
-        return true
-    }
     
-    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        textFieldDidUpdate(textField)
-        
-        return true
-    }
-    
-    private func textFieldDidUpdate(_ textField: UITextField) {
-        textField.resignFirstResponder()
-        
+    func textFieldDidEndEditing(_ textField: UITextField) {
         let text: String = (textField.text ?? "").trimmingCharacters(in: .whitespaces)
         
         switch textField {
         case firstNameTextField:
-            print("setting first name")
+            print("setting first name to '\(text)'.")
             UserDefaults.set(firstName: text)
         case lastNameTextField:
-            print("setting last name.")
+            print("setting last name to '\(text)'.")
             UserDefaults.set(lastName: text)
         case hostnameTextField:
-            print("setting server address.")
+            print("setting server address to '\(text)'.")
             UserDefaults.set(hostname: text)
         case portTextField:
-            print("setting port.")
+            print("setting port to '\(text)'.")
             UserDefaults.set(port: text)
         default:
             print("text field with tag \(textField.tag) is not found.")
         }
     }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        print("dismiss keyboard.")
+        textField.resignFirstResponder()
+        return true
+    }
+    
 }
