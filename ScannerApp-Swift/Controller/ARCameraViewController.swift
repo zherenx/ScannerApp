@@ -95,6 +95,7 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
             stopRecording()
         } else {
             DispatchQueue.main.async {
+                self.recordButton.isEnabled = false
                 self.popUpView.isHidden = false
             }
         }
@@ -104,6 +105,10 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
         
         DispatchQueue.main.async {
             self.popUpView.isHidden = true
+            
+            self.recordButton.setTitle("Stop", for: .normal)
+            self.recordButton.backgroundColor = .systemRed
+            self.recordButton.isEnabled = true
         }
         
         gpsLocation = getGpsLocation()
@@ -139,10 +144,6 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
         cameraInfoRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
         
         isRecording = true
-        DispatchQueue.main.async {
-            self.recordButton.setTitle("Recording...", for: .normal)
-            self.recordButton.backgroundColor = .systemRed
-        }
         
         print("pre2 count: \(numFrames)")
     }
@@ -150,6 +151,7 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
     func dismissPopUpView() {
         DispatchQueue.main.async {
             self.popUpView.isHidden = true
+            self.recordButton.isEnabled = true
         }
     }
     
