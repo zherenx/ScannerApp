@@ -54,6 +54,12 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
         arView.session = session
 
         locationManager.requestWhenInUseAuthorization()
+        
+        // dismiss keyboard when tap elsewhere
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tap)
     }
     
     private func setupPopUpView() {
@@ -71,6 +77,10 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
             self.popUpView.isHidden = true
         }
         
+    }
+    
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
     }
     
     override func viewWillAppear(_ animated: Bool) {

@@ -41,12 +41,21 @@ class ConfigurationViewController: UIViewController {
         portTextField.placeholder = Constants.Server.defaultPort
         
         debugModeSwitch.isOn = UserDefaults.debugFlag
+        
+        // dismiss keyboard when tap elsewhere
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tap)
     }
 
     @IBAction func debugModeSwitchValueChanged(_ sender: Any) {
         UserDefaults.set(debugFlag: debugModeSwitch.isOn)
     }
     
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
 }
 
 extension ConfigurationViewController: UITextFieldDelegate {
