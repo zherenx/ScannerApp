@@ -108,7 +108,6 @@ struct Constants {
         }
 
         static let defaultHost: String = "aspis.cmpt.sfu.ca/multiscan"
-        static let defaultPort: String = "8000"
     }
     
     struct Tag {
