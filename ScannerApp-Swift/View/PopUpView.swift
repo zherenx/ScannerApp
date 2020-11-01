@@ -67,6 +67,7 @@ class PopUpView: UIView {
         tf.layer.borderColor = UIColor.lightGray.cgColor
         tf.layer.borderWidth = 1
         tf.delegate = self
+        tf.autocorrectionType = .no
         return tf
     }()
     
@@ -76,6 +77,7 @@ class PopUpView: UIView {
         tf.layer.borderColor = UIColor.lightGray.cgColor
         tf.layer.borderWidth = 1
         tf.delegate = self
+        tf.autocorrectionType = .no
         return tf
     }()
     
@@ -85,6 +87,7 @@ class PopUpView: UIView {
         tf.layer.borderColor = UIColor.lightGray.cgColor
         tf.layer.borderWidth = 1
         tf.delegate = self
+        tf.autocorrectionType = .no
         return tf
     }()
     

@@ -107,7 +107,7 @@ struct Constants {
             static let verify: String = "/verify"
         }
 
-        static let defaultHost: String = "aspis.cmpt.sfu.ca/multiscan"
+        static let defaultHost: String = "aspis.cmpt.sfu.ca:80/multiscan"
     }
     
     struct Tag {

@@ -24,16 +24,17 @@ class ConfigurationViewController: UIViewController {
 
         // setup text fields
         firstNameTextField.delegate = self
+        firstNameTextField.text = UserDefaults.firstName
+        firstNameTextField.autocorrectionType = .no
+        
         lastNameTextField.delegate = self
+        lastNameTextField.text = UserDefaults.lastName
+        lastNameTextField.autocorrectionType = .no
         
         hostTextField.delegate = self
-        hostTextField.autocorrectionType = .no
-        
-        firstNameTextField.text = UserDefaults.firstName
-        lastNameTextField.text = UserDefaults.lastName
-        
         hostTextField.text = UserDefaults.host
         hostTextField.placeholder = Constants.Server.defaultHost
+        hostTextField.autocorrectionType = .no
         
         debugModeSwitch.isOn = UserDefaults.debugFlag
         
