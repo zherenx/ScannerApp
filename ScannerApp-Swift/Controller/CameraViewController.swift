@@ -337,12 +337,12 @@ class CameraViewController: UIViewController {
             // get number of frames when video is ready
             let numColorFrames = VideoHelper.getNumberOfFrames(videoUrl: URL(fileURLWithPath: self.movieFilePath))
             
-            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: Constants.Sensor.Camera.type, encoding: Constants.EncodingCode.h264, frequency: Constants.Sensor.Camera.frequency, num_frames: numColorFrames, file_extension: "mp4", resolution: self.colorResolution, intrinsics_matrix: self.cameraIntrinsicArray, extrinsics_matrix: nil)
+            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: Constants.Sensor.Camera.type, encoding: Constants.EncodingCode.h264, frequency: Constants.Sensor.Camera.frequency, numberOfFrames: numColorFrames, fileExtension: "mp4", resolution: self.colorResolution, intrinsics: self.cameraIntrinsicArray, extrinsics: nil)
             
             streamInfo.append(cameraStreamInfo)
             
             let username = self.firstName + " " + self.lastName
-            let metadata = Metadata(username: username, userInputDescription: self.userInputDescription, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: streamInfo, number_of_files: 7)
+            let metadata = Metadata(username: username, userInputDescription: self.userInputDescription, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: streamInfo, numberOfFiles: 7)
             
             metadata.display()
             metadata.writeToFile(filepath: self.metadataPath)
