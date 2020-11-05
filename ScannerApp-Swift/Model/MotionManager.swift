@@ -14,9 +14,6 @@ class MotionManager {
         case imuSensorInUnexpectedStateError
     }
     
-    // is it necessary to make this a singleton class??
-    static let instance = MotionManager()
-    
     private let motionManager = CMMotionManager()
     private let motionQueue = OperationQueue()
     
@@ -50,7 +47,7 @@ class MotionManager {
     private var attitudeAsciiFileHandle: FileHandle? = nil
     private var gravityAsciiFileHandle: FileHandle? = nil
     
-    private init() {
+    init() {
         motionManager.deviceMotionUpdateInterval = 1.0 / Double(Constants.Sensor.Imu.frequency)
         motionQueue.maxConcurrentOperationCount = 1
         
