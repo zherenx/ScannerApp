@@ -32,12 +32,12 @@ class UserInfo: Codable {
 class SceneInfo: Codable {
     private var description: String
     private var type: String
-    private var gps_location: [Double]
+    private var gpsLocation: [Double]
     
-    internal init(description: String, type: String, gps_location: [Double]) {
+    internal init(description: String, type: String, gpsLocation: [Double]) {
         self.description = description
         self.type = type
-        self.gps_location = gps_location
+        self.gpsLocation = gpsLocation
     }
 }
 
@@ -46,55 +46,43 @@ class StreamInfo: Encodable {
     private var type: String
     private var encoding: String
     private var frequency: Int
-    private var num_frames: Int
+    private var numberOfFrames: Int
+    private var fileExtension: String
     
-    internal init(id: String, type: String, encoding: String, frequency: Int, num_frames: Int) {
+    internal init(id: String, type: String, encoding: String, frequency: Int, numberOfFrames: Int, fileExtension: String) {
         self.id = id
         self.type = type
         self.encoding = encoding
         self.frequency = frequency
-        self.num_frames = num_frames
+        self.numberOfFrames = numberOfFrames
+        self.fileExtension = fileExtension
     }
 }
 
 class CameraStreamInfo: StreamInfo {
     private var resolution: [Int]
-    private var focal_length: [Float]?
-    private var principal_point: [Float]?
-    private var intrinsics_matrix: [Float]?
-    private var extrinsics_matrix: [Float]?
+    private var intrinsics: [Float]?
+    private var extrinsics: [Float]?
     
-    internal init(id: String, type: String, encoding: String, frequency: Int, num_frames: Int, resolution: [Int], focal_length: [Float], principal_point: [Float], extrinsics_matrix: [Float]?) {
+    internal init(id: String, type: String, encoding: String, frequency: Int, numberOfFrames: Int, fileExtension: String, resolution: [Int], intrinsics: [Float]?, extrinsics: [Float]?) {
         self.resolution = resolution
-        self.focal_length = focal_length
-        self.principal_point = principal_point
-        self.extrinsics_matrix = extrinsics_matrix
-        super.init(id: id, type: type, encoding: encoding, frequency: frequency, num_frames: num_frames)
-    }
-    
-    internal init(id: String, type: String, encoding: String, frequency: Int, num_frames: Int, resolution: [Int], intrinsics_matrix: [Float]?, extrinsics_matrix: [Float]?) {
-        self.resolution = resolution
-        self.intrinsics_matrix = intrinsics_matrix
-        self.extrinsics_matrix = extrinsics_matrix
-        super.init(id: id, type: type, encoding: encoding, frequency: frequency, num_frames: num_frames)
+        self.intrinsics = intrinsics
+        self.extrinsics = extrinsics
+        super.init(id: id, type: type, encoding: encoding, frequency: frequency, numberOfFrames: numberOfFrames, fileExtension: fileExtension)
     }
     
     override func encode(to encoder: Encoder) throws {
         try super.encode(to: encoder)
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(resolution, forKey: .resolution)
-        try container.encode(focal_length, forKey: .focal_length)
-        try container.encode(principal_point, forKey: .principal_point)
-        try container.encode(intrinsics_matrix, forKey: .intrinsics_matrix)
-        try container.encode(extrinsics_matrix, forKey: .extrinsics_matrix)
+        try container.encode(intrinsics, forKey: .intrinsics)
+        try container.encode(extrinsics, forKey: .extrinsics)
     }
     
     enum CodingKeys: String, CodingKey {
         case resolution
-        case focal_length
-        case principal_point
-        case intrinsics_matrix
-        case extrinsics_matrix
+        case intrinsics
+        case extrinsics
     }
 }
 
@@ -103,20 +91,6 @@ class ImuStreamInfo: StreamInfo {
     // so it is currently the same as its superclass
     
     // TODO: Add 'precision' info of imu sensor
-    
-    internal init(id: String, type: String, encoding: String, num_frames: Int, frequency: Int) {
-        super.init(id: id, type: type, encoding: encoding, frequency: frequency, num_frames: num_frames)
-    }
-    
-//    override func encode(to encoder: Encoder) throws {
-//        try super.encode(to: encoder)
-//        var container = encoder.container(keyedBy: CodingKeys.self)
-//        try container.encode(frequency, forKey: .frequency)
-//    }
-//
-//    enum CodingKeys: String, CodingKey {
-//        case frequency
-//    }
 }
 
 class Metadata: Encodable {
@@ -125,9 +99,10 @@ class Metadata: Encodable {
     private var user: UserInfo
     private var scene: SceneInfo
     private var streams: [StreamInfo]
+    private var numberOfFiles: Int
     
     init(username: String, userInputDescription: String, sceneType: String, gpsLocation: [Double],
-         streams: [StreamInfo]) {
+         streams: [StreamInfo], numberOfFiles: Int) {
         
         let deviceId = UIDevice.current.identifierForVendor?.uuidString
         let modelName = Helper.getDeviceModelCode()
@@ -135,8 +110,10 @@ class Metadata: Encodable {
         
         device = .init(id: deviceId!, type: modelName, name: deviceName)
         user = .init(name: username)
-        scene = .init(description: userInputDescription, type: sceneType, gps_location: gpsLocation)
+        scene = .init(description: userInputDescription, type: sceneType, gpsLocation: gpsLocation)
+        
         self.streams = streams
+        self.numberOfFiles = numberOfFiles
     }
     
     func display() {
