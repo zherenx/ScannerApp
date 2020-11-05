@@ -91,20 +91,6 @@ class ImuStreamInfo: StreamInfo {
     // so it is currently the same as its superclass
     
     // TODO: Add 'precision' info of imu sensor
-    
-    internal init(id: String, type: String, encoding: String, numberOfFrames: Int, frequency: Int, fileExtension: String) {
-        super.init(id: id, type: type, encoding: encoding, frequency: frequency, numberOfFrames: numberOfFrames, fileExtension: fileExtension)
-    }
-    
-//    override func encode(to encoder: Encoder) throws {
-//        try super.encode(to: encoder)
-//        var container = encoder.container(keyedBy: CodingKeys.self)
-//        try container.encode(frequency, forKey: .frequency)
-//    }
-//
-//    enum CodingKeys: String, CodingKey {
-//        case frequency
-//    }
 }
 
 class Metadata: Encodable {
