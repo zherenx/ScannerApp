@@ -91,46 +91,74 @@ class MotionData {
         print("Gravity: \(self.gravX), \(self.gravY), \(self.gravZ)")
     }
     
-    func writeToFileInBinaryFormat(rotationRateFileUrl: URL, userAccelerationFileUrl: URL, magneticFieldFileUrl: URL, attitudeFileUrl: URL, gravityFileUrl: URL) {
-        
-        writeToFileInBinaryFormat(fileUrl: rotationRateFileUrl, t: timestamp.littleEndian, x: rotX.bitPattern.littleEndian, y: rotY.bitPattern.littleEndian, z: rotZ.bitPattern.littleEndian)
-        writeToFileInBinaryFormat(fileUrl: userAccelerationFileUrl, t: timestamp.littleEndian, x: accX.bitPattern.littleEndian, y: accY.bitPattern.littleEndian, z: accZ.bitPattern.littleEndian)
-        writeToFileInBinaryFormat(fileUrl: magneticFieldFileUrl, t: timestamp.littleEndian, x: magX.bitPattern.littleEndian, y: magY.bitPattern.littleEndian, z: magZ.bitPattern.littleEndian)
-        writeToFileInBinaryFormat(fileUrl: attitudeFileUrl, t: timestamp.littleEndian, x: roll.bitPattern.littleEndian, y: pitch.bitPattern.littleEndian, z: yaw.bitPattern.littleEndian)
-        writeToFileInBinaryFormat(fileUrl: gravityFileUrl, t: timestamp.littleEndian, x: gravX.bitPattern.littleEndian, y: gravY.bitPattern.littleEndian, z: gravZ.bitPattern.littleEndian)
+    func getRotationRateDataBinary() -> Data {
+        let dataPointer = UnsafeMutableRawPointer.allocate(byteCount: 32, alignment: 1)
+        dataPointer.storeBytes(of: timestamp.littleEndian, toByteOffset: 0, as: Int64.self)
+        dataPointer.storeBytes(of: rotX.bitPattern.littleEndian, toByteOffset: 8, as: UInt64.self)
+        dataPointer.storeBytes(of: rotY.bitPattern.littleEndian, toByteOffset: 16, as: UInt64.self)
+        dataPointer.storeBytes(of: rotZ.bitPattern.littleEndian, toByteOffset: 24, as: UInt64.self)
+        return Data(bytes: dataPointer, count: 32)
     }
     
-    func writeToFileInAsciiFormat(rotationRateFileUrl: URL, userAccelerationFileUrl: URL, magneticFieldFileUrl: URL, attitudeFileUrl: URL, gravityFileUrl: URL) {
-         
-        writeToFileInAsciiFormat(fileUrl: rotationRateFileUrl, t: timestamp, x: rotX, y: rotY, z: rotZ)
-        writeToFileInAsciiFormat(fileUrl: userAccelerationFileUrl, t: timestamp, x: accX, y: accY, z: accZ)
-        writeToFileInAsciiFormat(fileUrl: magneticFieldFileUrl, t: timestamp, x: magX, y: magY, z: magZ)
-        writeToFileInAsciiFormat(fileUrl: attitudeFileUrl, t: timestamp, x: roll, y: pitch, z: yaw)
-        writeToFileInAsciiFormat(fileUrl: gravityFileUrl, t: timestamp, x: gravX, y: gravY, z: gravZ)
+    func getUserAccelerationDataBinary() -> Data {
+        let dataPointer = UnsafeMutableRawPointer.allocate(byteCount: 32, alignment: 1)
+        dataPointer.storeBytes(of: timestamp.littleEndian, toByteOffset: 0, as: Int64.self)
+        dataPointer.storeBytes(of: accX.bitPattern.littleEndian, toByteOffset: 8, as: UInt64.self)
+        dataPointer.storeBytes(of: accY.bitPattern.littleEndian, toByteOffset: 16, as: UInt64.self)
+        dataPointer.storeBytes(of: accZ.bitPattern.littleEndian, toByteOffset: 24, as: UInt64.self)
+        return Data(bytes: dataPointer, count: 32)
     }
     
-    private func writeToFileInBinaryFormat(fileUrl: URL, t: Int64, x: UInt64, y: UInt64, z: UInt64) {
-        do {
-            let fileHandle = try FileHandle(forWritingTo: fileUrl)
-            fileHandle.seekToEndOfFile()
-            fileHandle.write(Data(bytes: [t], count: 8))
-            fileHandle.write(Data(bytes: [x], count: 8))
-            fileHandle.write(Data(bytes: [y], count: 8))
-            fileHandle.write(Data(bytes: [z], count: 8))
-            fileHandle.closeFile()
-        } catch {
-            print(error)
-        }
+    func getMagneticFieldDataBinary() -> Data {
+        let dataPointer = UnsafeMutableRawPointer.allocate(byteCount: 32, alignment: 1)
+        dataPointer.storeBytes(of: timestamp.littleEndian, toByteOffset: 0, as: Int64.self)
+        dataPointer.storeBytes(of: magX.bitPattern.littleEndian, toByteOffset: 8, as: UInt64.self)
+        dataPointer.storeBytes(of: magY.bitPattern.littleEndian, toByteOffset: 16, as: UInt64.self)
+        dataPointer.storeBytes(of: magZ.bitPattern.littleEndian, toByteOffset: 24, as: UInt64.self)
+        return Data(bytes: dataPointer, count: 32)
     }
     
-    private func writeToFileInAsciiFormat(fileUrl: URL, t: Int64, x: Double, y: Double, z: Double) {
-        do {
-            let fileHandle = try FileHandle(forWritingTo: fileUrl)
-            fileHandle.seekToEndOfFile()
-            fileHandle.write("\(t) \(x) \(y) \(z)\n".data(using: .ascii)!)
-            fileHandle.closeFile()
-        } catch {
-            print(error)
-        }
+    func getAttitudeDataBinary() -> Data {
+        let dataPointer = UnsafeMutableRawPointer.allocate(byteCount: 32, alignment: 1)
+        dataPointer.storeBytes(of: timestamp.littleEndian, toByteOffset: 0, as: Int64.self)
+        dataPointer.storeBytes(of: roll.bitPattern.littleEndian, toByteOffset: 8, as: UInt64.self)
+        dataPointer.storeBytes(of: pitch.bitPattern.littleEndian, toByteOffset: 16, as: UInt64.self)
+        dataPointer.storeBytes(of: yaw.bitPattern.littleEndian, toByteOffset: 24, as: UInt64.self)
+        return Data(bytes: dataPointer, count: 32)
     }
+    
+    func getGravityDataBinary() -> Data {
+        let dataPointer = UnsafeMutableRawPointer.allocate(byteCount: 32, alignment: 1)
+        dataPointer.storeBytes(of: timestamp.littleEndian, toByteOffset: 0, as: Int64.self)
+        dataPointer.storeBytes(of: gravX.bitPattern.littleEndian, toByteOffset: 8, as: UInt64.self)
+        dataPointer.storeBytes(of: gravY.bitPattern.littleEndian, toByteOffset: 16, as: UInt64.self)
+        dataPointer.storeBytes(of: gravZ.bitPattern.littleEndian, toByteOffset: 24, as: UInt64.self)
+        return Data(bytes: dataPointer, count: 32)
+    }
+    
+    func getRotationRateDataAscii() -> Data {
+        let dataString = "\(timestamp) \(rotX) \(rotY) \(rotZ)\n"
+        return dataString.data(using: .ascii)!
+    }
+    
+    func getUserAccelerationDataAscii() -> Data {
+        let dataString = "\(timestamp) \(accX) \(accY) \(accZ)\n"
+        return dataString.data(using: .ascii)!
+    }
+    
+    func getMagneticFieldDataAscii() -> Data {
+        let dataString = "\(timestamp) \(magX) \(magY) \(magZ)\n"
+        return dataString.data(using: .ascii)!
+    }
+    
+    func getAttitudeDataAscii() -> Data {
+        let dataString = "\(timestamp) \(roll) \(pitch) \(yaw)\n"
+        return dataString.data(using: .ascii)!
+    }
+    
+    func getGravityDataAscii() -> Data {
+        let dataString = "\(timestamp) \(gravX) \(gravY) \(gravZ)\n"
+        return dataString.data(using: .ascii)!
+    }
+    
 }
