@@ -24,8 +24,7 @@ class CameraViewController: UIViewController {
     private var sceneType: String?
     private var gpsLocation: [Double]!
     private var colorResolution: [Int]!
-    private var focalLength: [Float]!
-    private var principalPoint: [Float]!
+    private var cameraIntrinsicArray: [Float]?
     
     private var recordingId: String!
     private var movieFilePath: String!
@@ -168,15 +167,7 @@ class CameraViewController: UIViewController {
         let mx = Float(width - 1) / 2.0
         let my = Float(height - 1) / 2.0
         
-        focalLength = [fx, fy]
-        principalPoint = [mx, my]
-        
-//        print(fov)
-//        print(aspect)
-//        print(width)
-//        print(height)
-//        print(focalLength)
-//        print(principalPoint)
+        cameraIntrinsicArray = [fx, 0.0, 0.0, 0.0, fy, 0.0, mx, my, 1.0]
         
         self.session.commitConfiguration()
         
@@ -346,12 +337,12 @@ class CameraViewController: UIViewController {
             // get number of frames when video is ready
             let numColorFrames = VideoHelper.getNumberOfFrames(videoUrl: URL(fileURLWithPath: self.movieFilePath))
             
-            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: Constants.Sensor.Camera.type, encoding: Constants.EncodingCode.h264, frequency: Constants.Sensor.Camera.frequency, num_frames: numColorFrames, resolution: self.colorResolution, focal_length: self.focalLength, principal_point: self.principalPoint, extrinsics_matrix: nil)
+            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: Constants.Sensor.Camera.type, encoding: Constants.EncodingCode.h264, frequency: Constants.Sensor.Camera.frequency, num_frames: numColorFrames, file_extension: "mp4", resolution: self.colorResolution, intrinsics_matrix: self.cameraIntrinsicArray, extrinsics_matrix: nil)
             
             streamInfo.append(cameraStreamInfo)
             
             let username = self.firstName + " " + self.lastName
-            let metadata = Metadata(username: username, userInputDescription: self.userInputDescription, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: streamInfo)
+            let metadata = Metadata(username: username, userInputDescription: self.userInputDescription, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: streamInfo, number_of_files: 7)
             
             metadata.display()
             metadata.writeToFile(filepath: self.metadataPath)

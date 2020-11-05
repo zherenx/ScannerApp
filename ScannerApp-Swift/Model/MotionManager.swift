@@ -275,11 +275,11 @@ class MotionManager {
     private func generateStreamInfo() -> [ImuStreamInfo] {
         let imuFrequency = Constants.Sensor.Imu.frequency
         let imuFileEncoding = Constants.EncodingCode.binary
-        let rotationRateStreamInfo = ImuStreamInfo(id: "rot_1", type: Constants.Sensor.Imu.RotationRate.type, encoding: imuFileEncoding, num_frames: numberOfMeasurements, frequency: imuFrequency)
-        let userAccelerationStreamInfo = ImuStreamInfo(id: "acce_1", type: Constants.Sensor.Imu.UserAcceleration.type, encoding: imuFileEncoding, num_frames: numberOfMeasurements, frequency: imuFrequency)
-        let magneticFieldStreamInfo = ImuStreamInfo(id: "mag_1", type: Constants.Sensor.Imu.MagneticField.type, encoding: imuFileEncoding, num_frames: numberOfMeasurements, frequency: imuFrequency)
-        let attitudeStreamInfo = ImuStreamInfo(id: "atti_1", type: Constants.Sensor.Imu.Attitude.type, encoding: imuFileEncoding, num_frames: numberOfMeasurements, frequency: imuFrequency)
-        let gravityStreamInfo = ImuStreamInfo(id: "grav_1", type: Constants.Sensor.Imu.Gravity.type, encoding: imuFileEncoding, num_frames: numberOfMeasurements, frequency: imuFrequency)
+        let rotationRateStreamInfo = ImuStreamInfo(id: "rot_1", type: Constants.Sensor.Imu.RotationRate.type, encoding: imuFileEncoding, num_frames: numberOfMeasurements, frequency: imuFrequency, file_extension: Constants.Sensor.Imu.RotationRate.fileExtension)
+        let userAccelerationStreamInfo = ImuStreamInfo(id: "acce_1", type: Constants.Sensor.Imu.UserAcceleration.type, encoding: imuFileEncoding, num_frames: numberOfMeasurements, frequency: imuFrequency, file_extension: Constants.Sensor.Imu.UserAcceleration.fileExtension)
+        let magneticFieldStreamInfo = ImuStreamInfo(id: "mag_1", type: Constants.Sensor.Imu.MagneticField.type, encoding: imuFileEncoding, num_frames: numberOfMeasurements, frequency: imuFrequency, file_extension: Constants.Sensor.Imu.MagneticField.fileExtension)
+        let attitudeStreamInfo = ImuStreamInfo(id: "atti_1", type: Constants.Sensor.Imu.Attitude.type, encoding: imuFileEncoding, num_frames: numberOfMeasurements, frequency: imuFrequency, file_extension: Constants.Sensor.Imu.Attitude.fileExtension)
+        let gravityStreamInfo = ImuStreamInfo(id: "grav_1", type: Constants.Sensor.Imu.Gravity.type, encoding: imuFileEncoding, num_frames: numberOfMeasurements, frequency: imuFrequency, file_extension: Constants.Sensor.Imu.Gravity.fileExtension)
 
         return [rotationRateStreamInfo, userAccelerationStreamInfo, magneticFieldStreamInfo, attitudeStreamInfo, gravityStreamInfo]
     }

@@ -47,44 +47,34 @@ class StreamInfo: Encodable {
     private var encoding: String
     private var frequency: Int
     private var num_frames: Int
+    private var file_extension: String
     
-    internal init(id: String, type: String, encoding: String, frequency: Int, num_frames: Int) {
+    internal init(id: String, type: String, encoding: String, frequency: Int, num_frames: Int, file_extension: String) {
         self.id = id
         self.type = type
         self.encoding = encoding
         self.frequency = frequency
         self.num_frames = num_frames
+        self.file_extension = file_extension
     }
 }
 
 class CameraStreamInfo: StreamInfo {
     private var resolution: [Int]
-    private var focal_length: [Float]?
-    private var principal_point: [Float]?
     private var intrinsics_matrix: [Float]?
     private var extrinsics_matrix: [Float]?
     
-    internal init(id: String, type: String, encoding: String, frequency: Int, num_frames: Int, resolution: [Int], focal_length: [Float], principal_point: [Float], extrinsics_matrix: [Float]?) {
-        self.resolution = resolution
-        self.focal_length = focal_length
-        self.principal_point = principal_point
-        self.extrinsics_matrix = extrinsics_matrix
-        super.init(id: id, type: type, encoding: encoding, frequency: frequency, num_frames: num_frames)
-    }
-    
-    internal init(id: String, type: String, encoding: String, frequency: Int, num_frames: Int, resolution: [Int], intrinsics_matrix: [Float]?, extrinsics_matrix: [Float]?) {
+    internal init(id: String, type: String, encoding: String, frequency: Int, num_frames: Int, file_extension: String, resolution: [Int], intrinsics_matrix: [Float]?, extrinsics_matrix: [Float]?) {
         self.resolution = resolution
         self.intrinsics_matrix = intrinsics_matrix
         self.extrinsics_matrix = extrinsics_matrix
-        super.init(id: id, type: type, encoding: encoding, frequency: frequency, num_frames: num_frames)
+        super.init(id: id, type: type, encoding: encoding, frequency: frequency, num_frames: num_frames, file_extension: file_extension)
     }
     
     override func encode(to encoder: Encoder) throws {
         try super.encode(to: encoder)
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(resolution, forKey: .resolution)
-        try container.encode(focal_length, forKey: .focal_length)
-        try container.encode(principal_point, forKey: .principal_point)
         try container.encode(intrinsics_matrix, forKey: .intrinsics_matrix)
         try container.encode(extrinsics_matrix, forKey: .extrinsics_matrix)
     }
@@ -104,8 +94,8 @@ class ImuStreamInfo: StreamInfo {
     
     // TODO: Add 'precision' info of imu sensor
     
-    internal init(id: String, type: String, encoding: String, num_frames: Int, frequency: Int) {
-        super.init(id: id, type: type, encoding: encoding, frequency: frequency, num_frames: num_frames)
+    internal init(id: String, type: String, encoding: String, num_frames: Int, frequency: Int, file_extension: String) {
+        super.init(id: id, type: type, encoding: encoding, frequency: frequency, num_frames: num_frames, file_extension: file_extension)
     }
     
 //    override func encode(to encoder: Encoder) throws {
@@ -125,9 +115,10 @@ class Metadata: Encodable {
     private var user: UserInfo
     private var scene: SceneInfo
     private var streams: [StreamInfo]
+    private var number_of_files: Int
     
     init(username: String, userInputDescription: String, sceneType: String, gpsLocation: [Double],
-         streams: [StreamInfo]) {
+         streams: [StreamInfo], number_of_files: Int) {
         
         let deviceId = UIDevice.current.identifierForVendor?.uuidString
         let modelName = Helper.getDeviceModelCode()
@@ -136,7 +127,9 @@ class Metadata: Encodable {
         device = .init(id: deviceId!, type: modelName, name: deviceName)
         user = .init(name: username)
         scene = .init(description: userInputDescription, type: sceneType, gps_location: gpsLocation)
+        
         self.streams = streams
+        self.number_of_files = number_of_files
     }
     
     func display() {
