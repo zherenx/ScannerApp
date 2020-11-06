@@ -10,16 +10,11 @@ import CoreMotion
 
 class MotionManager {
     
-    enum MotionManagerError: Error {
-        case imuSensorInUnexpectedStateError
-    }
-    
     private let motionManager = CMMotionManager()
     private let motionQueue = OperationQueue()
     
 //    private let bootTime: Double
     
-    private var isRecording: Bool = false
     private var numberOfMeasurements: Int = 0
     private var isDebugMode: Bool = false
     
@@ -56,32 +51,22 @@ class MotionManager {
     }
     
     func startRecording(dataPathString: String, recordingId: String) {
-        if isRecording {
-            // TODO: do something
-            return
-        }
-        
-        isRecording = true // should i move this to later?
+
         numberOfMeasurements = 0
         isDebugMode = UserDefaults.debugFlag
         
         initFiles(dataPathString: dataPathString, recordingId: recordingId)
         
-        self.motionManager.startDeviceMotionUpdates(using: .xArbitraryCorrectedZVertical, to: self.motionQueue) { (data, error) in
+        motionManager.startDeviceMotionUpdates(using: .xArbitraryCorrectedZVertical, to: self.motionQueue) { (data, error) in
+            
             if let validData = data {
-                self.numberOfMeasurements += 1
+                
                 let motionData = MotionData(deviceMotion: validData)
 //                let motionData = MotionData(deviceMotion: validData, bootTime: self.bootTime)
                 
-                self.writeDataBinary(motionData: motionData)
-
-                if self.isDebugMode {
-
-                    motionData.display()
-                    
-                    self.writeDataAscii(motionData: motionData)
-                }
-
+                self.numberOfMeasurements += 1
+                self.writeData(motionData: motionData)
+                
             } else {
                 print("there is some problem with motion data")
             }
@@ -89,38 +74,17 @@ class MotionManager {
     }
     
     func stopRecordingAndReturnNumberOfMeasurements() -> Int {
-        do {
-            try stopRecording()
-        } catch {
-            // TODO: do something
-            return -1
-        }
-        
+        stopRecording()
         return numberOfMeasurements
     }
     
     func stopRecordingAndReturnStreamInfo() -> [ImuStreamInfo] {
-        do {
-            try stopRecording()
-        } catch {
-            // TODO: do something
-            return []
-        }
-        
+        stopRecording()
         return generateStreamInfo()
     }
     
-    func stopRecording() throws {
-        if !isRecording {
-            print("Imu sensor is not recording when calling stopRecording().")
-            
-            // TODO: do something
-            throw MotionManagerError.imuSensorInUnexpectedStateError
-        }
-        
-        self.motionManager.stopDeviceMotionUpdates()
-        
-        isRecording = false
+    func stopRecording() {
+        motionManager.stopDeviceMotionUpdates()
         
         closeFiles()
         addHeaders()
@@ -256,6 +220,15 @@ class MotionManager {
         magneticFieldAsciiFileUrl = nil
         attitudeAsciiFileUrl = nil
         gravityAsciiFileUrl = nil
+    }
+    
+    private func writeData(motionData: MotionData) {
+        writeDataBinary(motionData: motionData)
+        
+        if self.isDebugMode {
+            motionData.display()
+            writeDataAscii(motionData: motionData)
+        }
     }
     
     private func writeDataBinary(motionData: MotionData) {
