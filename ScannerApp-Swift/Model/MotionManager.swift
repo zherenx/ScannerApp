@@ -13,6 +13,8 @@ class MotionManager {
     private let motionManager = CMMotionManager()
     private let motionQueue = OperationQueue()
     
+    private let motionDataOutputQueue = DispatchQueue(label: "motion data output queue")
+    
 //    private let bootTime: Double
     
     private var numberOfMeasurements: Int = 0
@@ -51,44 +53,47 @@ class MotionManager {
     }
     
     func startRecording(dataPathString: String, recordingId: String) {
-
-        numberOfMeasurements = 0
-        isDebugMode = UserDefaults.debugFlag
         
-        initFiles(dataPathString: dataPathString, recordingId: recordingId)
+        motionDataOutputQueue.async {
+            
+            self.numberOfMeasurements = 0
+            self.isDebugMode = UserDefaults.debugFlag
+            
+            self.initFiles(dataPathString: dataPathString, recordingId: recordingId)
+            
+        }
         
         motionManager.startDeviceMotionUpdates(using: .xArbitraryCorrectedZVertical, to: self.motionQueue) { (data, error) in
-            
-            if let validData = data {
+
+            self.motionDataOutputQueue.async {
                 
-                let motionData = MotionData(deviceMotion: validData)
-//                let motionData = MotionData(deviceMotion: validData, bootTime: self.bootTime)
-                
-                self.numberOfMeasurements += 1
-                self.writeData(motionData: motionData)
-                
-            } else {
-                print("there is some problem with motion data")
+                if let validData = data {
+                    
+                    let motionData = MotionData(deviceMotion: validData)
+//                    let motionData = MotionData(deviceMotion: validData, bootTime: self.bootTime)
+                    
+                    self.numberOfMeasurements += 1
+                    self.writeData(motionData: motionData)
+
+                } else {
+                    print("there is some problem with motion data")
+                }
             }
         }
-    }
-    
-    func stopRecordingAndReturnNumberOfMeasurements() -> Int {
-        stopRecording()
-        return numberOfMeasurements
+        
     }
     
     func stopRecordingAndReturnStreamInfo() -> [ImuStreamInfo] {
-        stopRecording()
-        return generateStreamInfo()
-    }
-    
-    func stopRecording() {
+
         motionManager.stopDeviceMotionUpdates()
+
+        motionDataOutputQueue.sync {
+            closeFiles()
+            addHeaders()
+            resetFileUrls()
+        }
         
-        closeFiles()
-        addHeaders()
-        resetFileUrls()
+        return generateStreamInfo()
     }
     
     private func initFiles(dataPathString: String, recordingId: String) {
