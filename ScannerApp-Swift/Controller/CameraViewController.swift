@@ -14,7 +14,7 @@ import UIKit
 class CameraViewController: UIViewController {
     
     private let locationManager = CLLocationManager()
-    private let motionManager = MotionManager.instance
+    private let motionManager = MotionManager()
     
     private let sceneTypes = Constants.sceneTypes
 
