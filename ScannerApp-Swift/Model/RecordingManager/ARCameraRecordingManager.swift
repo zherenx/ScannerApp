@@ -76,7 +76,7 @@ extension ARCameraRecordingManager: RecordingManager {
             self.sceneDescription = sceneDescription
             self.sceneType = sceneType
             
-            gpsLocation = Helper.getGpsLocation()
+            gpsLocation = Helper.getGpsLocation(locationManager: locationManager)
             
             numFrames = 0
             

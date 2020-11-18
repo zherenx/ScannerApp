@@ -80,10 +80,8 @@ struct Helper {
     }
     
     // this assume gps authorization has been done previously
-    static func getGpsLocation() -> [Double] {
-        let locationManager = CLLocationManager()
-//        locationManager.requestWhenInUseAuthorization()
-        
+    static func getGpsLocation(locationManager: CLLocationManager) -> [Double] {
+
         var gpsLocation: [Double] = []
         
         if (CLLocationManager.authorizationStatus() == .authorizedWhenInUse ||
