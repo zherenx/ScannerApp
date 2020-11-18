@@ -13,7 +13,7 @@ class ARCameraRecordingManager: NSObject {
     
     private let sessionQueue = DispatchQueue(label: "ar camera recording queue")
     
-    let session = ARSession()
+    private let session = ARSession()
     
     private let depthRecorder = DepthRecorder()
     private let confidenceMapRecorder = ConfidenceMapRecorder()
@@ -32,6 +32,10 @@ class ARCameraRecordingManager: NSObject {
     private var colorFrameResolution: [Int] = []
     private var depthFrameResolution: [Int] = []
     private var frequency: Int?
+    
+    private var username: String?
+    private var sceneDescription: String?
+    private var sceneType: String?
     
     override init() {
         super.init()
@@ -60,14 +64,23 @@ class ARCameraRecordingManager: NSObject {
 @available(iOS 14.0, *)
 extension ARCameraRecordingManager: RecordingManager {
     
-    func startRecording() {
+    func getSession() -> NSObject {
+        return session
+    }
+    
+    func startRecording(username: String, sceneDescription: String, sceneType: String) {
         
         sessionQueue.async { [self] in
+            
+            self.username = username
+            self.sceneDescription = sceneDescription
+            self.sceneType = sceneType
             
             gpsLocation = Helper.getGpsLocation()
             
             numFrames = 0
             
+            // TODO: should this be moved to configureSession?
             if let currentFrame = session.currentFrame {
                 cameraIntrinsic = currentFrame.camera.intrinsics
                 
@@ -103,7 +116,7 @@ extension ARCameraRecordingManager: RecordingManager {
         
     }
     
-    func finishRecordingAndReturnStreamInfo() -> [StreamInfo] {
+    func stopRecording() {
         
         sessionQueue.sync { [self] in
             
@@ -116,12 +129,16 @@ extension ARCameraRecordingManager: RecordingManager {
             rgbRecorder.finishRecording()
             cameraInfoRecorder.finishRecording()
             
+            writeMetadataToFile()
+            
+            username = nil
+            sceneDescription = nil
+            sceneType = nil
+            
         }
-        
-        return getStreamInfo()
     }
     
-    private func getStreamInfo() -> [StreamInfo]{
+    private func writeMetadataToFile() {
         
         let cameraIntrinsicArray = [cameraIntrinsic!.columns.0.x, cameraIntrinsic!.columns.0.y, cameraIntrinsic!.columns.0.z,
                                     cameraIntrinsic!.columns.1.x, cameraIntrinsic!.columns.1.y, cameraIntrinsic!.columns.1.z,
@@ -131,7 +148,12 @@ extension ARCameraRecordingManager: RecordingManager {
         let confidenceMapStreamInfo = StreamInfo(id: "confidence_map", type: "confidence_map", encoding: "uint8_zlib", frequency: frequency ?? 0, numberOfFrames: numFrames, fileExtension: "confidence.zlib")
         let cameraInfoStreamInfo = StreamInfo(id: "camera_info_color_back_1", type: "camera_info", encoding: "jsonl", frequency: frequency ?? 0, numberOfFrames: numFrames, fileExtension: "jsonl")
         
-        return [rgbStreamInfo, depthStreamInfo, confidenceMapStreamInfo, cameraInfoStreamInfo]
+        let metadata = Metadata(username: username ?? "", userInputDescription: sceneDescription ?? "", sceneType: sceneType ?? "", gpsLocation: gpsLocation, streams: [rgbStreamInfo, depthStreamInfo, confidenceMapStreamInfo, cameraInfoStreamInfo], numberOfFiles: 5)
+
+        let metadataPath = (dirUrl.path as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("json")!)
+        
+        metadata.display()
+        metadata.writeToFile(filepath: metadataPath)
     }
     
 }
@@ -140,9 +162,7 @@ extension ARCameraRecordingManager: RecordingManager {
 extension ARCameraRecordingManager: ARSessionDelegate {
     
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
-        
-//        print("Got frame update.")
-        
+
         if !isRecording {
             return
         }

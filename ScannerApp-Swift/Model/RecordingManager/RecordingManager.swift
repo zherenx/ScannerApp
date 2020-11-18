@@ -10,8 +10,9 @@ import Foundation
 
 protocol RecordingManager {
     var isRecording: Bool { get }
-    var session: NSObject { get }
     
-    func startRecording()
-    func finishRecordingAndReturnStreamInfo() -> [StreamInfo]
+    func getSession() -> NSObject
+    
+    func startRecording(username: String, sceneDescription: String, sceneType: String)
+    func stopRecording()
 }
