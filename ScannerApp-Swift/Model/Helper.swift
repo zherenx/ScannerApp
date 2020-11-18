@@ -7,6 +7,7 @@
 //
 
 import CommonCrypto
+import CoreLocation
 import Foundation
 import UIKit
 
@@ -76,6 +77,23 @@ struct Helper {
             return identifier + String(UnicodeScalar(UInt8(value)))
         }
         return identifier
+    }
+    
+    // this assume gps authorization has been done previously
+    static func getGpsLocation() -> [Double] {
+        let locationManager = CLLocationManager()
+//        locationManager.requestWhenInUseAuthorization()
+        
+        var gpsLocation: [Double] = []
+        
+        if (CLLocationManager.authorizationStatus() == .authorizedWhenInUse ||
+            CLLocationManager.authorizationStatus() == .authorizedAlways) {
+            if let coordinate = locationManager.location?.coordinate {
+                gpsLocation = [coordinate.latitude, coordinate.longitude]
+            }
+        }
+        
+        return gpsLocation
     }
     
     // TODO: include this function in doc
