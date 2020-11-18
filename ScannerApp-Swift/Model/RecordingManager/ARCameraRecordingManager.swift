@@ -17,7 +17,7 @@ class ARCameraRecordingManager: NSObject {
     
     private let depthRecorder = DepthRecorder()
     private let confidenceMapRecorder = ConfidenceMapRecorder()
-    private let rgbRecorder = RGBRecorder(videoSettings: [AVVideoCodecKey: AVVideoCodecType.h264, AVVideoHeightKey: NSNumber(value: 1440), AVVideoWidthKey: NSNumber(value: 1920)])
+    private var rgbRecorder: RGBRecorder! = nil // rgbRecorder will be initialized in configureSession
     private let cameraInfoRecorder = CameraInfoRecorder()
     
     private var numFrames: Int = 0
@@ -40,15 +40,15 @@ class ARCameraRecordingManager: NSObject {
     override init() {
         super.init()
         
+        locationManager.requestWhenInUseAuthorization()
+        
         sessionQueue.async {
             self.configureSession()
         }
     }
     
-    // TODO: think about better name?
     private func configureSession() {
         session.delegate = self
-        locationManager.requestWhenInUseAuthorization()
         
         let configuration = ARWorldTrackingConfiguration()
         configuration.frameSemantics = .sceneDepth
@@ -58,6 +58,9 @@ class ARCameraRecordingManager: NSObject {
         frequency = videoFormat.framesPerSecond
         let imageResolution = videoFormat.imageResolution
         colorFrameResolution = [Int(imageResolution.height), Int(imageResolution.width)]
+        
+        let videoSettings: [String: Any] = [AVVideoCodecKey: AVVideoCodecType.h264, AVVideoHeightKey: NSNumber(value: colorFrameResolution[0]), AVVideoWidthKey: NSNumber(value: colorFrameResolution[1])]
+        rgbRecorder = RGBRecorder(videoSettings: videoSettings)
     }
 }
 
@@ -80,7 +83,7 @@ extension ARCameraRecordingManager: RecordingManager {
             
             numFrames = 0
             
-            // TODO: should this be moved to configureSession?
+            // TODO: consider an if check here to avoid doing this for every recording?
             if let currentFrame = session.currentFrame {
                 cameraIntrinsic = currentFrame.camera.intrinsics
                 
