@@ -13,7 +13,7 @@ class ARCameraRecordingManager: NSObject {
     
     private let sessionQueue = DispatchQueue(label: "ar camera recording queue")
     
-    private let session = ARSession()
+    let session = ARSession()
     
     private let depthRecorder = DepthRecorder()
     private let confidenceMapRecorder = ConfidenceMapRecorder()
@@ -23,7 +23,7 @@ class ARCameraRecordingManager: NSObject {
     private var numFrames: Int = 0
     private var dirUrl: URL!
     private var recordingId: String!
-    private var isRecording: Bool = false
+    var isRecording: Bool = false
     
     private let locationManager = CLLocationManager()
     private var gpsLocation: [Double] = []
@@ -119,10 +119,6 @@ extension ARCameraRecordingManager: RecordingManager {
         }
         
         return getStreamInfo()
-    }
-    
-    func getSession() -> NSObject {
-        return session
     }
     
     private func getStreamInfo() -> [StreamInfo]{

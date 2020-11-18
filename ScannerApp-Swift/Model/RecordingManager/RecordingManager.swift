@@ -6,8 +6,12 @@
 //  Copyright © 2020 jx16. All rights reserved.
 //
 
+import Foundation
+
 protocol RecordingManager {
+    var isRecording: Bool { get }
+    var session: NSObject { get }
+    
     func startRecording()
     func finishRecordingAndReturnStreamInfo() -> [StreamInfo]
-    func getSession() -> NSObject
 }
