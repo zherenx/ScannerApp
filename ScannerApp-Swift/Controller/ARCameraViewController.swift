@@ -54,6 +54,7 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
         arView.session = session
 
         locationManager.requestWhenInUseAuthorization()
+//        Helper.requsetWhenInUseAuthorization()
         
         // dismiss keyboard when tap elsewhere
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(
@@ -121,7 +122,7 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
             self.recordButton.isEnabled = true
         }
         
-        gpsLocation = Helper.getGpsLocation()
+        gpsLocation = Helper.getGpsLocation(locationManager: locationManager)
         
         numFrames = 0
         
