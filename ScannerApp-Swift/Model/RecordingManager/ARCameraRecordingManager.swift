@@ -64,7 +64,7 @@ extension ARCameraRecordingManager: RecordingManager {
         
         sessionQueue.async { [self] in
             
-            gpsLocation = getGpsLocation()
+            gpsLocation = Helper.getGpsLocation()
             
             numFrames = 0
             
@@ -138,23 +138,6 @@ extension ARCameraRecordingManager: RecordingManager {
         return [rgbStreamInfo, depthStreamInfo, confidenceMapStreamInfo, cameraInfoStreamInfo]
     }
     
-    // intended to be moved to Helper
-    // this assume gps authorization has been done previously
-    private func getGpsLocation() -> [Double] {
-        let locationManager = CLLocationManager()
-//        locationManager.requestWhenInUseAuthorization()
-        
-        var gpsLocation: [Double] = []
-        
-        if (CLLocationManager.authorizationStatus() == .authorizedWhenInUse ||
-            CLLocationManager.authorizationStatus() == .authorizedAlways) {
-            if let coordinate = locationManager.location?.coordinate {
-                gpsLocation = [coordinate.latitude, coordinate.longitude]
-            }
-        }
-        
-        return gpsLocation
-    }
 }
 
 @available(iOS 14.0, *)
