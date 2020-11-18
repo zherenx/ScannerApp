@@ -121,7 +121,7 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
             self.recordButton.isEnabled = true
         }
         
-        gpsLocation = getGpsLocation()
+        gpsLocation = Helper.getGpsLocation()
         
         numFrames = 0
         
@@ -201,24 +201,6 @@ class ARCameraViewController: UIViewController, CameraViewControllerPopUpViewDel
         
         metadata.display()
         metadata.writeToFile(filepath: metadataPath)
-    }
-    
-    // intended to be moved to Helper
-    // this assume gps authorization has been done previously
-    private func getGpsLocation() -> [Double] {
-        let locationManager = CLLocationManager()
-//        locationManager.requestWhenInUseAuthorization()
-        
-        var gpsLocation: [Double] = []
-        
-        if (CLLocationManager.authorizationStatus() == .authorizedWhenInUse ||
-            CLLocationManager.authorizationStatus() == .authorizedAlways) {
-            if let coordinate = locationManager.location?.coordinate {
-                gpsLocation = [coordinate.latitude, coordinate.longitude]
-            }
-        }
-        
-        return gpsLocation
     }
     
 }
