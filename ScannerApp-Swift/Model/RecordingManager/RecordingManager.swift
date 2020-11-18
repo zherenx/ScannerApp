@@ -8,7 +8,6 @@
 
 protocol RecordingManager {
     func startRecording()
-    func finishRecording()
     func finishRecordingAndReturnStreamInfo() -> [StreamInfo]
     func getSession() -> NSObject
 }

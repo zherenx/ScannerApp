@@ -61,56 +61,63 @@ class ARCameraRecordingManager: NSObject {
 extension ARCameraRecordingManager: RecordingManager {
     
     func startRecording() {
-        gpsLocation = getGpsLocation()
         
-        numFrames = 0
-        
-        if let currentFrame = session.currentFrame {
-            cameraIntrinsic = currentFrame.camera.intrinsics
+        sessionQueue.async { [self] in
             
-            // get depth resolution
-            if let depthData = currentFrame.sceneDepth {
+            gpsLocation = getGpsLocation()
+            
+            numFrames = 0
+            
+            if let currentFrame = session.currentFrame {
+                cameraIntrinsic = currentFrame.camera.intrinsics
                 
-                let depthMap: CVPixelBuffer = depthData.depthMap
-                let height = CVPixelBufferGetHeight(depthMap)
-                let width = CVPixelBufferGetWidth(depthMap)
+                // get depth resolution
+                if let depthData = currentFrame.sceneDepth {
+                    
+                    let depthMap: CVPixelBuffer = depthData.depthMap
+                    let height = CVPixelBufferGetHeight(depthMap)
+                    let width = CVPixelBufferGetWidth(depthMap)
+                    
+                    depthFrameResolution = [height, width]
+                    
+                } else {
+                    print("Unable to get depth resolution.")
+                }
                 
-                depthFrameResolution = [height, width]
-                
-            } else {
-                print("Unable to get depth resolution.")
             }
-
+            
+            print("pre1 count: \(numFrames)")
+            
+            recordingId = Helper.getRecordingId()
+            dirUrl = URL(fileURLWithPath: Helper.getRecordingDataDirectoryPath(recordingId: recordingId))
+            
+            depthRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
+            confidenceMapRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
+            rgbRecorder.prepareForRecording(dirPath: dirUrl.path, filenameWithoutExt: recordingId)
+            cameraInfoRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
+            
+            isRecording = true
+            
+            print("pre2 count: \(numFrames)")
         }
         
-        print("pre1 count: \(numFrames)")
-        
-        recordingId = Helper.getRecordingId()
-        dirUrl = URL(fileURLWithPath: Helper.getRecordingDataDirectoryPath(recordingId: recordingId))
-        
-        depthRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
-        confidenceMapRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
-        rgbRecorder.prepareForRecording(dirPath: dirUrl.path, filenameWithoutExt: recordingId)
-        cameraInfoRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
-        
-        isRecording = true
-        
-        print("pre2 count: \(numFrames)")
-    }
-    
-    func finishRecording() {
-        print("post count: \(numFrames)")
-        
-        isRecording = false
-        
-        depthRecorder.finishRecording()
-        confidenceMapRecorder.finishRecording()
-        rgbRecorder.finishRecording()
-        cameraInfoRecorder.finishRecording()
     }
     
     func finishRecordingAndReturnStreamInfo() -> [StreamInfo] {
-        finishRecording()
+        
+        sessionQueue.sync { [self] in
+            
+            print("post count: \(numFrames)")
+            
+            isRecording = false
+            
+            depthRecorder.finishRecording()
+            confidenceMapRecorder.finishRecording()
+            rgbRecorder.finishRecording()
+            cameraInfoRecorder.finishRecording()
+            
+        }
+        
         return getStreamInfo()
     }
     
