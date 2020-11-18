@@ -9,8 +9,6 @@
 protocol RecordingManager {
     func startRecording()
     func finishRecording()
-    func finishRecordingAndReturnStreamInfo()
-    
-//    func getSession() // Not sure yet, will need to see if this work
-//    func setUpPreview() // Not sure yet, will need to see if this work
+    func finishRecordingAndReturnStreamInfo() -> [StreamInfo]
+    func getSession() -> NSObject
 }
