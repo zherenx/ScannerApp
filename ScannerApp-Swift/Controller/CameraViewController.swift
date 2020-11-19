@@ -11,17 +11,11 @@ import CoreLocation
 import CoreMotion
 import UIKit
 
-class CameraViewController: UIViewController {
+class CameraViewController: UIViewController, CameraViewControllerPopUpViewDelegate {
     
     private let locationManager = CLLocationManager()
     private let motionManager = MotionManager()
     
-    private let sceneTypes = Constants.sceneTypes
-
-    private var firstName: String = ""
-    private var lastName: String = ""
-    private var userInputDescription: String = ""
-    private var sceneType: String?
     private var gpsLocation: [Double]!
     private var colorResolution: [Int]!
     private var cameraIntrinsicArray: [Float]?
@@ -45,15 +39,7 @@ class CameraViewController: UIViewController {
     @IBOutlet private weak var previewView: PreviewView!
     @IBOutlet private weak var recordButton: UIButton!
     
-    // pop-up view
-    @IBOutlet private weak var popUpView: UIView!
-    @IBOutlet private weak var firstNameTextField: UITextField!
-    @IBOutlet private weak var lastNameTextField: UITextField!
-    @IBOutlet private weak var descriptionTextField: UITextField!
-    @IBOutlet private weak var selectSceneTypeButton: UIButton!
-    @IBOutlet private weak var sceneTypePickerView: UIPickerView!
-    @IBOutlet private weak var cancelButton: UIButton!
-    @IBOutlet private weak var startButton: UIButton!
+    var popUpView: PopUpView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,12 +51,10 @@ class CameraViewController: UIViewController {
         // TODO: order of these function calls might matter, consider improve on this
         self.configurateSession()
         
-        self.loadUserDefaults()
-        
         gpsLocation = [] // Do we want to enforce valid gps location?
         updateGpsLocation()
         
-        self.configPopUpView()
+        self.setupPopUpView()
         
     }
     
@@ -89,6 +73,23 @@ class CameraViewController: UIViewController {
         }
         
         super.viewWillDisappear(animated)
+    }
+    
+    private func setupPopUpView() {
+        
+        popUpView = PopUpView()
+        popUpView.delegate = self
+        
+        view.addSubview(popUpView)
+        
+        popUpView.translatesAutoresizingMaskIntoConstraints = false
+        popUpView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        popUpView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        
+        DispatchQueue.main.async {
+            self.popUpView.isHidden = true
+        }
+        
     }
 
     private func configurateSession() {
@@ -173,56 +174,6 @@ class CameraViewController: UIViewController {
         
     }
     
-    private func loadUserDefaults() {
-        
-        firstName = UserDefaults.firstName
-        lastName = UserDefaults.lastName
-        
-        userInputDescription = UserDefaults.userInputDescription
-        
-        updateSceneType()
-    }
-    
-    private func updateSceneType() {
-        let currentSceneTypeIndex = UserDefaults.sceneTypeIndex
-        if currentSceneTypeIndex == 0 {
-            sceneType = nil
-        } else {
-            sceneType = sceneTypes[currentSceneTypeIndex]
-        }
-    }
-    
-    private func configPopUpView() {
-        popUpView.isHidden = true
-        
-        firstNameTextField.delegate = self
-        lastNameTextField.delegate = self
-        descriptionTextField.delegate = self
-        
-        firstNameTextField.tag = Constants.Tag.firstNameTag
-        lastNameTextField.tag = Constants.Tag.lastNameTag
-        descriptionTextField.tag = Constants.Tag.descriptionTag
-        
-        firstName = UserDefaults.firstName
-        lastName = UserDefaults.lastName
-        userInputDescription = UserDefaults.userInputDescription
-        
-        firstNameTextField.text = firstName
-        lastNameTextField.text = lastName
-        descriptionTextField.text = userInputDescription
-        
-        // setup picker view
-        sceneTypePickerView.delegate = self
-        sceneTypePickerView.dataSource = self
-
-        sceneTypePickerView.isHidden = true
-        
-        let currentSceneTypeIndex = UserDefaults.sceneTypeIndex
-        selectSceneTypeButton.setTitle(sceneTypes[currentSceneTypeIndex], for: .normal)
-        
-        sceneTypePickerView.selectRow(currentSceneTypeIndex, inComponent: 0, animated: false)
-    }
-    
     @IBAction private func recordButtonTapped(_ sender: Any) {
         
         DispatchQueue.main.async {
@@ -237,61 +188,21 @@ class CameraViewController: UIViewController {
                 self.popUpView.isHidden = false
             }
             
-            self.updateStartButton()
-            
         } else {
             self.stopRecording()
         }
 
     }
     
-    @IBAction func startButtonTapped(_ sender: Any) {
-        DispatchQueue.main.async {
-            self.popUpView.isHidden = true
-        }
-        
-        self.startRecording()
-    }
-    
-    @IBAction func cancelButtonTapped(_ sender: Any) {
+    func dismissPopUpView() {
         DispatchQueue.main.async {
             self.popUpView.isHidden = true
             self.recordButton.isEnabled = true
         }
     }
     
-    @IBAction func selectSceneTypeButtonTapped(_ sender: Any) {
-        DispatchQueue.main.async {
-            if self.sceneTypePickerView.isHidden {
-                self.sceneTypePickerView.isHidden = false
-            } else {
-                self.sceneTypePickerView.isHidden = true
-            }
-        }
-    }
-    
-    private func hasAllRequiredProperties() -> Bool {
-        if !self.firstName.isEmpty
-            && !self.lastName.isEmpty
-            && !self.userInputDescription.isEmpty
-            && self.sceneType != nil {
-            return true
-        } else {
-            return false
-        }
-    }
-    
-    private func updateStartButton() {
-        DispatchQueue.main.async {
-            if self.hasAllRequiredProperties() {
-                self.startButton.isEnabled = true
-            } else {
-                self.startButton.isEnabled = false
-            }
-        }
-    }
-    
-    private func startRecording() {
+    func startRecording() {
+        
         sessionQueue.async {
             
             if UIDevice.current.isMultitaskingSupported {
@@ -341,8 +252,10 @@ class CameraViewController: UIViewController {
             
             streamInfo.append(cameraStreamInfo)
             
-            let username = self.firstName + " " + self.lastName
-            let metadata = Metadata(username: username, userInputDescription: self.userInputDescription, sceneType: self.sceneType!, gpsLocation: self.gpsLocation, streams: streamInfo, numberOfFiles: 7)
+            let username = self.popUpView.firstName + " " + self.popUpView.lastName
+            let sceneDescription = self.popUpView.userInputDescription
+            let sceneType = self.popUpView.sceneTypes[self.popUpView.sceneTypeIndex]
+            let metadata = Metadata(username: username, userInputDescription: sceneDescription, sceneType: sceneType, gpsLocation: self.gpsLocation, streams: streamInfo, numberOfFiles: 7)
             
             metadata.display()
             metadata.writeToFile(filepath: self.metadataPath)
@@ -373,6 +286,8 @@ extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
     func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
         // Enable the Record button to let the user stop recording.
         DispatchQueue.main.async {
+            self.popUpView.isHidden = true
+            
             self.recordButton.setTitle("Stop", for: .normal)
             self.recordButton.backgroundColor = .systemRed
             self.recordButton.isEnabled = true
@@ -412,63 +327,5 @@ extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
         }
         
         videoIsReady = true
-    }
-}
-
-extension CameraViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textFieldDidUpdate(textField)
-        
-        return true
-    }
-    
-    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
-        textFieldDidUpdate(textField)
-        
-        return true
-    }
-    
-    private func textFieldDidUpdate(_ textField: UITextField) {
-        textField.resignFirstResponder()
-        
-        let text: String = (textField.text ?? "").trimmingCharacters(in: .whitespaces)
-        
-        switch textField.tag {
-        case Constants.Tag.firstNameTag:
-            firstName = text
-            UserDefaults.set(firstName: text)
-        case Constants.Tag.lastNameTag:
-            lastName = text
-            UserDefaults.set(lastName: text)
-        case Constants.Tag.descriptionTag:
-            userInputDescription = text
-            UserDefaults.set(userInputDescription: text)
-        default:
-            print("text field with tag \(textField.tag) is not found.")
-        }
-        
-        updateStartButton()
-    }
-}
-
-extension CameraViewController: UIPickerViewDelegate, UIPickerViewDataSource {
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1;
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return sceneTypes.count
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return sceneTypes[row]
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        UserDefaults.set(sceneTypeIndex: row)
-        selectSceneTypeButton.setTitle(sceneTypes[row], for: .normal)
-        
-        updateSceneType()
-        updateStartButton()
     }
 }
