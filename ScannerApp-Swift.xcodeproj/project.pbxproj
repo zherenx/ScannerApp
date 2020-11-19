@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		FE017D722564782900786973 /* RecordingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE017D712564782900786973 /* RecordingManager.swift */; };
 		FE017D762564980700786973 /* ARCameraRecordingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE017D752564980700786973 /* ARCameraRecordingManager.swift */; };
+		FE017D8B2566346900786973 /* SingleCameraRecordingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE017D8A2566346900786973 /* SingleCameraRecordingManager.swift */; };
 		FE02EE2B23F0C750000BD9EE /* ConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE02EE2A23F0C750000BD9EE /* ConfigurationViewController.swift */; };
 		FE02EE2D23F1D102000BD9EE /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE02EE2C23F1D102000BD9EE /* Helper.swift */; };
 		FE02EE2F23F61A9C000BD9EE /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE02EE2E23F61A9C000BD9EE /* Constants.swift */; };
@@ -43,6 +44,7 @@
 /* Begin PBXFileReference section */
 		FE017D712564782900786973 /* RecordingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingManager.swift; sourceTree = "<group>"; };
 		FE017D752564980700786973 /* ARCameraRecordingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCameraRecordingManager.swift; sourceTree = "<group>"; };
+		FE017D8A2566346900786973 /* SingleCameraRecordingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleCameraRecordingManager.swift; sourceTree = "<group>"; };
 		FE02EE2A23F0C750000BD9EE /* ConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewController.swift; sourceTree = "<group>"; };
 		FE02EE2C23F1D102000BD9EE /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		FE02EE2E23F61A9C000BD9EE /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -91,6 +93,7 @@
 			isa = PBXGroup;
 			children = (
 				FE017D712564782900786973 /* RecordingManager.swift */,
+				FE017D8A2566346900786973 /* SingleCameraRecordingManager.swift */,
 				FE017D752564980700786973 /* ARCameraRecordingManager.swift */,
 			);
 			path = RecordingManager;
@@ -256,6 +259,7 @@
 				FE09457523ADFAAF003A1CA5 /* CameraViewController.swift in Sources */,
 				FE02EE2B23F0C750000BD9EE /* ConfigurationViewController.swift in Sources */,
 				FE017D722564782900786973 /* RecordingManager.swift in Sources */,
+				FE017D8B2566346900786973 /* SingleCameraRecordingManager.swift in Sources */,
 				FE975BB12453BFF800DAB6CB /* VideoHelper.swift in Sources */,
 				FEF6FD5025391AF900C3060B /* ARCameraViewController.swift in Sources */,
 				FE017D762564980700786973 /* ARCameraRecordingManager.swift in Sources */,
