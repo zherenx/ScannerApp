@@ -347,11 +347,11 @@ class CameraViewController: UIViewController {
             metadata.display()
             metadata.writeToFile(filepath: self.metadataPath)
             
+            self.videoIsReady = false
         }
         
         Helper.showToast(controller: self, message: "Finish recording\nfile prefix: \(recordingId)", seconds: 1)
         
-        videoIsReady = false
     }
     
     // TODO: Move this to Helper
