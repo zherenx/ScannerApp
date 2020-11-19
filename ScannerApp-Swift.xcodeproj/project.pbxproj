@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FE017D722564782900786973 /* RecordingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE017D712564782900786973 /* RecordingManager.swift */; };
+		FE017D762564980700786973 /* ARCameraRecordingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE017D752564980700786973 /* ARCameraRecordingManager.swift */; };
 		FE02EE2B23F0C750000BD9EE /* ConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE02EE2A23F0C750000BD9EE /* ConfigurationViewController.swift */; };
 		FE02EE2D23F1D102000BD9EE /* Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE02EE2C23F1D102000BD9EE /* Helper.swift */; };
 		FE02EE2F23F61A9C000BD9EE /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE02EE2E23F61A9C000BD9EE /* Constants.swift */; };
@@ -39,6 +41,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FE017D712564782900786973 /* RecordingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingManager.swift; sourceTree = "<group>"; };
+		FE017D752564980700786973 /* ARCameraRecordingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARCameraRecordingManager.swift; sourceTree = "<group>"; };
 		FE02EE2A23F0C750000BD9EE /* ConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewController.swift; sourceTree = "<group>"; };
 		FE02EE2C23F1D102000BD9EE /* Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helper.swift; sourceTree = "<group>"; };
 		FE02EE2E23F61A9C000BD9EE /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
@@ -83,6 +87,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FE017D74256497B200786973 /* RecordingManager */ = {
+			isa = PBXGroup;
+			children = (
+				FE017D712564782900786973 /* RecordingManager.swift */,
+				FE017D752564980700786973 /* ARCameraRecordingManager.swift */,
+			);
+			path = RecordingManager;
+			sourceTree = "<group>";
+		};
 		FE09455423AD7061003A1CA5 = {
 			isa = PBXGroup;
 			children = (
@@ -128,6 +141,7 @@
 		FE09458223B1B318003A1CA5 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				FE017D74256497B200786973 /* RecordingManager */,
 				FE19F8B923B6070F00CF174E /* Metadata.swift */,
 				FE19F8BD23B754BD00CF174E /* MotionData.swift */,
 				FE82409523BB42C500ADB6CC /* HttpRequestHandler.swift */,
@@ -241,8 +255,10 @@
 				FE02EE2D23F1D102000BD9EE /* Helper.swift in Sources */,
 				FE09457523ADFAAF003A1CA5 /* CameraViewController.swift in Sources */,
 				FE02EE2B23F0C750000BD9EE /* ConfigurationViewController.swift in Sources */,
+				FE017D722564782900786973 /* RecordingManager.swift in Sources */,
 				FE975BB12453BFF800DAB6CB /* VideoHelper.swift in Sources */,
 				FEF6FD5025391AF900C3060B /* ARCameraViewController.swift in Sources */,
+				FE017D762564980700786973 /* ARCameraRecordingManager.swift in Sources */,
 				FEF6FD562539375300C3060B /* RGBRecorder.swift in Sources */,
 				FE19F8BE23B754BD00CF174E /* MotionData.swift in Sources */,
 				FEF6FD582539375300C3060B /* Compressor.swift in Sources */,
