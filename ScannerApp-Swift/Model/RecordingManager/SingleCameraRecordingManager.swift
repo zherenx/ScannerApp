@@ -24,7 +24,7 @@ class SingleCameraRecordingManager: NSObject {
     
     private var videoIsReady: Bool = false // this is a heck, consider improve it
     
-    private var defaultVideoDevice: AVCaptureDevice?
+//    private var defaultVideoDevice: AVCaptureDevice?
 
     private let movieFileOutput = AVCaptureMovieFileOutput()
     
@@ -58,24 +58,22 @@ class SingleCameraRecordingManager: NSObject {
     
     private func configureSession() {
         
+        var device: AVCaptureDevice!
+        
         session.beginConfiguration()
         
         do {
-            // Choose the back dual camera, if available, otherwise default to a wide angle camera.
-            if let dualCameraDevice = AVCaptureDevice.default(.builtInDualCamera, for: .video, position: .back) {
-                defaultVideoDevice = dualCameraDevice
-            } else if let backCameraDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) {
-                defaultVideoDevice = backCameraDevice
-            }
-            guard let videoDevice = defaultVideoDevice else {
-                print("Default video device is unavailable.")
+            guard let videoDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
+                print("Wide angle camera is unavailable.")
                 session.commitConfiguration()
                 return
             }
             
+            device = videoDevice
+            
             do {
                 try videoDevice.lockForConfiguration()
-                
+                                
                 let targetFrameDuration = CMTimeMake(value: 1, timescale: Int32(Constants.Sensor.Camera.frequency))
                 videoDevice.activeVideoMaxFrameDuration = targetFrameDuration
                 videoDevice.activeVideoMinFrameDuration = targetFrameDuration
@@ -94,6 +92,7 @@ class SingleCameraRecordingManager: NSObject {
                 session.commitConfiguration()
                 return
             }
+            
         } catch {
             print("Couldn't create video device input: \(error)")
             session.commitConfiguration()
@@ -105,6 +104,7 @@ class SingleCameraRecordingManager: NSObject {
             
 //            session.sessionPreset = .photo
             session.sessionPreset = .hd1920x1080
+//            session.sessionPreset = .high
 
             if let connection = movieFileOutput.connection(with: .video) {
                 if connection.isVideoStabilizationSupported {
@@ -115,15 +115,26 @@ class SingleCameraRecordingManager: NSObject {
             }
         }
         
-        let videoFormatDescription = defaultVideoDevice!.activeFormat.formatDescription
+        session.commitConfiguration()
+        
+        let movieFileOutputConnection = movieFileOutput.connection(with: .video)
+        movieFileOutputConnection?.videoOrientation = .landscapeRight
+        
+        let availableVideoCodecTypes = movieFileOutput.availableVideoCodecTypes
+        
+        if availableVideoCodecTypes.contains(.h264) {
+            movieFileOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.h264], for: movieFileOutputConnection!)
+        }
+
+        let videoFormatDescription = device.activeFormat.formatDescription
         let dimensions = CMVideoFormatDescriptionGetDimensions(videoFormatDescription)
         
         let width = Int(dimensions.width)
         let height = Int(dimensions.height)
         colorResolution = [height, width]
         
-        let fov = defaultVideoDevice!.activeFormat.videoFieldOfView
-        let aspect = Float(width) / Float(height)
+        let fov = device.activeFormat.videoFieldOfView
+//        let aspect = Float(width) / Float(height)
         let t = tan((0.5 * fov) * Float.pi / 180)
         
         let fx = 0.5 * Float(width) / t
@@ -134,8 +145,6 @@ class SingleCameraRecordingManager: NSObject {
         let my = Float(height - 1) / 2.0
         
         cameraIntrinsicArray = [fx, 0.0, 0.0, 0.0, fy, 0.0, mx, my, 1.0]
-        
-        session.commitConfiguration()
         
     }
 
@@ -160,10 +169,6 @@ extension SingleCameraRecordingManager: RecordingManager {
             self.sceneType = sceneType
             
             gpsLocation = Helper.getGpsLocation(locationManager: locationManager)
-            
-            let movieFileOutputConnection = movieFileOutput.connection(with: .video)
-            
-            movieFileOutputConnection?.videoOrientation = .landscapeRight
             
             recordingId = Helper.getRecordingId()
             dirUrl = URL(fileURLWithPath: Helper.getRecordingDataDirectoryPath(recordingId: recordingId))
