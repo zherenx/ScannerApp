@@ -20,7 +20,6 @@ class SingleCameraRecordingManager: NSObject {
     private var dirUrl: URL!
     private var recordingId: String!
     private var movieFilePath: String!
-    var isRecording: Bool = false
 
     private let movieFileOutput = AVCaptureMovieFileOutput()
     
@@ -156,9 +155,9 @@ class SingleCameraRecordingManager: NSObject {
 
 extension SingleCameraRecordingManager: RecordingManager {
     
-//    var isRecording: Bool {
-//        return movieFileOutput.isRecording
-//    }
+    var isRecording: Bool {
+        return movieFileOutput.isRecording
+    }
     
     func getSession() -> NSObject {
         return session
@@ -186,8 +185,7 @@ extension SingleCameraRecordingManager: RecordingManager {
             // Video
             movieFilePath = (dirUrl.path as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension(Constants.Sensor.Camera.fileExtension)!)
             movieFileOutput.startRecording(to: URL(fileURLWithPath: movieFilePath), recordingDelegate: self)
-        
-            isRecording = true
+    
         }
         
     }
@@ -229,8 +227,6 @@ extension SingleCameraRecordingManager: AVCaptureFileOutputRecordingDelegate {
             
             metadata.display()
             metadata.writeToFile(filepath: metadataPath)
-            
-            isRecording = false
             
             username = nil
             sceneDescription = nil
