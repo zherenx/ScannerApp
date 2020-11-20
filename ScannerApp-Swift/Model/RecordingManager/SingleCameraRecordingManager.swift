@@ -51,12 +51,11 @@ class SingleCameraRecordingManager: NSObject {
         }
     }
     
-    // TODO: session.stopRunning need to be called at some point, but called in deinit cause error
-//    deinit {
-//        sessionQueue.async {
-//            self.session.stopRunning()
-//        }
-//    }
+    deinit {
+        sessionQueue.sync {
+            self.session.stopRunning()
+        }
+    }
     
     private func configureSession() {
         
