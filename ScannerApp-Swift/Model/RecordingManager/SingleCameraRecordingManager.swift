@@ -29,8 +29,6 @@ class SingleCameraRecordingManager: NSObject {
 
     private let movieFileOutput = AVCaptureMovieFileOutput()
     
-//    private var backgroundRecordingID: UIBackgroundTaskIdentifier?
-    
     private let locationManager = CLLocationManager()
     private var gpsLocation: [Double] = []
     
@@ -53,7 +51,7 @@ class SingleCameraRecordingManager: NSObject {
         }
     }
     
-    // TODO: this need to be tested
+    // TODO: session.stopRunning need to be called at some point, but called in deinit cause error
 //    deinit {
 //        sessionQueue.async {
 //            self.session.stopRunning()
@@ -62,7 +60,7 @@ class SingleCameraRecordingManager: NSObject {
     
     private func configureSession() {
         
-        self.session.beginConfiguration()
+        session.beginConfiguration()
         
         do {
             // Choose the back dual camera, if available, otherwise default to a wide angle camera.
@@ -91,26 +89,26 @@ class SingleCameraRecordingManager: NSObject {
 
             let videoDeviceInput = try AVCaptureDeviceInput(device: videoDevice)
 
-            if self.session.canAddInput(videoDeviceInput) {
-                self.session.addInput(videoDeviceInput)
+            if session.canAddInput(videoDeviceInput) {
+                session.addInput(videoDeviceInput)
             } else {
                 print("Couldn't add video device input to the session.")
-                self.session.commitConfiguration()
+                session.commitConfiguration()
                 return
             }
         } catch {
             print("Couldn't create video device input: \(error)")
-            self.session.commitConfiguration()
+            session.commitConfiguration()
             return
         }
         
-        if self.session.canAddOutput(self.movieFileOutput) {
-            self.session.addOutput(self.movieFileOutput)
+        if session.canAddOutput(movieFileOutput) {
+            session.addOutput(movieFileOutput)
             
-//            self.session.sessionPreset = .photo
-            self.session.sessionPreset = .hd1920x1080
+//            session.sessionPreset = .photo
+            session.sessionPreset = .hd1920x1080
 
-            if let connection = self.movieFileOutput.connection(with: .video) {
+            if let connection = movieFileOutput.connection(with: .video) {
                 if connection.isVideoStabilizationSupported {
                     connection.preferredVideoStabilizationMode = .auto
                 }
@@ -139,7 +137,7 @@ class SingleCameraRecordingManager: NSObject {
         
         cameraIntrinsicArray = [fx, 0.0, 0.0, 0.0, fy, 0.0, mx, my, 1.0]
         
-        self.session.commitConfiguration()
+        session.commitConfiguration()
         
     }
 
@@ -160,32 +158,32 @@ extension SingleCameraRecordingManager: RecordingManager {
         
         sessionQueue.async { [self] in
             
-//            if UIDevice.current.isMultitaskingSupported {
-//                self.backgroundRecordingID = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
-//            }
+            self.username = username
+            self.sceneDescription = sceneDescription
+            self.sceneType = sceneType
             
             gpsLocation = Helper.getGpsLocation(locationManager: locationManager)
             
-            let movieFileOutputConnection = self.movieFileOutput.connection(with: .video)
+            let movieFileOutputConnection = movieFileOutput.connection(with: .video)
             
             movieFileOutputConnection?.videoOrientation = .landscapeRight
             
-            self.recordingId = Helper.getRecordingId()
+            recordingId = Helper.getRecordingId()
             
-            let recordingDataDirectoryPath = Helper.getRecordingDataDirectoryPath(recordingId: self.recordingId)
+            let recordingDataDirectoryPath = Helper.getRecordingDataDirectoryPath(recordingId: recordingId)
             
             // save metadata path, it will be used when recording is finished
-            self.metadataPath = (recordingDataDirectoryPath as NSString).appendingPathComponent((self.recordingId as NSString).appendingPathExtension("json")!)
+            metadataPath = (recordingDataDirectoryPath as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("json")!)
             
             // TODO:
             // Camera data
             
             // Motion data
-            self.motionManager.startRecording(dataPathString: recordingDataDirectoryPath, recordingId: self.recordingId)
+            motionManager.startRecording(dataPathString: recordingDataDirectoryPath, recordingId: recordingId)
             
             // Video
-            self.movieFilePath = (recordingDataDirectoryPath as NSString).appendingPathComponent((self.recordingId as NSString).appendingPathExtension(Constants.Sensor.Camera.fileExtension)!)
-            self.movieFileOutput.startRecording(to: URL(fileURLWithPath: self.movieFilePath), recordingDelegate: self)
+            movieFilePath = (recordingDataDirectoryPath as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension(Constants.Sensor.Camera.fileExtension)!)
+            movieFileOutput.startRecording(to: URL(fileURLWithPath: movieFilePath), recordingDelegate: self)
         
             isRecording = true
         }
@@ -196,29 +194,29 @@ extension SingleCameraRecordingManager: RecordingManager {
         
         sessionQueue.async { [self] in
             
-            self.movieFileOutput.stopRecording()
+            movieFileOutput.stopRecording()
             
-            var streamInfo: [StreamInfo] = self.motionManager.stopRecordingAndReturnStreamInfo()
+            var streamInfo: [StreamInfo] = motionManager.stopRecordingAndReturnStreamInfo()
             
-            while !self.videoIsReady {
+            while !videoIsReady {
                 // this is a heck
                 // wait until video is ready
                 print("waiting for video ...")
                 usleep(10000)
             }
             // get number of frames when video is ready
-            let numColorFrames = VideoHelper.getNumberOfFrames(videoUrl: URL(fileURLWithPath: self.movieFilePath))
+            let numColorFrames = VideoHelper.getNumberOfFrames(videoUrl: URL(fileURLWithPath: movieFilePath))
             
-            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: Constants.Sensor.Camera.type, encoding: Constants.EncodingCode.h264, frequency: Constants.Sensor.Camera.frequency, numberOfFrames: numColorFrames, fileExtension: "mp4", resolution: self.colorResolution, intrinsics: self.cameraIntrinsicArray, extrinsics: nil)
+            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: Constants.Sensor.Camera.type, encoding: Constants.EncodingCode.h264, frequency: Constants.Sensor.Camera.frequency, numberOfFrames: numColorFrames, fileExtension: "mp4", resolution: colorResolution, intrinsics: cameraIntrinsicArray, extrinsics: nil)
             
             streamInfo.append(cameraStreamInfo)
             
-            let metadata = Metadata(username: username ?? "", userInputDescription: sceneDescription ?? "", sceneType: sceneType ?? "", gpsLocation: self.gpsLocation, streams: streamInfo, numberOfFiles: 7)
+            let metadata = Metadata(username: username ?? "", userInputDescription: sceneDescription ?? "", sceneType: sceneType ?? "", gpsLocation: gpsLocation, streams: streamInfo, numberOfFiles: 7)
             
             metadata.display()
-            metadata.writeToFile(filepath: self.metadataPath)
+            metadata.writeToFile(filepath: metadataPath)
             
-            self.videoIsReady = false
+            videoIsReady = false
             isRecording = false
         }
         
@@ -228,49 +226,16 @@ extension SingleCameraRecordingManager: RecordingManager {
 
 extension SingleCameraRecordingManager: AVCaptureFileOutputRecordingDelegate {
     
-//    func fileOutput(_ output: AVCaptureFileOutput, didStartRecordingTo fileURL: URL, from connections: [AVCaptureConnection]) {
-//        // Enable the Record button to let the user stop recording.
-//        DispatchQueue.main.async {
-//            self.popUpView.isHidden = true
-//
-//            self.recordButton.setTitle("Stop", for: .normal)
-//            self.recordButton.backgroundColor = .systemRed
-//            self.recordButton.isEnabled = true
-//        }
-//    }
-    
     func fileOutput(_ output: AVCaptureFileOutput,
                     didFinishRecordingTo outputFileURL: URL,
                     from connections: [AVCaptureConnection],
                     error: Error?) {
-
-//        func cleanup() {
-//
-//            if let currentBackgroundRecordingID = backgroundRecordingID {
-//                backgroundRecordingID = UIBackgroundTaskIdentifier.invalid
-//
-//                if currentBackgroundRecordingID != UIBackgroundTaskIdentifier.invalid {
-//                    UIApplication.shared.endBackgroundTask(currentBackgroundRecordingID)
-//                }
-//            }
-//        }
-        
-        var success = true
         
         if error != nil {
             print("Movie file finishing error: \(String(describing: error))")
-            success = (((error! as NSError).userInfo[AVErrorRecordingSuccessfullyFinishedKey] as AnyObject).boolValue)!
         }
         
-//        cleanup()
-        
-//        // Enable the Camera and Record buttons to let the user switch camera and start another recording.
-//        DispatchQueue.main.async {
-//            self.recordButton.setTitle("Record", for: .normal)
-//            self.recordButton.backgroundColor = .systemBlue
-//            self.recordButton.isEnabled = true
-//        }
-        
+        // TODO: see if have better way
         videoIsReady = true
     }
 }
