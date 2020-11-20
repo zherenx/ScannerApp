@@ -1,5 +1,5 @@
 //
-//  CameraViewController.swift
+//  SingleCameraViewController.swift
 //  ScannerApp-Swift
 //
 //  Created by Zheren Xiao on 2019-12-20.
@@ -9,7 +9,7 @@
 import AVFoundation
 import UIKit
 
-class CameraViewController: UIViewController, CameraViewControllerPopUpViewDelegate {
+class SingleCameraViewController: UIViewController, CameraViewControllerPopUpViewDelegate {
     
     var recordingManager: RecordingManager! = nil
     
