@@ -21,10 +21,6 @@ class SingleCameraRecordingManager: NSObject {
     private var recordingId: String!
     private var movieFilePath: String!
     var isRecording: Bool = false
-    
-    private var videoIsReady: Bool = false // this is a heck, consider improve it
-    
-//    private var defaultVideoDevice: AVCaptureDevice?
 
     private let movieFileOutput = AVCaptureMovieFileOutput()
     
@@ -198,34 +194,8 @@ extension SingleCameraRecordingManager: RecordingManager {
     
     func stopRecording() {
         
-        sessionQueue.async { [self] in
-            
-            movieFileOutput.stopRecording()
-            
-            var streamInfo: [StreamInfo] = motionManager.stopRecordingAndReturnStreamInfo()
-            
-            while !videoIsReady {
-                // this is a heck
-                // wait until video is ready
-                print("waiting for video ...")
-                usleep(10000)
-            }
-            // get number of frames when video is ready
-            let numColorFrames = VideoHelper.getNumberOfFrames(videoUrl: URL(fileURLWithPath: movieFilePath))
-            
-            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: Constants.Sensor.Camera.type, encoding: Constants.EncodingCode.h264, frequency: 60, numberOfFrames: numColorFrames, fileExtension: "mp4", resolution: colorResolution, intrinsics: cameraIntrinsicArray, extrinsics: nil)
-            
-            streamInfo.append(cameraStreamInfo)
-            
-            let metadata = Metadata(username: username ?? "", userInputDescription: sceneDescription ?? "", sceneType: sceneType ?? "", gpsLocation: gpsLocation, streams: streamInfo, numberOfFiles: 7)
-            
-            let metadataPath = (dirUrl.path as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("json")!)
-            
-            metadata.display()
-            metadata.writeToFile(filepath: metadataPath)
-            
-            videoIsReady = false
-            isRecording = false
+        sessionQueue.async {
+            self.movieFileOutput.stopRecording()
         }
         
     }
@@ -243,7 +213,31 @@ extension SingleCameraRecordingManager: AVCaptureFileOutputRecordingDelegate {
             print("Movie file finishing error: \(String(describing: error))")
         }
         
-        // TODO: see if have better way
-        videoIsReady = true
+        sessionQueue.async { [self] in
+            
+            var streamInfo: [StreamInfo] = motionManager.stopRecordingAndReturnStreamInfo()
+
+            let numColorFrames = VideoHelper.getNumberOfFrames(videoUrl: outputFileURL)
+            
+            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: Constants.Sensor.Camera.type, encoding: Constants.EncodingCode.h264, frequency: 60, numberOfFrames: numColorFrames, fileExtension: "mp4", resolution: colorResolution, intrinsics: cameraIntrinsicArray, extrinsics: nil)
+            
+            streamInfo.append(cameraStreamInfo)
+            
+            let metadata = Metadata(username: username ?? "", userInputDescription: sceneDescription ?? "", sceneType: sceneType ?? "", gpsLocation: gpsLocation, streams: streamInfo, numberOfFiles: 7)
+            
+            let metadataPath = (dirUrl.path as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("json")!)
+            
+            metadata.display()
+            metadata.writeToFile(filepath: metadataPath)
+            
+            isRecording = false
+            
+            username = nil
+            sceneDescription = nil
+            sceneType = nil
+            
+        }
+        
     }
+    
 }
