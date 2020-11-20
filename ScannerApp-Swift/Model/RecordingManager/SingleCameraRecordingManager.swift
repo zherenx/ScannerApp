@@ -17,10 +17,9 @@ class SingleCameraRecordingManager: NSObject {
 
     private let motionManager = MotionManager()
     
-//    private var dirUrl: URL!
+    private var dirUrl: URL!
     private var recordingId: String!
     private var movieFilePath: String!
-    private var metadataPath: String!
     var isRecording: Bool = false
     
     private var videoIsReady: Bool = false // this is a heck, consider improve it
@@ -144,7 +143,6 @@ class SingleCameraRecordingManager: NSObject {
 
 extension SingleCameraRecordingManager: RecordingManager {
     
-    // TODO: test this
 //    var isRecording: Bool {
 //        return movieFileOutput.isRecording
 //    }
@@ -168,20 +166,16 @@ extension SingleCameraRecordingManager: RecordingManager {
             movieFileOutputConnection?.videoOrientation = .landscapeRight
             
             recordingId = Helper.getRecordingId()
-            
-            let recordingDataDirectoryPath = Helper.getRecordingDataDirectoryPath(recordingId: recordingId)
-            
-            // save metadata path, it will be used when recording is finished
-            metadataPath = (recordingDataDirectoryPath as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("json")!)
+            dirUrl = URL(fileURLWithPath: Helper.getRecordingDataDirectoryPath(recordingId: recordingId))
             
             // TODO:
             // Camera data
             
             // Motion data
-            motionManager.startRecording(dataPathString: recordingDataDirectoryPath, recordingId: recordingId)
+            motionManager.startRecording(dataPathString: dirUrl.path, recordingId: recordingId)
             
             // Video
-            movieFilePath = (recordingDataDirectoryPath as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension(Constants.Sensor.Camera.fileExtension)!)
+            movieFilePath = (dirUrl.path as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension(Constants.Sensor.Camera.fileExtension)!)
             movieFileOutput.startRecording(to: URL(fileURLWithPath: movieFilePath), recordingDelegate: self)
         
             isRecording = true
@@ -211,6 +205,8 @@ extension SingleCameraRecordingManager: RecordingManager {
             streamInfo.append(cameraStreamInfo)
             
             let metadata = Metadata(username: username ?? "", userInputDescription: sceneDescription ?? "", sceneType: sceneType ?? "", gpsLocation: gpsLocation, streams: streamInfo, numberOfFiles: 7)
+            
+            let metadataPath = (dirUrl.path as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("json")!)
             
             metadata.display()
             metadata.writeToFile(filepath: metadataPath)
