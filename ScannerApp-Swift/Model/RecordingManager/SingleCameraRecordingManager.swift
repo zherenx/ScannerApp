@@ -58,30 +58,16 @@ class SingleCameraRecordingManager: NSObject {
     
     private func configureSession() {
         
-        var device: AVCaptureDevice!
-        
+        guard let videoDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
+            print("Wide angle camera is unavailable.")
+            return
+        }
+
         session.beginConfiguration()
         
+        session.sessionPreset = .inputPriority
+        
         do {
-            guard let videoDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
-                print("Wide angle camera is unavailable.")
-                session.commitConfiguration()
-                return
-            }
-            
-            device = videoDevice
-            
-            do {
-                try videoDevice.lockForConfiguration()
-                                
-                let targetFrameDuration = CMTimeMake(value: 1, timescale: Int32(Constants.Sensor.Camera.frequency))
-                videoDevice.activeVideoMaxFrameDuration = targetFrameDuration
-                videoDevice.activeVideoMinFrameDuration = targetFrameDuration
-                
-                videoDevice.unlockForConfiguration()
-            } catch {
-                print("Error configurating video device")
-            }
 
             let videoDeviceInput = try AVCaptureDeviceInput(device: videoDevice)
 
@@ -101,10 +87,6 @@ class SingleCameraRecordingManager: NSObject {
         
         if session.canAddOutput(movieFileOutput) {
             session.addOutput(movieFileOutput)
-            
-//            session.sessionPreset = .photo
-            session.sessionPreset = .hd1920x1080
-//            session.sessionPreset = .high
 
             if let connection = movieFileOutput.connection(with: .video) {
                 if connection.isVideoStabilizationSupported {
@@ -112,28 +94,54 @@ class SingleCameraRecordingManager: NSObject {
                 }
                 
                 connection.videoOrientation = .landscapeRight
+                
+                let availableVideoCodecTypes = movieFileOutput.availableVideoCodecTypes
+                
+                if availableVideoCodecTypes.contains(.h264) {
+                    movieFileOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.h264], for: connection)
+                }
             }
         }
         
         session.commitConfiguration()
-        
-        let movieFileOutputConnection = movieFileOutput.connection(with: .video)
-        movieFileOutputConnection?.videoOrientation = .landscapeRight
-        
-        let availableVideoCodecTypes = movieFileOutput.availableVideoCodecTypes
-        
-        if availableVideoCodecTypes.contains(.h264) {
-            movieFileOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.h264], for: movieFileOutputConnection!)
+
+        // set video resulotion to 1920x1440 and framerate to 60 fps if possible
+        for format in videoDevice.formats {
+
+            let videoFormatDescription = format.formatDescription
+            let dimensions = CMVideoFormatDescriptionGetDimensions(videoFormatDescription)
+
+            let framerate = format.videoSupportedFrameRateRanges[0]
+
+            if framerate.maxFrameRate >= 60 && dimensions.width >= 1920 && dimensions.height >= 1440 {
+
+                do {
+                    try videoDevice.lockForConfiguration()
+                    
+                    videoDevice.activeFormat = format
+                                    
+                    let targetFrameDuration = CMTimeMake(value: 1, timescale: Int32(60))
+                    videoDevice.activeVideoMaxFrameDuration = targetFrameDuration
+                    videoDevice.activeVideoMinFrameDuration = targetFrameDuration
+                    
+                    videoDevice.unlockForConfiguration()
+                } catch {
+                    print("Error configurating video device")
+                }
+
+                break
+            }
+            
         }
 
-        let videoFormatDescription = device.activeFormat.formatDescription
+        let videoFormatDescription = videoDevice.activeFormat.formatDescription
         let dimensions = CMVideoFormatDescriptionGetDimensions(videoFormatDescription)
         
         let width = Int(dimensions.width)
         let height = Int(dimensions.height)
         colorResolution = [height, width]
         
-        let fov = device.activeFormat.videoFieldOfView
+        let fov = videoDevice.activeFormat.videoFieldOfView
 //        let aspect = Float(width) / Float(height)
         let t = tan((0.5 * fov) * Float.pi / 180)
         
@@ -205,7 +213,7 @@ extension SingleCameraRecordingManager: RecordingManager {
             // get number of frames when video is ready
             let numColorFrames = VideoHelper.getNumberOfFrames(videoUrl: URL(fileURLWithPath: movieFilePath))
             
-            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: Constants.Sensor.Camera.type, encoding: Constants.EncodingCode.h264, frequency: Constants.Sensor.Camera.frequency, numberOfFrames: numColorFrames, fileExtension: "mp4", resolution: colorResolution, intrinsics: cameraIntrinsicArray, extrinsics: nil)
+            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: Constants.Sensor.Camera.type, encoding: Constants.EncodingCode.h264, frequency: 60, numberOfFrames: numColorFrames, fileExtension: "mp4", resolution: colorResolution, intrinsics: cameraIntrinsicArray, extrinsics: nil)
             
             streamInfo.append(cameraStreamInfo)
             
