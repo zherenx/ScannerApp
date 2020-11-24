@@ -22,16 +22,22 @@ import simd
 class CameraInfo: Encodable {
     
     private var timestamp: Int64
+//    private var intrinsics: simd_float3x3
 //    private var transform: simd_float4x4
 //    private var eulerAngles: simd_float3
+    private var intrinsics: [Float]
     private var transform: [Float]
     private var eulerAngles: [Float]
     private var exposureDuration: Int64
     
-    internal init(timestamp: TimeInterval, transform: simd_float4x4, eulerAngles: simd_float3, exposureDuration: TimeInterval) {
+    internal init(timestamp: TimeInterval, intrinsics: simd_float3x3, transform: simd_float4x4, eulerAngles: simd_float3, exposureDuration: TimeInterval) {
         self.timestamp = Int64(timestamp * 1_000_000_000.0)
+//        self.intrinsics = intrinsics
 //        self.transform = transform
 //        self.eulerAngles = eulerAngles
+        self.intrinsics = [intrinsics.columns.0.x, intrinsics.columns.0.y, intrinsics.columns.0.z,
+                           intrinsics.columns.1.x, intrinsics.columns.1.y, intrinsics.columns.1.z,
+                           intrinsics.columns.2.x, intrinsics.columns.2.y, intrinsics.columns.2.z]
         self.transform = [transform.columns.0.x, transform.columns.0.y, transform.columns.0.z, transform.columns.0.w,
                           transform.columns.1.x, transform.columns.1.y, transform.columns.1.z, transform.columns.1.w,
                           transform.columns.2.x, transform.columns.2.y, transform.columns.2.z, transform.columns.2.w,
