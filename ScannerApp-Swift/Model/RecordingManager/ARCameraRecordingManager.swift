@@ -196,6 +196,7 @@ extension ARCameraRecordingManager: ARSessionDelegate {
         print()
     
         let currentCameraInfo = CameraInfo(timestamp: frame.timestamp,
+                                           intrinsics: frame.camera.intrinsics,
                                            transform: frame.camera.transform,
                                            eulerAngles: frame.camera.eulerAngles,
                                            exposureDuration: frame.camera.exposureDuration)
