@@ -32,4 +32,15 @@ class ViewController: UIViewController {
         }
     }
     
+    
+    
+    
+    @IBAction func testButtonTapped(_ sender: Any) {
+        
+        let vc = CameraViewController(mode: .arCamera)
+        vc.modalPresentationStyle = .fullScreen
+        navigationController?.pushViewController(vc, animated: true)
+        
+    }
+    
 }
