@@ -17,6 +17,11 @@ enum RecordingMode {
     case none
 }
 
+protocol CameraViewControllerPopUpViewDelegate: class {
+    func startRecording()
+    func dismissPopUpView()
+}
+
 class CameraViewController: UIViewController, CameraViewControllerPopUpViewDelegate {
     
     private var mode: RecordingMode = .none
