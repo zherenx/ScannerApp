@@ -53,7 +53,7 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
 
         view.backgroundColor = .white
         
-        initRecordingManagerAndSetupPreview()
+        initRecordingManagerAndPerformRecordingModeRelatedSetup()
         setupPopUpView()
         setupRecordButton()
         
@@ -76,7 +76,7 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
         UIApplication.shared.isIdleTimerDisabled = true
     }
     
-    private func initRecordingManagerAndSetupPreview() {
+    private func initRecordingManagerAndPerformRecordingModeRelatedSetup() {
         
         switch mode {
         case .singleCamera:
@@ -85,9 +85,11 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
             previewView.videoPreviewLayer.session = recordingManager.getSession() as? AVCaptureSession
             
             setupPreviewView(previewView: previewView)
+            navigationItem.title = "Single Camera"
         
         case .dualCamera:
             print("Dual camera mode not supported yet.")
+            navigationItem.title = "Dual Camera"
             // TODO: do something
         
         case .arCamera:
@@ -99,6 +101,7 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
                 arView.session = session
                 
                 setupPreviewView(previewView: arView)
+                navigationItem.title = "Color Camera + LiDAR"
                 
             } else {
                 print("AR camera only available for iOS 14.0 or newer.")
