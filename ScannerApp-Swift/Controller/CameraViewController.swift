@@ -22,7 +22,17 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
     private var mode: RecordingMode = .none
     
     private var recordingManager: RecordingManager! = nil
-    private var popUpView: PopUpView = PopUpView()
+    
+    private let popUpView: PopUpView = PopUpView()
+    private let recordButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setTitle("Record", for: .normal)
+        btn.setTitleColor(.white, for: .normal)
+        btn.setTitleColor(.gray, for: .disabled)
+        btn.backgroundColor = .systemBlue
+        btn.addTarget(self, action: #selector(recordButtonTapped), for: .touchUpInside)
+        return btn
+    }()
 
     init(mode: RecordingMode) {
         self.mode = mode
@@ -66,6 +76,15 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
         switch mode {
         case .singleCamera:
             recordingManager = SingleCameraRecordingManager()
+            let previewView = PreviewView()
+            previewView.videoPreviewLayer.session = recordingManager.getSession() as? AVCaptureSession
+            
+            view.addSubview(previewView)
+            previewView.translatesAutoresizingMaskIntoConstraints = false
+            previewView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+            previewView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+            previewView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
+            previewView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
         
         case .dualCamera:
             print("Dual camera mode not supported yet.")
@@ -122,16 +141,6 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
         recordButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8).isActive = true
         
     }
-    
-    private let recordButton: UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setTitle("Record", for: .normal)
-        btn.setTitleColor(.white, for: .normal)
-        btn.setTitleColor(.gray, for: .disabled)
-        btn.backgroundColor = .systemBlue
-        btn.addTarget(self, action: #selector(recordButtonTapped), for: .touchUpInside)
-        return btn
-    }()
     
     @objc func recordButtonTapped() {
         
