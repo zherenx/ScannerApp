@@ -79,12 +79,7 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
             let previewView = PreviewView()
             previewView.videoPreviewLayer.session = recordingManager.getSession() as? AVCaptureSession
             
-            view.addSubview(previewView)
-            previewView.translatesAutoresizingMaskIntoConstraints = false
-            previewView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-            previewView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-            previewView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
-            previewView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
+            setupPreviewView(previewView: previewView)
         
         case .dualCamera:
             print("Dual camera mode not supported yet.")
@@ -98,12 +93,7 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
                 let arView = ARView()
                 arView.session = session
                 
-                view.addSubview(arView)
-                arView.translatesAutoresizingMaskIntoConstraints = false
-                arView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-                arView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-                arView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
-                arView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
+                setupPreviewView(previewView: arView)
                 
             } else {
                 print("AR camera only available for iOS 14.0 or newer.")
@@ -115,6 +105,17 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
             // TODO: do something
         }
         
+    }
+    
+    private func setupPreviewView(previewView: UIView) {
+        
+        view.addSubview(previewView)
+        previewView.translatesAutoresizingMaskIntoConstraints = false
+        previewView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        previewView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        previewView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
+        previewView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
+    
     }
 
     private func setupPopUpView() {
