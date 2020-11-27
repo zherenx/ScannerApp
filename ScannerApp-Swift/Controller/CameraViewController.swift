@@ -14,7 +14,6 @@ enum RecordingMode {
     case singleCamera
     case dualCamera
     case arCamera
-    case none
 }
 
 protocol CameraViewControllerPopUpViewDelegate: class {
@@ -24,7 +23,7 @@ protocol CameraViewControllerPopUpViewDelegate: class {
 
 class CameraViewController: UIViewController, CameraViewControllerPopUpViewDelegate {
     
-    private var mode: RecordingMode = .none
+    private let mode: RecordingMode
     
     private var recordingManager: RecordingManager! = nil
     
@@ -108,9 +107,9 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
                 // TODO: do something
             }
         
-        default:
-            print("Error, recording mode is not specified.")
-            // TODO: do something
+//        default:
+//            print("Unexpected, this line of should be unreachable.")
+//            // TODO: do something
         }
         
     }
