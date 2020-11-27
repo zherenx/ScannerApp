@@ -118,13 +118,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="21" translatesAutoresizingMaskIntoConstraints="NO" id="Aa6-uh-Bj2">
-                                <rect key="frame" x="160" y="305.5" width="94" height="285"/>
+                                <rect key="frame" x="160" y="331" width="94" height="234"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="h1F-s7-QmH">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N9K-PD-rNb">
                                         <rect key="frame" x="0.0" y="0.0" width="94" height="30"/>
-                                        <state key="normal" title="TEST"/>
+                                        <state key="normal" title="Camera"/>
                                         <connections>
-                                            <action selector="testButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Iwe-4Z-6Ch"/>
+                                            <action selector="singleCameraModeButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="FDu-Mv-KLy"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KLC-Ov-bZB">
@@ -134,36 +134,29 @@
                                             <segue destination="hbE-un-H6B" kind="show" id="ANJ-GO-kC7"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N9K-PD-rNb">
-                                        <rect key="frame" x="0.0" y="102" width="94" height="30"/>
-                                        <state key="normal" title="Camera"/>
-                                        <connections>
-                                            <segue destination="iQQ-Hf-ehR" kind="show" id="ETW-fh-zis"/>
-                                        </connections>
-                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oaZ-cl-Pm8">
-                                        <rect key="frame" x="0.0" y="153" width="94" height="30"/>
+                                        <rect key="frame" x="0.0" y="102" width="94" height="30"/>
                                         <state key="normal" title="LiDARDepth"/>
                                         <connections>
-                                            <segue destination="guW-Bm-LTj" kind="show" id="qY1-o1-7Kh"/>
+                                            <action selector="arCameraModeButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="e77-yc-x5w"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZgB-2w-6UE">
-                                        <rect key="frame" x="0.0" y="204" width="94" height="30"/>
+                                        <rect key="frame" x="0.0" y="153" width="94" height="30"/>
                                         <state key="normal" title="Library"/>
                                         <connections>
                                             <segue destination="toN-jm-P7c" kind="show" id="783-6t-LQC"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2wX-Kn-hHC">
-                                        <rect key="frame" x="0.0" y="255" width="94" height="30"/>
+                                        <rect key="frame" x="0.0" y="204" width="94" height="30"/>
                                         <state key="normal" title="Configuration"/>
                                         <connections>
                                             <segue destination="HH8-a4-OXI" kind="show" id="LKU-Si-3IT"/>
                                         </connections>
                                     </button>
                                     <button hidden="YES" opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NfC-UT-yAp">
-                                        <rect key="frame" x="0.0" y="285" width="94" height="0.0"/>
+                                        <rect key="frame" x="0.0" y="234" width="94" height="0.0"/>
                                         <state key="normal" title="TEST DEPTH"/>
                                         <connections>
                                             <segue destination="8Cb-Uv-t0a" kind="show" id="Uc3-qm-ysY"/>
@@ -242,50 +235,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ho4-KC-jbu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2228" y="117"/>
-        </scene>
-        <!--AR Camera View Controller-->
-        <scene sceneID="jog-Qx-yMh">
-            <objects>
-                <viewController id="guW-Bm-LTj" userLabel="AR Camera View Controller" customClass="ARCameraViewController" customModule="ScannerApp_Swift" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="5V3-f9-apU">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sCs-oe-46K" userLabel="Record Button">
-                                <rect key="frame" x="179.5" y="809" width="55" height="33"/>
-                                <color key="backgroundColor" systemColor="systemBlueColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="tintColor" systemColor="groupTableViewBackgroundColor"/>
-                                <state key="normal" title="Record"/>
-                                <connections>
-                                    <action selector="recordButtonTapped:" destination="hbE-un-H6B" eventType="touchUpInside" id="5XQ-Qo-vqA"/>
-                                    <action selector="recordButtonTapped:" destination="guW-Bm-LTj" eventType="touchUpInside" id="mQ4-Iw-ky3"/>
-                                </connections>
-                            </button>
-                            <arView multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nzl-Vu-tfN">
-                                <rect key="frame" x="12" y="100" width="390" height="697"/>
-                            </arView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="lej-V3-91h"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="nzl-Vu-tfN" firstAttribute="top" secondItem="lej-V3-91h" secondAttribute="top" constant="12" id="5Hp-bB-A63"/>
-                            <constraint firstItem="sCs-oe-46K" firstAttribute="top" secondItem="nzl-Vu-tfN" secondAttribute="bottom" constant="12" id="84V-vo-TOu"/>
-                            <constraint firstItem="lej-V3-91h" firstAttribute="bottom" secondItem="sCs-oe-46K" secondAttribute="bottom" constant="20" id="9Za-aO-mxc"/>
-                            <constraint firstItem="sCs-oe-46K" firstAttribute="centerX" secondItem="5V3-f9-apU" secondAttribute="centerX" id="Fwh-vl-KgO"/>
-                            <constraint firstItem="lej-V3-91h" firstAttribute="trailing" secondItem="nzl-Vu-tfN" secondAttribute="trailing" constant="12" id="cCX-bp-sfN"/>
-                            <constraint firstItem="nzl-Vu-tfN" firstAttribute="leading" secondItem="lej-V3-91h" secondAttribute="leading" constant="12" id="mds-6x-SMY"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" id="Jci-gp-Dl3"/>
-                    <connections>
-                        <outlet property="arView" destination="nzl-Vu-tfN" id="atw-BW-z13"/>
-                        <outlet property="recordButton" destination="sCs-oe-46K" id="zxc-Ui-VhO"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="EuQ-ND-S5P" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2228" y="800"/>
         </scene>
         <!--Library-->
         <scene sceneID="CUe-ah-38R">
@@ -508,50 +457,6 @@
             </objects>
             <point key="canvasLocation" x="138" y="992"/>
         </scene>
-        <!--Camera View Controller-->
-        <scene sceneID="BxD-mn-6TA">
-            <objects>
-                <viewController id="iQQ-Hf-ehR" userLabel="Camera View Controller" customClass="SingleCameraViewController" customModule="ScannerApp_Swift" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Xwx-G2-6Vz">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Zed-oU-Xh6" userLabel="Preview" customClass="PreviewView" customModule="ScannerApp_Swift" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="88" width="414" height="774"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                            </view>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rCc-Ay-x0X">
-                                <rect key="frame" x="181" y="810" width="52" height="32"/>
-                                <color key="backgroundColor" systemColor="systemBlueColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                <color key="tintColor" systemColor="groupTableViewBackgroundColor"/>
-                                <state key="normal" title="Record"/>
-                                <connections>
-                                    <action selector="recordButtonTapped:" destination="iQQ-Hf-ehR" eventType="touchUpInside" id="bwG-9C-INI"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="xMd-t2-1b9"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="Zed-oU-Xh6" firstAttribute="trailing" secondItem="xMd-t2-1b9" secondAttribute="trailing" id="KnE-nZ-Ao5"/>
-                            <constraint firstItem="Zed-oU-Xh6" firstAttribute="top" secondItem="xMd-t2-1b9" secondAttribute="top" id="VL6-ho-zbK"/>
-                            <constraint firstItem="Zed-oU-Xh6" firstAttribute="leading" secondItem="xMd-t2-1b9" secondAttribute="leading" id="WFF-nW-gAa"/>
-                            <constraint firstItem="xMd-t2-1b9" firstAttribute="bottom" secondItem="Zed-oU-Xh6" secondAttribute="bottom" id="WG8-j8-wiz"/>
-                            <constraint firstItem="xMd-t2-1b9" firstAttribute="bottom" secondItem="rCc-Ay-x0X" secondAttribute="bottom" constant="20" id="sZE-fF-qOV"/>
-                            <constraint firstItem="rCc-Ay-x0X" firstAttribute="centerX" secondItem="Xwx-G2-6Vz" secondAttribute="centerX" id="xTE-Lm-Dzd"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" title="Camera" id="jz7-xy-EeB"/>
-                    <connections>
-                        <outlet property="previewView" destination="Zed-oU-Xh6" id="5OQ-Wg-o2N"/>
-                        <outlet property="recordButton" destination="rCc-Ay-x0X" id="hou-O2-ef6"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="QBY-kt-XpX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2228" y="-560"/>
-        </scene>
         <!--Navigation Controller-->
         <scene sceneID="Sg1-fR-fC3">
             <objects>
@@ -572,12 +477,6 @@
         </scene>
     </scenes>
     <resources>
-        <systemColor name="groupTableViewBackgroundColor">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="groupTableViewBackgroundColor">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
         <systemColor name="groupTableViewBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

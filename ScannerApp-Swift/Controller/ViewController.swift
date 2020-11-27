@@ -32,12 +32,17 @@ class ViewController: UIViewController {
         }
     }
     
+    @IBAction func singleCameraModeButtonTapped(_ sender: Any) {
+        segueToCameraScene(mode: .singleCamera)
+    }
     
+    @IBAction func arCameraModeButtonTapped(_ sender: Any) {
+        segueToCameraScene(mode: .arCamera)
+    }
     
-    
-    @IBAction func testButtonTapped(_ sender: Any) {
+    private func segueToCameraScene(mode: RecordingMode) {
         
-        let vc = CameraViewController(mode: .arCamera)
+        let vc = CameraViewController(mode: mode)
         vc.modalPresentationStyle = .fullScreen
         navigationController?.pushViewController(vc, animated: true)
         
