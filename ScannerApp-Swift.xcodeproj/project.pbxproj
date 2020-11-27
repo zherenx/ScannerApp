@@ -99,6 +99,17 @@
 			path = RecordingManager;
 			sourceTree = "<group>";
 		};
+		FE017DAC25709D6D00786973 /* Recorder */ = {
+			isa = PBXGroup;
+			children = (
+				FEF6FD522539375200C3060B /* RGBRecorder.swift */,
+				FEF6FD552539375300C3060B /* DepthRecorder.swift */,
+				FE3A2E5A2548DD97002FFF36 /* ConfidenceMapRecorder.swift */,
+				FEF6FD532539375200C3060B /* CameraInfoRecorder.swift */,
+			);
+			path = Recorder;
+			sourceTree = "<group>";
+		};
 		FE09455423AD7061003A1CA5 = {
 			isa = PBXGroup;
 			children = (
@@ -145,15 +156,12 @@
 			isa = PBXGroup;
 			children = (
 				FE017D74256497B200786973 /* RecordingManager */,
+				FE017DAC25709D6D00786973 /* Recorder */,
 				FE19F8B923B6070F00CF174E /* Metadata.swift */,
 				FE19F8BD23B754BD00CF174E /* MotionData.swift */,
 				FE82409523BB42C500ADB6CC /* HttpRequestHandler.swift */,
 				FE1E41CD242451CE00216886 /* MotionManager.swift */,
-				FEF6FD532539375200C3060B /* CameraInfoRecorder.swift */,
 				FEF6FD542539375300C3060B /* Compressor.swift */,
-				FEF6FD552539375300C3060B /* DepthRecorder.swift */,
-				FE3A2E5A2548DD97002FFF36 /* ConfidenceMapRecorder.swift */,
-				FEF6FD522539375200C3060B /* RGBRecorder.swift */,
 				FE975BAC245107DE00DAB6CB /* UserDefaultsExtension.swift */,
 				FE02EE2E23F61A9C000BD9EE /* Constants.swift */,
 				FE02EE2C23F1D102000BD9EE /* Helper.swift */,
