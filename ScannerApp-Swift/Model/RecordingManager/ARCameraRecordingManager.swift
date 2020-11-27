@@ -47,6 +47,12 @@ class ARCameraRecordingManager: NSObject {
         }
     }
     
+    deinit {
+        sessionQueue.sync {
+            session.pause()
+        }
+    }
+    
     private func configureSession() {
         session.delegate = self
         
