@@ -8,10 +8,12 @@
 
 import Accelerate.vImage
 import Compression
+import CoreMedia
 import CoreVideo
 import Foundation
 
-class ConfidenceMapRecorder {
+class ConfidenceMapRecorder: Recorder {
+    typealias T = CVPixelBuffer
     
     private let confidenceMapQueue = DispatchQueue(label: "confidence map queue")
     
@@ -21,13 +23,13 @@ class ConfidenceMapRecorder {
     
     private var count: Int32 = 0
     
-    func prepareForRecording(dirPath: String, filename: String) {
+    func prepareForRecording(dirPath: String, filename: String, fileExtension: String = "confidence") {
         
         confidenceMapQueue.async {
             
             self.count = 0
             
-            let filePath = (dirPath as NSString).appendingPathComponent((filename as NSString).appendingPathExtension("confidence")!)
+            let filePath = (dirPath as NSString).appendingPathComponent((filename as NSString).appendingPathExtension(fileExtension)!)
             let compressedFilePath = (filePath as NSString).appendingPathExtension("zlib")!
             self.fileUrl = URL(fileURLWithPath: filePath)
             self.compressedFileUrl = URL(fileURLWithPath: compressedFilePath)
@@ -42,7 +44,7 @@ class ConfidenceMapRecorder {
         
     }
     
-    func update(buffer: CVPixelBuffer) {
+    func update(_ buffer: CVPixelBuffer, timestamp: CMTime? = nil) {
         
         confidenceMapQueue.async {
             
