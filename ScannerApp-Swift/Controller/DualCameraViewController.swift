@@ -17,38 +17,31 @@ class DualCameraViewController: UIViewController {
     private let sessionQueue = DispatchQueue(label: "session queue")
     
     private let dataOutputQueue = DispatchQueue(label: "data output queue")
-    
-    
-    
+
     @IBOutlet private weak var recordButton: UIButton!
     private var isRecording = false
     private var backgroundRecordingID: UIBackgroundTaskIdentifier?
     
     private var extrinsics: Data?
     
-//    private var dualCameraInput: AVCaptureDeviceInput?
+    private var mainCameraInput: AVCaptureDeviceInput?
+    private let mainCameraOutput = AVCaptureMovieFileOutput()
+    private weak var mainCameraPreviewLayer: AVCaptureVideoPreviewLayer?
+    @IBOutlet weak var mainCameraPreviewView: PreviewView!
     
-    private var wideAngleInput: AVCaptureDeviceInput?
-    private var telephotoInput: AVCaptureDeviceInput?
-    
-//    private var cameraInput1: AVCaptureDeviceInput?
-    private let wideAngleCameraOutput = AVCaptureMovieFileOutput()
-    private weak var wideAngleCameraPreviewLayer: AVCaptureVideoPreviewLayer?
-    @IBOutlet weak var wideAngleCameraPreviewView: PreviewView!
-    
-    //    private var cameraInput2: AVCaptureDeviceInput?
-    private let telephotoCameraOutput = AVCaptureMovieFileOutput()
-    private weak var telephotoCameraPreviewLayer: AVCaptureVideoPreviewLayer?
-    @IBOutlet weak var telephotoCameraPreviewView: PreviewView!
+    private var secondaryCameraInput: AVCaptureDeviceInput?
+    private let secondaryCameraOutput = AVCaptureMovieFileOutput()
+    private weak var secondaryCameraPreviewLayer: AVCaptureVideoPreviewLayer?
+    @IBOutlet weak var secondaryCameraPreviewView: PreviewView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        wideAngleCameraPreviewView.videoPreviewLayer.setSessionWithNoConnection(session)
-        telephotoCameraPreviewView.videoPreviewLayer.setSessionWithNoConnection(session)
+        mainCameraPreviewView.videoPreviewLayer.setSessionWithNoConnection(session)
+        secondaryCameraPreviewView.videoPreviewLayer.setSessionWithNoConnection(session)
         
-        wideAngleCameraPreviewLayer = wideAngleCameraPreviewView.videoPreviewLayer
-        telephotoCameraPreviewLayer = telephotoCameraPreviewView.videoPreviewLayer
+        mainCameraPreviewLayer = mainCameraPreviewView.videoPreviewLayer
+        secondaryCameraPreviewLayer = secondaryCameraPreviewView.videoPreviewLayer
         
         sessionQueue.async {
             self.configureSession()
@@ -84,74 +77,53 @@ class DualCameraViewController: UIViewController {
             session.commitConfiguration()
         }
         
-        // setup input
-        // Use back dual camera (virtual camera, with two constituent camera)
-//        guard let dualCameraDevice = AVCaptureDevice.default(.builtInDualCamera, for: .video, position: .back) else {
-//            print("Could not find the dual camera")
-//            return
-//        }
-        
-        guard let wideAngleDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
+        guard let mainCameraDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
             print("Could not find the wide angle camera")
             return
         }
         
-        guard let telephotoDevice = AVCaptureDevice.default(.builtInUltraWideCamera, for: .video, position: .back) else {
-            print("Could not find the telephoto camera")
+        guard let secondaryCameraDevice = AVCaptureDevice.default(.builtInUltraWideCamera, for: .video, position: .back) else {
+            print("Could not find the ultrawide camera")
             return
         }
         
         
         
-        if let wide = AVCaptureDevice.default(.builtInWideAngleCamera, for: nil, position: .back), let tele = AVCaptureDevice.default(.builtInTelephotoCamera, for: nil, position: .back) {
-            self.extrinsics = AVCaptureDevice.extrinsicMatrix(from: tele, to: wide)
-            
-            let matrix: matrix_float4x3 = self.extrinsics!.withUnsafeBytes { $0.pointee }
-            
-            print(matrix)
-            
-            
-        }
-        
-//        do {
-//            dualCameraInput = try AVCaptureDeviceInput(device: dualCameraDevice)
+//        if let wide = AVCaptureDevice.default(.builtInWideAngleCamera, for: nil, position: .back), let tele = AVCaptureDevice.default(.builtInTelephotoCamera, for: nil, position: .back) {
+//            self.extrinsics = AVCaptureDevice.extrinsicMatrix(from: tele, to: wide)
 //
-//            guard let dualCameraInput = dualCameraInput, session.canAddInput(dualCameraInput) else {
-//                print("Could not add dual camera device input")
-//                return
-//            }
+//            let matrix: matrix_float4x3 = self.extrinsics!.withUnsafeBytes { $0.pointee }
 //
-//            session.addInputWithNoConnections(dualCameraInput)
-//        } catch {
-//            print("Couldn't create dual camera device input: \(error)")
-//            return
+//            print(matrix)
 //        }
         
+        
+        
         do {
-            wideAngleInput = try AVCaptureDeviceInput(device: wideAngleDevice)
+            mainCameraInput = try AVCaptureDeviceInput(device: mainCameraDevice)
             
-            guard let wideAngleInput = wideAngleInput, session.canAddInput(wideAngleInput) else {
+            guard let mainCameraInput = mainCameraInput, session.canAddInput(mainCameraInput) else {
                 print("Could not add wide angle camera device input")
                 return
             }
             
-            session.addInputWithNoConnections(wideAngleInput)
+            session.addInputWithNoConnections(mainCameraInput)
         } catch {
             print("Couldn't create wide angle camera device input: \(error)")
             return
         }
         
         do {
-            telephotoInput = try AVCaptureDeviceInput(device: telephotoDevice)
+            secondaryCameraInput = try AVCaptureDeviceInput(device: secondaryCameraDevice)
             
-            guard let telephotoInput = telephotoInput, session.canAddInput(telephotoInput) else {
-                print("Could not add telephoto camera device input")
+            guard let secondaryCameraInput = secondaryCameraInput, session.canAddInput(secondaryCameraInput) else {
+                print("Could not add secondary camera device input")
                 return
             }
             
-            session.addInputWithNoConnections(telephotoInput)
+            session.addInputWithNoConnections(secondaryCameraInput)
         } catch {
-            print("Couldn't create telephoto camera device input: \(error)")
+            print("Couldn't create secondary camera device input: \(error)")
             return
         }
         
@@ -159,82 +131,86 @@ class DualCameraViewController: UIViewController {
         
         
         // setup output
-        guard session.canAddOutput(wideAngleCameraOutput) else {
+        guard session.canAddOutput(mainCameraOutput) else {
             print("Could not add wide-angle camera output")
             return
         }
-        session.addOutputWithNoConnections(wideAngleCameraOutput)
+        session.addOutputWithNoConnections(mainCameraOutput)
+        
+        
         // TODO: check setting 
 //        backCameraVideoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_32BGRA)]
 //        backCameraVideoDataOutput.setSampleBufferDelegate(self, queue: dataOutputQueue)
         
-        guard session.canAddOutput(telephotoCameraOutput) else {
-            print("Could not add telephoto camera output")
+        
+        
+        guard session.canAddOutput(secondaryCameraOutput) else {
+            print("Could not add secondary camera output")
             return
         }
-        session.addOutputWithNoConnections(telephotoCameraOutput)
+        session.addOutputWithNoConnections(secondaryCameraOutput)
         
         // setup connections
-        guard let port1 = wideAngleInput!.ports(for: .video,
+        guard let mainCameraPort = mainCameraInput!.ports(for: .video,
                                                    sourceDeviceType: .builtInWideAngleCamera,
-                                                   sourceDevicePosition: wideAngleDevice.position).first
+                                                   sourceDevicePosition: mainCameraDevice.position).first
         else {
                 print("Could not obtain wide angle camera input ports")
                 return
         }
-//        guard let port2 = telephotoInput!.ports(for: .video,
+//        guard let secondaryCameraPort = secondaryCameraInput!.ports(for: .video,
 //                                                   sourceDeviceType: .builtInTelephotoCamera,
 //                                                   sourceDevicePosition: telephotoDevice.position).first
 //        else {
 //            print("Could not obtain telephoto camera input ports")
 //            return
 //        }
-        guard let port2 = telephotoInput!.ports(for: .video,
+        guard let secondaryCameraPort = secondaryCameraInput!.ports(for: .video,
                                                    sourceDeviceType: .builtInUltraWideCamera,
-                                                   sourceDevicePosition: telephotoDevice.position).first
+                                                   sourceDevicePosition: secondaryCameraDevice.position).first
         else {
             print("Could not obtain ultrawide camera input ports")
             return
         }
         
-        let wideAngleCameraConnection = AVCaptureConnection(inputPorts: [port1], output: wideAngleCameraOutput)
-        guard session.canAddConnection(wideAngleCameraConnection) else {
+        let mainCameraConnection = AVCaptureConnection(inputPorts: [mainCameraPort], output: mainCameraOutput)
+        guard session.canAddConnection(mainCameraConnection) else {
             print("Cannot add wide-angle input to output")
             return
         }
-        session.addConnection(wideAngleCameraConnection)
-//        wideAngleCameraConnection.videoOrientation = .portrait
-        wideAngleCameraConnection.videoOrientation = .landscapeRight
+        session.addConnection(mainCameraConnection)
+//        mainCameraConnection.videoOrientation = .portrait
+        mainCameraConnection.videoOrientation = .landscapeRight
         
-        let telephotoCameraConnection = AVCaptureConnection(inputPorts: [port2], output: telephotoCameraOutput)
-        guard session.canAddConnection(telephotoCameraConnection) else {
-            print("Cannot add telephoto input to output")
+        let secondaryCameraConnection = AVCaptureConnection(inputPorts: [secondaryCameraPort], output: secondaryCameraOutput)
+        guard session.canAddConnection(secondaryCameraConnection) else {
+            print("Cannot add secondary input to output")
             return
         }
-        session.addConnection(telephotoCameraConnection)
-//        telephotoCameraConnection.videoOrientation = .portrait
-        telephotoCameraConnection.videoOrientation = .landscapeRight
+        session.addConnection(secondaryCameraConnection)
+//        secondaryCameraConnection.videoOrientation = .portrait
+        secondaryCameraConnection.videoOrientation = .landscapeRight
         
         // connect to preview layers
-        guard let wideAngleCameraPreviewLayer = wideAngleCameraPreviewLayer else {
+        guard let mainCameraPreviewLayer = mainCameraPreviewLayer else {
             return
         }
-        let wideAngleCameraPreviewLayerConnection = AVCaptureConnection(inputPort: port1, videoPreviewLayer: wideAngleCameraPreviewLayer)
-        guard session.canAddConnection(wideAngleCameraPreviewLayerConnection) else {
+        let mainCameraPreviewLayerConnection = AVCaptureConnection(inputPort: mainCameraPort, videoPreviewLayer: mainCameraPreviewLayer)
+        guard session.canAddConnection(mainCameraPreviewLayerConnection) else {
             print("Could not add a connection to the wide-angle camera video preview layer")
             return
         }
-        session.addConnection(wideAngleCameraPreviewLayerConnection)
+        session.addConnection(mainCameraPreviewLayerConnection)
         
-        guard let telephotoCameraPreviewLayer = telephotoCameraPreviewLayer else {
+        guard let secondaryCameraPreviewLayer = secondaryCameraPreviewLayer else {
             return
         }
-        let telephotoCameraPreviewLayerConnection = AVCaptureConnection(inputPort: port2, videoPreviewLayer: telephotoCameraPreviewLayer)
-        guard session.canAddConnection(telephotoCameraPreviewLayerConnection) else {
-            print("Could not add a connection to the telephoto camera video preview layer")
+        let secondaryCameraPreviewLayerConnection = AVCaptureConnection(inputPort: secondaryCameraPort, videoPreviewLayer: secondaryCameraPreviewLayer)
+        guard session.canAddConnection(secondaryCameraPreviewLayerConnection) else {
+            print("Could not add a connection to the secondary camera video preview layer")
             return
         }
-        session.addConnection(telephotoCameraPreviewLayerConnection)
+        session.addConnection(secondaryCameraPreviewLayerConnection)
         
     }
     
@@ -259,58 +235,58 @@ class DualCameraViewController: UIViewController {
     
     private func startRecoring() {
         
-//        if self.wideAngleCameraOutput.isRecording {
+//        if self.mainCameraOutput.isRecording {
 //            print("Error, wide-angle camera should not be recording at the moment")
 //        }
-//        if self.telephotoCameraOutput.isRecording {
-//            print("Error, telephoto camera should not be recording at the moment")
+//        if self.secondaryCameraOutput.isRecording {
+//            print("Error, secondary camera should not be recording at the moment")
 //        }
         
         if UIDevice.current.isMultitaskingSupported {
             self.backgroundRecordingID = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
         }
         
-        let wideAngleOutputConnection = self.wideAngleCameraOutput.connection(with: .video)
-        wideAngleOutputConnection?.videoOrientation = .landscapeRight
-        //                let wideAngleAvailableVideoCodecTypes = self.wideAngleCameraOutput.availableVideoCodecTypes
+        let mainCameraOutputConnection = self.mainCameraOutput.connection(with: .video)
+        mainCameraOutputConnection?.videoOrientation = .landscapeRight
+        //                let wideAngleAvailableVideoCodecTypes = self.mainCameraOutput.availableVideoCodecTypes
         //                if wideAngleAvailableVideoCodecTypes.contains(.hevc) {
-        //                    self.wideAngleCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: wideAngleOutputConnection!)
+        //                    self.mainCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: wideAngleOutputConnection!)
         //                }
         
-        let telephoteOutputConnection = self.telephotoCameraOutput.connection(with: .video)
-        telephoteOutputConnection?.videoOrientation = .landscapeRight
-        //                let telephotoAvailableVideoCodecTypes = self.telephotoCameraOutput.availableVideoCodecTypes
+        let secondaryCameraOutputConnection = self.secondaryCameraOutput.connection(with: .video)
+        secondaryCameraOutputConnection?.videoOrientation = .landscapeRight
+        //                let telephotoAvailableVideoCodecTypes = self.secondaryCameraOutput.availableVideoCodecTypes
         //                if telephotoAvailableVideoCodecTypes.contains(.hevc) {
-        //                    self.telephotoCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: telephoteOutputConnection!)
+        //                    self.secondaryCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: telephoteOutputConnection!)
         //                }
         
         let recordingId = Helper.getRecordingId()
         let recordingDataDirectoryPath = Helper.getRecordingDataDirectoryPath(recordingId: recordingId)
         
         // Video
-        let wideAngleFilename = recordingId + "-wide"
-        let wideAnglePath = (recordingDataDirectoryPath as NSString).appendingPathComponent((wideAngleFilename as NSString).appendingPathExtension("mp4")!)
+        let mainVideoFilename = recordingId + "-main"
+        let mainVideoPath = (recordingDataDirectoryPath as NSString).appendingPathComponent((mainVideoFilename as NSString).appendingPathExtension("mp4")!)
         
-        let telephotoFilename = recordingId + "-tele"
-        let telephotoPath = (recordingDataDirectoryPath as NSString).appendingPathComponent((telephotoFilename as NSString).appendingPathExtension("mp4")!)
+        let secondaryVideoFilename = recordingId + "-secondary"
+        let secondaryVideoPath = (recordingDataDirectoryPath as NSString).appendingPathComponent((secondaryVideoFilename as NSString).appendingPathExtension("mp4")!)
         
-        self.wideAngleCameraOutput.startRecording(to: URL(fileURLWithPath: wideAnglePath), recordingDelegate: self)
-        self.telephotoCameraOutput.startRecording(to: URL(fileURLWithPath: telephotoPath), recordingDelegate: self)
+        self.mainCameraOutput.startRecording(to: URL(fileURLWithPath: mainVideoPath), recordingDelegate: self)
+        self.secondaryCameraOutput.startRecording(to: URL(fileURLWithPath: secondaryVideoPath), recordingDelegate: self)
         
         self.isRecording = true
     }
     
     private func stopRecording() {
         
-//        if !self.wideAngleCameraOutput.isRecording {
+//        if !self.mainCameraOutput.isRecording {
 //            print("Error, wide-angle camera should be recording but it is not")
 //        }
-//        if !self.telephotoCameraOutput.isRecording {
-//            print("Error, telephoto camera should be recording but it is not")
+//        if !self.secondaryCameraOutput.isRecording {
+//            print("Error, secondary camera should be recording but it is not")
 //        }
         
-        self.wideAngleCameraOutput.stopRecording()
-        self.telephotoCameraOutput.stopRecording()
+        self.mainCameraOutput.stopRecording()
+        self.secondaryCameraOutput.stopRecording()
     }
 }
 
