@@ -6,6 +6,7 @@
 //  Copyright © 2020 jx16. All rights reserved.
 //
 
+import CoreMedia
 import Foundation
 import simd
 
@@ -35,7 +36,8 @@ class CameraInfo: Encodable {
     }
 }
 
-class CameraInfoRecorder {
+class CameraInfoRecorder: Recorder {
+    typealias T = CameraInfo
     
     private let cameraInfoQueue = DispatchQueue(label: "camera info queue")
     
@@ -44,13 +46,13 @@ class CameraInfoRecorder {
     
     private var count: Int32 = 0
     
-    func prepareForRecording(dirPath: String, filename: String) {
+    func prepareForRecording(dirPath: String, filename: String, fileExtension: String = "jsonl") {
         
         cameraInfoQueue.async {
             
             self.count = 0
             
-            let filePath = (dirPath as NSString).appendingPathComponent((filename as NSString).appendingPathExtension("jsonl")!)
+            let filePath = (dirPath as NSString).appendingPathComponent((filename as NSString).appendingPathExtension(fileExtension)!)
             self.fileUrl = URL(fileURLWithPath: filePath)
             FileManager.default.createFile(atPath: self.fileUrl!.path, contents: nil, attributes: nil)
             
@@ -63,7 +65,7 @@ class CameraInfoRecorder {
         
     }
     
-    func update(cameraInfo: CameraInfo) {
+    func update(_ cameraInfo: CameraInfo, timestamp: CMTime? = nil) {
         cameraInfoQueue.async {
             print("Saving camera info \(self.count) ...")
             

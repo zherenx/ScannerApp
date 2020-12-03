@@ -115,7 +115,7 @@ extension ARCameraRecordingManager: RecordingManager {
             
             depthRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
             confidenceMapRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
-            rgbRecorder.prepareForRecording(dirPath: dirUrl.path, filenameWithoutExt: recordingId)
+            rgbRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
             cameraInfoRecorder.prepareForRecording(dirPath: dirUrl.path, filename: recordingId)
             
             isRecording = true
@@ -190,13 +190,13 @@ extension ARCameraRecordingManager: ARSessionDelegate {
         let timestamp: CMTime = CMTime(seconds: frame.timestamp, preferredTimescale: 1_000_000_000)
 
         print("**** @Controller: depth \(numFrames) ****")
-        depthRecorder.update(buffer: depthMap)
+        depthRecorder.update(depthMap)
 
         print("**** @Controller: confidence \(numFrames) ****")
-        confidenceMapRecorder.update(buffer: confidenceMap)
+        confidenceMapRecorder.update(confidenceMap)
         
         print("**** @Controller: color \(numFrames) ****")
-        rgbRecorder.update(buffer: colorImage, timestamp: timestamp)
+        rgbRecorder.update(colorImage, timestamp: timestamp)
         print()
     
         let currentCameraInfo = CameraInfo(timestamp: frame.timestamp,
@@ -204,7 +204,7 @@ extension ARCameraRecordingManager: ARSessionDelegate {
                                            transform: frame.camera.transform,
                                            eulerAngles: frame.camera.eulerAngles,
                                            exposureDuration: frame.camera.exposureDuration)
-        cameraInfoRecorder.update(cameraInfo: currentCameraInfo)
+        cameraInfoRecorder.update(currentCameraInfo)
         
         numFrames += 1
     }

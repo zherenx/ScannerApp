@@ -11,7 +11,8 @@
 import AVFoundation
 import Foundation
 
-class RGBRecorder {
+class RGBRecorder: Recorder {
+    typealias T = CVPixelBuffer
     
     // I'm not sure if a separate queue is necessary
     private let movieQueue = DispatchQueue(label: "movie queue")
@@ -30,13 +31,13 @@ class RGBRecorder {
         self.videoSettings = videoSettings
     }
     
-    func prepareForRecording(dirPath: String, filenameWithoutExt: String) {
+    func prepareForRecording(dirPath: String, filename: String, fileExtension: String = "mp4") {
         
         movieQueue.async {
             
             self.count = 0
             
-            let outputFilePath = (dirPath as NSString).appendingPathComponent((filenameWithoutExt as NSString).appendingPathExtension("mp4")!)
+            let outputFilePath = (dirPath as NSString).appendingPathComponent((filename as NSString).appendingPathExtension(fileExtension)!)
             let outputFileUrl = URL(fileURLWithPath: outputFilePath)
             
             guard let assetWriter = try? AVAssetWriter(url: outputFileUrl, fileType: .mp4) else {
@@ -58,7 +59,11 @@ class RGBRecorder {
         
     }
     
-    func update(buffer: CVPixelBuffer, timestamp: CMTime) {
+    func update(_ buffer: CVPixelBuffer, timestamp: CMTime?) {
+        
+        guard let timestamp = timestamp else {
+            return
+        }
         
         movieQueue.async {
             
