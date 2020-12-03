@@ -20,7 +20,6 @@ class DualCameraViewController: UIViewController {
 
     @IBOutlet private weak var recordButton: UIButton!
     private var isRecording = false
-    private var backgroundRecordingID: UIBackgroundTaskIdentifier?
     
     private var extrinsics: Data?
     
@@ -242,10 +241,6 @@ class DualCameraViewController: UIViewController {
 //            print("Error, secondary camera should not be recording at the moment")
 //        }
         
-        if UIDevice.current.isMultitaskingSupported {
-            self.backgroundRecordingID = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
-        }
-        
         let mainCameraOutputConnection = self.mainCameraOutput.connection(with: .video)
         mainCameraOutputConnection?.videoOrientation = .landscapeRight
         //                let wideAngleAvailableVideoCodecTypes = self.mainCameraOutput.availableVideoCodecTypes
@@ -306,30 +301,9 @@ extension DualCameraViewController: AVCaptureFileOutputRecordingDelegate {
                     from connections: [AVCaptureConnection],
                     error: Error?) {
 
-        func cleanup() {
-            if let currentBackgroundRecordingID = backgroundRecordingID {
-                backgroundRecordingID = UIBackgroundTaskIdentifier.invalid
-                
-                if currentBackgroundRecordingID != UIBackgroundTaskIdentifier.invalid {
-                    UIApplication.shared.endBackgroundTask(currentBackgroundRecordingID)
-                }
-            }
-        }
-        
-        var success = true
-        
         if error != nil {
             print("Movie file finishing error: \(String(describing: error))")
-            success = (((error! as NSError).userInfo[AVErrorRecordingSuccessfullyFinishedKey] as AnyObject).boolValue)!
         }
-        
-        if success {
-            
-        } else {
-            // TODO: delete file
-        }
-        
-        cleanup()
         
         DispatchQueue.main.async {
             self.recordButton.setTitle("Record", for: .normal)
