@@ -211,6 +211,21 @@ class DualCameraViewController: UIViewController {
         }
         session.addConnection(secondaryCameraPreviewLayerConnection)
         
+        
+        let mainCameraOutputConnection = self.mainCameraOutput.connection(with: .video)
+        mainCameraOutputConnection?.videoOrientation = .landscapeRight
+        //                let wideAngleAvailableVideoCodecTypes = self.mainCameraOutput.availableVideoCodecTypes
+        //                if wideAngleAvailableVideoCodecTypes.contains(.hevc) {
+        //                    self.mainCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: wideAngleOutputConnection!)
+        //                }
+        
+        let secondaryCameraOutputConnection = self.secondaryCameraOutput.connection(with: .video)
+        secondaryCameraOutputConnection?.videoOrientation = .landscapeRight
+        //                let telephotoAvailableVideoCodecTypes = self.secondaryCameraOutput.availableVideoCodecTypes
+        //                if telephotoAvailableVideoCodecTypes.contains(.hevc) {
+        //                    self.secondaryCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: telephoteOutputConnection!)
+        //                }
+        
     }
     
     private func addObservers() {
@@ -234,27 +249,6 @@ class DualCameraViewController: UIViewController {
     
     private func startRecoring() {
         
-//        if self.mainCameraOutput.isRecording {
-//            print("Error, wide-angle camera should not be recording at the moment")
-//        }
-//        if self.secondaryCameraOutput.isRecording {
-//            print("Error, secondary camera should not be recording at the moment")
-//        }
-        
-        let mainCameraOutputConnection = self.mainCameraOutput.connection(with: .video)
-        mainCameraOutputConnection?.videoOrientation = .landscapeRight
-        //                let wideAngleAvailableVideoCodecTypes = self.mainCameraOutput.availableVideoCodecTypes
-        //                if wideAngleAvailableVideoCodecTypes.contains(.hevc) {
-        //                    self.mainCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: wideAngleOutputConnection!)
-        //                }
-        
-        let secondaryCameraOutputConnection = self.secondaryCameraOutput.connection(with: .video)
-        secondaryCameraOutputConnection?.videoOrientation = .landscapeRight
-        //                let telephotoAvailableVideoCodecTypes = self.secondaryCameraOutput.availableVideoCodecTypes
-        //                if telephotoAvailableVideoCodecTypes.contains(.hevc) {
-        //                    self.secondaryCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: telephoteOutputConnection!)
-        //                }
-        
         let recordingId = Helper.getRecordingId()
         let recordingDataDirectoryPath = Helper.getRecordingDataDirectoryPath(recordingId: recordingId)
         
@@ -272,13 +266,6 @@ class DualCameraViewController: UIViewController {
     }
     
     private func stopRecording() {
-        
-//        if !self.mainCameraOutput.isRecording {
-//            print("Error, wide-angle camera should be recording but it is not")
-//        }
-//        if !self.secondaryCameraOutput.isRecording {
-//            print("Error, secondary camera should be recording but it is not")
-//        }
         
         self.mainCameraOutput.stopRecording()
         self.secondaryCameraOutput.stopRecording()
