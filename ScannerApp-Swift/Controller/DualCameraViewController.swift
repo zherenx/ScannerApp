@@ -81,12 +81,16 @@ class DualCameraViewController: UIViewController {
             return
         }
         
-        guard let secondaryCameraDevice = AVCaptureDevice.default(.builtInUltraWideCamera, for: .video, position: .back) else {
-            print("Could not find the ultrawide camera")
+        var secondaryCameraDevice: AVCaptureDevice
+        
+        if let ultrawideCameraDevice = AVCaptureDevice.default(.builtInUltraWideCamera, for: .video, position: .back) {
+            secondaryCameraDevice = ultrawideCameraDevice
+        } else if let telephotoCameraDevice = AVCaptureDevice.default(.builtInTelephotoCamera, for: .video, position: .back) {
+            secondaryCameraDevice = telephotoCameraDevice
+        } else {
+            print("Could not find either ultrawide or telephone camera")
             return
         }
-        
-        
         
 //        if let wide = AVCaptureDevice.default(.builtInWideAngleCamera, for: nil, position: .back), let tele = AVCaptureDevice.default(.builtInTelephotoCamera, for: nil, position: .back) {
 //            self.extrinsics = AVCaptureDevice.extrinsicMatrix(from: tele, to: wide)
@@ -157,18 +161,19 @@ class DualCameraViewController: UIViewController {
                 print("Could not obtain wide angle camera input ports")
                 return
         }
-//        guard let secondaryCameraPort = secondaryCameraInput!.ports(for: .video,
-//                                                   sourceDeviceType: .builtInTelephotoCamera,
-//                                                   sourceDevicePosition: telephotoDevice.position).first
-//        else {
-//            print("Could not obtain telephoto camera input ports")
-//            return
-//        }
-        guard let secondaryCameraPort = secondaryCameraInput!.ports(for: .video,
-                                                   sourceDeviceType: .builtInUltraWideCamera,
-                                                   sourceDevicePosition: secondaryCameraDevice.position).first
-        else {
-            print("Could not obtain ultrawide camera input ports")
+        
+        let secondaryCameraPort: AVCaptureInput.Port
+        
+        if secondaryCameraDevice.deviceType == .builtInUltraWideCamera {
+            secondaryCameraPort = secondaryCameraInput!.ports(for: .video,
+                                                              sourceDeviceType: .builtInUltraWideCamera,
+                                                              sourceDevicePosition: secondaryCameraDevice.position).first!
+        } else if secondaryCameraDevice.deviceType == .builtInTelephotoCamera {
+            secondaryCameraPort = secondaryCameraInput!.ports(for: .video,
+                                                              sourceDeviceType: .builtInTelephotoCamera,
+                                                              sourceDevicePosition: secondaryCameraDevice.position).first!
+        } else {
+            print("Could not obtain secondary camera input ports")
             return
         }
         
