@@ -35,6 +35,7 @@
 		FE975BAD245107DE00DAB6CB /* UserDefaultsExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE975BAC245107DE00DAB6CB /* UserDefaultsExtension.swift */; };
 		FE975BAF245396E900DAB6CB /* RecordingDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE975BAE245396E900DAB6CB /* RecordingDetailViewController.swift */; };
 		FE975BB12453BFF800DAB6CB /* VideoHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE975BB02453BFF800DAB6CB /* VideoHelper.swift */; };
+		FEC93A8B25835EA000811731 /* DualCameraRecordingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEC93A8A25835EA000811731 /* DualCameraRecordingManager.swift */; };
 		FEF6FD562539375300C3060B /* RGBRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEF6FD522539375200C3060B /* RGBRecorder.swift */; };
 		FEF6FD572539375300C3060B /* CameraInfoRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEF6FD532539375200C3060B /* CameraInfoRecorder.swift */; };
 		FEF6FD582539375300C3060B /* Compressor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEF6FD542539375300C3060B /* Compressor.swift */; };
@@ -73,6 +74,7 @@
 		FE975BAC245107DE00DAB6CB /* UserDefaultsExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsExtension.swift; sourceTree = "<group>"; };
 		FE975BAE245396E900DAB6CB /* RecordingDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingDetailViewController.swift; sourceTree = "<group>"; };
 		FE975BB02453BFF800DAB6CB /* VideoHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoHelper.swift; sourceTree = "<group>"; };
+		FEC93A8A25835EA000811731 /* DualCameraRecordingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DualCameraRecordingManager.swift; sourceTree = "<group>"; };
 		FEF6FD522539375200C3060B /* RGBRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RGBRecorder.swift; sourceTree = "<group>"; };
 		FEF6FD532539375200C3060B /* CameraInfoRecorder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraInfoRecorder.swift; sourceTree = "<group>"; };
 		FEF6FD542539375300C3060B /* Compressor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Compressor.swift; sourceTree = "<group>"; };
@@ -96,6 +98,7 @@
 			children = (
 				FE017D712564782900786973 /* RecordingManager.swift */,
 				FE017D8A2566346900786973 /* SingleCameraRecordingManager.swift */,
+				FEC93A8A25835EA000811731 /* DualCameraRecordingManager.swift */,
 				FE017D752564980700786973 /* ARCameraRecordingManager.swift */,
 			);
 			path = RecordingManager;
@@ -280,6 +283,7 @@
 				FEF6FD582539375300C3060B /* Compressor.swift in Sources */,
 				FE09456123AD7061003A1CA5 /* AppDelegate.swift in Sources */,
 				FEF6FD6625414CFA00C3060B /* PopUpView.swift in Sources */,
+				FEC93A8B25835EA000811731 /* DualCameraRecordingManager.swift in Sources */,
 				FE975BAD245107DE00DAB6CB /* UserDefaultsExtension.swift in Sources */,
 				FE1E41CE242451CE00216886 /* MotionManager.swift in Sources */,
 				FEF6FD592539375300C3060B /* DepthRecorder.swift in Sources */,
