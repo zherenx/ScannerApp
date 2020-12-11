@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="L1p-2W-pSb">
-    <device id="retina6_1" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="L1p-2W-pSb">
     <dependencies>
         <deployment version="5120" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -14,14 +13,14 @@
             <objects>
                 <viewController id="HH8-a4-OXI" customClass="ConfigurationViewController" customModule="ScannerApp_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="CGn-7N-j5q">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="ble-zw-gJc">
-                                <rect key="frame" x="20" y="351.5" width="374" height="193"/>
+                                <rect key="frame" x="20" y="203.5" width="560" height="193"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="42" translatesAutoresizingMaskIntoConstraints="NO" id="dmn-7K-DjT">
-                                        <rect key="frame" x="0.0" y="0.0" width="374" height="34"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="560" height="34"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="First Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EP6-lG-GUj">
                                                 <rect key="frame" x="0.0" y="0.0" width="82.5" height="34"/>
@@ -30,14 +29,14 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="TmV-XF-18Y">
-                                                <rect key="frame" x="124.5" y="0.0" width="249.5" height="34"/>
+                                                <rect key="frame" x="124.5" y="0.0" width="435.5" height="34"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits"/>
                                             </textField>
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="43" translatesAutoresizingMaskIntoConstraints="NO" id="sIP-8g-dWY">
-                                        <rect key="frame" x="0.0" y="54" width="374" height="34"/>
+                                        <rect key="frame" x="0.0" y="54" width="560" height="34"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Last Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="t77-qL-uyQ">
                                                 <rect key="frame" x="0.0" y="0.0" width="81.5" height="34"/>
@@ -46,14 +45,14 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="kyT-9V-gPV">
-                                                <rect key="frame" x="124.5" y="0.0" width="249.5" height="34"/>
+                                                <rect key="frame" x="124.5" y="0.0" width="435.5" height="34"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits"/>
                                             </textField>
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="85" translatesAutoresizingMaskIntoConstraints="NO" id="cZX-co-uGA">
-                                        <rect key="frame" x="0.0" y="108" width="374" height="34"/>
+                                        <rect key="frame" x="0.0" y="108" width="560" height="34"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Host" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="N5S-l6-m1U">
                                                 <rect key="frame" x="0.0" y="0.0" width="36" height="34"/>
@@ -62,23 +61,23 @@
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="pzM-0d-Oxw">
-                                                <rect key="frame" x="121" y="0.0" width="253" height="34"/>
+                                                <rect key="frame" x="121" y="0.0" width="439" height="34"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits"/>
                                             </textField>
                                         </subviews>
                                     </stackView>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="46" translatesAutoresizingMaskIntoConstraints="NO" id="sxM-VV-RvT">
-                                        <rect key="frame" x="0.0" y="162" width="374" height="31"/>
+                                        <rect key="frame" x="0.0" y="162" width="560" height="31"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Debug Mode" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1iu-EF-pr9">
-                                                <rect key="frame" x="0.0" y="0.0" width="279" height="31"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="465" height="31"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ftj-Rk-s1n">
-                                                <rect key="frame" x="325" y="0.0" width="51" height="31"/>
+                                                <rect key="frame" x="511" y="0.0" width="51" height="31"/>
                                                 <connections>
                                                     <action selector="debugModeSwitchValueChanged:" destination="HH8-a4-OXI" eventType="valueChanged" id="SiY-ff-BT0"/>
                                                 </connections>
@@ -114,11 +113,11 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="ScannerApp_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="21" translatesAutoresizingMaskIntoConstraints="NO" id="Aa6-uh-Bj2">
-                                <rect key="frame" x="160" y="331" width="94" height="234"/>
+                                <rect key="frame" x="253" y="183" width="94" height="234"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N9K-PD-rNb">
                                         <rect key="frame" x="0.0" y="0.0" width="94" height="30"/>
@@ -187,24 +186,24 @@
             <objects>
                 <viewController id="hbE-un-H6B" customClass="DualCameraViewController" customModule="ScannerApp_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="g7U-dC-Uu8">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Oes-xv-Faf">
-                                <rect key="frame" x="0.0" y="88" width="414" height="774"/>
+                                <rect key="frame" x="0.0" y="44" width="600" height="556"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LzI-Xo-0h7" customClass="PreviewView" customModule="ScannerApp_Swift" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="383"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="274"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lZy-yN-Bd6" customClass="PreviewView" customModule="ScannerApp_Swift" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="391" width="414" height="383"/>
+                                        <rect key="frame" x="0.0" y="282" width="600" height="274"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     </view>
                                 </subviews>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uWv-7G-hYQ">
-                                <rect key="frame" x="179.5" y="809" width="55" height="33"/>
+                                <rect key="frame" x="272.5" y="547" width="55" height="33"/>
                                 <color key="backgroundColor" systemColor="systemBlueColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="tintColor" systemColor="groupTableViewBackgroundColor"/>
@@ -227,9 +226,9 @@
                     </view>
                     <navigationItem key="navigationItem" title="Dual Camera" id="P1h-g5-MKQ"/>
                     <connections>
+                        <outlet property="mainCameraPreviewView" destination="LzI-Xo-0h7" id="TBy-1K-LKR"/>
                         <outlet property="recordButton" destination="uWv-7G-hYQ" id="faw-6R-jrb"/>
-                        <outlet property="telephotoCameraPreviewView" destination="lZy-yN-Bd6" id="un3-dc-LvE"/>
-                        <outlet property="wideAngleCameraPreviewView" destination="LzI-Xo-0h7" id="TBy-1K-LKR"/>
+                        <outlet property="secondaryCameraPreviewView" destination="lZy-yN-Bd6" id="un3-dc-LvE"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ho4-KC-jbu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -241,15 +240,15 @@
             <objects>
                 <tableViewController id="toN-jm-P7c" customClass="LibraryTableViewController" customModule="ScannerApp_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="t96-Ow-YMj">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="libraryTableViewCell" rowHeight="150" id="fnb-SS-nu0" customClass="LibraryTableViewCell" customModule="ScannerApp_Swift" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="414" height="150"/>
+                                <rect key="frame" x="0.0" y="28" width="600" height="150"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="fnb-SS-nu0" id="rWL-bx-t3R">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="150"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="150"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="0in-1v-Qxm">
@@ -257,7 +256,7 @@
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Filename" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aVC-eB-NNE" userLabel="Title">
-                                            <rect key="frame" x="128" y="8" width="278" height="20"/>
+                                            <rect key="frame" x="128" y="8" width="464" height="20"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="20" id="FQL-A0-sCf"/>
                                             </constraints>
@@ -266,7 +265,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="List of file ext." lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Az9-AH-Osh" userLabel="Info">
-                                            <rect key="frame" x="128" y="32" width="278" height="40"/>
+                                            <rect key="frame" x="128" y="32" width="464" height="40"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="40" id="NdP-fg-PA6"/>
                                             </constraints>
@@ -275,21 +274,21 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="F7y-O0-Anh">
-                                            <rect key="frame" x="361" y="112" width="45" height="30"/>
+                                            <rect key="frame" x="547" y="112" width="45" height="30"/>
                                             <state key="normal" title="Delete"/>
                                             <connections>
                                                 <action selector="deleteButtonTapped:" destination="fnb-SS-nu0" eventType="touchUpInside" id="351-Ft-o4a"/>
                                             </connections>
                                         </button>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0bt-CB-BqD">
-                                            <rect key="frame" x="304" y="112" width="49" height="30"/>
+                                            <rect key="frame" x="490" y="112" width="49" height="30"/>
                                             <state key="normal" title="Upload"/>
                                             <connections>
                                                 <action selector="uploadButtonTapped:" destination="fnb-SS-nu0" eventType="touchUpInside" id="IB4-ck-6Bp"/>
                                             </connections>
                                         </button>
                                         <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TNI-sk-V3t">
-                                            <rect key="frame" x="8" y="128" width="278" height="4"/>
+                                            <rect key="frame" x="8" y="128" width="464" height="4"/>
                                         </progressView>
                                     </subviews>
                                     <constraints>
@@ -339,29 +338,29 @@
             <objects>
                 <viewController storyboardIdentifier="RecordingDetailViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="F1R-QL-NwA" customClass="RecordingDetailViewController" customModule="ScannerApp_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="3sL-IM-IT7">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6Z5-qT-KdC">
-                                <rect key="frame" x="0.0" y="88" width="414" height="774"/>
+                                <rect key="frame" x="0.0" y="44" width="600" height="556"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7tj-82-mea">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="312.5"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="600" height="417.5"/>
                                         <subviews>
                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Khz-0Q-sPV">
-                                                <rect key="frame" x="10" y="10" width="394" height="221.5"/>
+                                                <rect key="frame" x="10" y="10" width="580" height="326.5"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="Khz-0Q-sPV" secondAttribute="height" multiplier="16:9" id="T1S-BB-ory"/>
                                                 </constraints>
                                             </imageView>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Recording Id" textAlignment="center" lineBreakMode="characterWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="etM-X6-9SO">
-                                                <rect key="frame" x="8" y="239.5" width="398" height="20.5"/>
+                                                <rect key="frame" x="8" y="344.5" width="584" height="20.5"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Detail" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3YY-YL-82i">
-                                                <rect key="frame" x="12" y="276" width="390" height="20.5"/>
+                                                <rect key="frame" x="12" y="381" width="576" height="20.5"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
@@ -420,11 +419,11 @@
             <objects>
                 <viewController id="8Cb-Uv-t0a" customClass="DepthViewController" customModule="ScannerApp_Swift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Dub-Tk-9fD">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="edA-PJ-b4P" customClass="PreviewView" customModule="ScannerApp_Swift" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="88" width="414" height="774"/>
+                                <rect key="frame" x="0.0" y="44" width="600" height="556"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fqB-Nh-TbQ">
                                         <rect key="frame" x="191" y="372" width="32" height="30"/>
