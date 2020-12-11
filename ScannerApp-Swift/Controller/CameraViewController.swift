@@ -79,6 +79,7 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
         
         switch mode {
         case .singleCamera:
+            
             recordingManager = SingleCameraRecordingManager()
             let previewView = PreviewView()
             previewView.videoPreviewLayer.session = recordingManager.getSession() as? AVCaptureSession
@@ -87,11 +88,46 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
             navigationItem.title = "Single Camera"
         
         case .dualCamera:
-            print("Dual camera mode not supported yet.")
-            navigationItem.title = "Dual Camera"
-            // TODO: do something
+            
+            if #available(iOS 13.0, *) {
+                
+                recordingManager = DualCameraRecordingManager()
+                let session = recordingManager.getSession() as! AVCaptureMultiCamSession
+                
+                // setup dual cam preview
+                let mainCameraPreviewView = PreviewView()
+                mainCameraPreviewView.videoPreviewLayer.setSessionWithNoConnection(session)
+                
+                // TODO: tmp solution
+                while session.inputs.count == 0 {
+                    usleep(1000)
+                }
+                
+                let mainCameraInput = session.inputs[0] as! AVCaptureDeviceInput
+                guard let mainCameraPort = mainCameraInput.ports(for: .video,
+                                                                 sourceDeviceType: .builtInWideAngleCamera,
+                                                                 sourceDevicePosition: .back).first
+                else {
+                    print("Could not obtain wide angle camera input ports")
+                    return
+                }
+                let mainCameraPreviewLayerConnection = AVCaptureConnection(inputPort: mainCameraPort, videoPreviewLayer: mainCameraPreviewView.videoPreviewLayer)
+                guard session.canAddConnection(mainCameraPreviewLayerConnection) else {
+                    print("Could not add a connection to the wide-angle camera video preview layer")
+                    return
+                }
+                session.addConnection(mainCameraPreviewLayerConnection)
+                
+                setupPreviewView(previewView: mainCameraPreviewView)
+                
+                navigationItem.title = "Dual Camera"
+                
+            } else {
+                // Fallback on earlier versions
+            }
         
         case .arCamera:
+            
             if #available(iOS 14.0, *) {
                 
                 recordingManager = ARCameraRecordingManager()

@@ -36,6 +36,10 @@ class ViewController: UIViewController {
         segueToCameraScene(mode: .singleCamera)
     }
     
+    @IBAction func dualCameraModeButtonTapped(_ sender: Any) {
+        segueToCameraScene(mode: .dualCamera)
+    }
+    
     @IBAction func arCameraModeButtonTapped(_ sender: Any) {
         segueToCameraScene(mode: .arCamera)
     }
