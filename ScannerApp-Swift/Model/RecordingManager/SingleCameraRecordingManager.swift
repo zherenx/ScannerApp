@@ -183,7 +183,7 @@ extension SingleCameraRecordingManager: RecordingManager {
             motionManager.startRecording(dataPathString: dirUrl.path, recordingId: recordingId)
             
             // Video
-            movieFilePath = (dirUrl.path as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension(Constants.Sensor.Camera.fileExtension)!)
+            movieFilePath = (dirUrl.path as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("mp4")!)
             movieFileOutput.startRecording(to: URL(fileURLWithPath: movieFilePath), recordingDelegate: self)
     
         }
@@ -217,7 +217,7 @@ extension SingleCameraRecordingManager: AVCaptureFileOutputRecordingDelegate {
 
             let numColorFrames = VideoHelper.getNumberOfFrames(videoUrl: outputFileURL)
             
-            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: Constants.Sensor.Camera.type, encoding: Constants.EncodingCode.h264, frequency: 60, numberOfFrames: numColorFrames, fileExtension: "mp4", resolution: colorResolution, intrinsics: cameraIntrinsicArray, extrinsics: nil)
+            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: "color_camera", encoding: "h264", frequency: 60, numberOfFrames: numColorFrames, fileExtension: "mp4", resolution: colorResolution, intrinsics: cameraIntrinsicArray, extrinsics: nil)
             
             streamInfo.append(cameraStreamInfo)
             
