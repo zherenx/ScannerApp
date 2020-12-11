@@ -76,6 +76,7 @@ class DualCameraViewController: UIViewController {
             session.commitConfiguration()
         }
         
+        // Get devices
         guard let mainCameraDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
             print("Could not find the wide angle camera")
             return
@@ -101,7 +102,7 @@ class DualCameraViewController: UIViewController {
 //        }
         
         
-        
+        // Add input
         do {
             mainCameraInput = try AVCaptureDeviceInput(device: mainCameraDevice)
             
@@ -129,23 +130,13 @@ class DualCameraViewController: UIViewController {
             print("Couldn't create secondary camera device input: \(error)")
             return
         }
-        
-        
-        
-        
-        // setup output
+
+        // Add output
         guard session.canAddOutput(mainCameraOutput) else {
             print("Could not add wide-angle camera output")
             return
         }
         session.addOutputWithNoConnections(mainCameraOutput)
-        
-        
-        // TODO: check setting 
-//        backCameraVideoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: Int(kCVPixelFormatType_32BGRA)]
-//        backCameraVideoDataOutput.setSampleBufferDelegate(self, queue: dataOutputQueue)
-        
-        
         
         guard session.canAddOutput(secondaryCameraOutput) else {
             print("Could not add secondary camera output")
@@ -153,7 +144,7 @@ class DualCameraViewController: UIViewController {
         }
         session.addOutputWithNoConnections(secondaryCameraOutput)
         
-        // setup connections
+        // Setup input/output connection
         guard let mainCameraPort = mainCameraInput!.ports(for: .video,
                                                    sourceDeviceType: .builtInWideAngleCamera,
                                                    sourceDevicePosition: mainCameraDevice.position).first
@@ -183,8 +174,12 @@ class DualCameraViewController: UIViewController {
             return
         }
         session.addConnection(mainCameraConnection)
-//        mainCameraConnection.videoOrientation = .portrait
         mainCameraConnection.videoOrientation = .landscapeRight
+        
+        let mainCameraAvailableVideoCodecTypes = mainCameraOutput.availableVideoCodecTypes
+        if mainCameraAvailableVideoCodecTypes.contains(.h264) {
+            mainCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.h264], for: mainCameraConnection)
+        }
         
         let secondaryCameraConnection = AVCaptureConnection(inputPorts: [secondaryCameraPort], output: secondaryCameraOutput)
         guard session.canAddConnection(secondaryCameraConnection) else {
@@ -192,10 +187,14 @@ class DualCameraViewController: UIViewController {
             return
         }
         session.addConnection(secondaryCameraConnection)
-//        secondaryCameraConnection.videoOrientation = .portrait
         secondaryCameraConnection.videoOrientation = .landscapeRight
         
-        // connect to preview layers
+        let secondaryCameraAvailableVideoCodecTypes = mainCameraOutput.availableVideoCodecTypes
+        if secondaryCameraAvailableVideoCodecTypes.contains(.h264) {
+            mainCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.h264], for: mainCameraConnection)
+        }
+        
+        // Setup input/preview connection
         guard let mainCameraPreviewLayer = mainCameraPreviewLayer else {
             return
         }
@@ -215,21 +214,6 @@ class DualCameraViewController: UIViewController {
             return
         }
         session.addConnection(secondaryCameraPreviewLayerConnection)
-        
-        
-        let mainCameraOutputConnection = self.mainCameraOutput.connection(with: .video)
-        mainCameraOutputConnection?.videoOrientation = .landscapeRight
-        //                let wideAngleAvailableVideoCodecTypes = self.mainCameraOutput.availableVideoCodecTypes
-        //                if wideAngleAvailableVideoCodecTypes.contains(.hevc) {
-        //                    self.mainCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: wideAngleOutputConnection!)
-        //                }
-        
-        let secondaryCameraOutputConnection = self.secondaryCameraOutput.connection(with: .video)
-        secondaryCameraOutputConnection?.videoOrientation = .landscapeRight
-        //                let telephotoAvailableVideoCodecTypes = self.secondaryCameraOutput.availableVideoCodecTypes
-        //                if telephotoAvailableVideoCodecTypes.contains(.hevc) {
-        //                    self.secondaryCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.hevc], for: telephoteOutputConnection!)
-        //                }
         
     }
     
