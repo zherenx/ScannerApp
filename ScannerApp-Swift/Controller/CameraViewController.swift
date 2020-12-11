@@ -98,15 +98,20 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
                 let mainCameraPreviewView = PreviewView()
                 mainCameraPreviewView.videoPreviewLayer.setSessionWithNoConnection(session)
                 
+                let secondaryPreviewView = PreviewView()
+                secondaryPreviewView.videoPreviewLayer.setSessionWithNoConnection(session)
+                
                 // TODO: tmp solution
                 while session.inputs.count == 0 {
+                    print("...")
                     usleep(1000)
                 }
                 
+                // main camera preview
                 let mainCameraInput = session.inputs[0] as! AVCaptureDeviceInput
                 guard let mainCameraPort = mainCameraInput.ports(for: .video,
                                                                  sourceDeviceType: .builtInWideAngleCamera,
-                                                                 sourceDevicePosition: .back).first
+                                                                 sourceDevicePosition: mainCameraInput.device.position).first
                 else {
                     print("Could not obtain wide angle camera input ports")
                     return
@@ -118,7 +123,32 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
                 }
                 session.addConnection(mainCameraPreviewLayerConnection)
                 
-                setupPreviewView(previewView: mainCameraPreviewView)
+                // secondary camera preview
+                let secondaryCameraInput = session.inputs[1] as! AVCaptureDeviceInput
+                
+                var secondaryCameraPort: AVCaptureInput.Port
+                
+                if secondaryCameraInput.device.deviceType == .builtInUltraWideCamera {
+                    secondaryCameraPort = secondaryCameraInput.ports(for: .video,
+                                                                     sourceDeviceType: .builtInUltraWideCamera,
+                                                                     sourceDevicePosition: secondaryCameraInput.device.position).first!
+                } else if secondaryCameraInput.device.deviceType == .builtInTelephotoCamera {
+                    secondaryCameraPort = secondaryCameraInput.ports(for: .video,
+                                                                     sourceDeviceType: .builtInTelephotoCamera,
+                                                                     sourceDevicePosition: secondaryCameraInput.device.position).first!
+                } else {
+                    print("Could not obtain secondary camera input ports")
+                    return
+                }
+                
+                let secondaryCameraPreviewLayerConnection = AVCaptureConnection(inputPort: secondaryCameraPort, videoPreviewLayer: secondaryPreviewView.videoPreviewLayer)
+                guard session.canAddConnection(secondaryCameraPreviewLayerConnection) else {
+                    print("Could not add a connection to the secondary camera video preview layer")
+                    return
+                }
+                session.addConnection(secondaryCameraPreviewLayerConnection)
+                
+                setupDualPreview(pv1: mainCameraPreviewView, pv2: secondaryPreviewView)
                 
                 navigationItem.title = "Dual Camera"
                 
@@ -158,6 +188,24 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
         previewView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
         previewView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
         previewView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
+    
+    }
+    
+    private func setupDualPreview(pv1: UIView, pv2: UIView) {
+        
+        view.addSubview(pv1)
+        pv1.translatesAutoresizingMaskIntoConstraints = false
+        pv1.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        pv1.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor).isActive = true
+        pv1.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
+        pv1.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
+        
+        view.addSubview(pv2)
+        pv2.translatesAutoresizingMaskIntoConstraints = false
+        pv2.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor).isActive = true
+        pv2.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        pv2.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
+        pv2.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
     
     }
 
