@@ -8,27 +8,6 @@
 
 struct Constants {
     
-    // this struct stores the encoding code (String) used in this project
-    // and in the output files of this project (e.g. metadata)
-    // the purpose of this is mainly for consistency
-    struct EncodingCode {
-        static let ascii: String = "ascii"
-        static let binary: String = "bin"
-        static let h264: String = "h264"
-    }
-    
-//    static let sceneTypes: [String] = ["Please Select A Scene Type",
-//                                       "Dining Room",
-//                                       "Office",
-//                                       "Classroom",
-//                                       "Bedroom / Hotel",
-//                                       "Living room / Lounge",
-//                                       "Kitchen",
-//                                       "Bookstore / Library",
-//                                       "Bathroom",
-//                                       "Conference Room",
-//                                       "Misc."]
-    
     static let sceneTypes: [String] = ["Please Select A Scene Type",
                                        "Apartment",
                                        "Bathroom",
@@ -55,49 +34,6 @@ struct Constants {
                                        "Stairs",
                                        "Storage/Basement/Garage"]
     
-    struct Sensor {
-        struct Imu {
-            struct RotationRate {
-                static let type: String = "rot"
-                static let fileExtension: String = "rot"
-            }
-            
-            struct UserAcceleration {
-                static let type: String = "acce"
-                static let fileExtension: String = "acce"
-            }
-            
-            struct MagneticField {
-                static let type: String = "mag"
-                static let fileExtension: String = "mag"
-            }
-            
-            struct Attitude {
-                static let type: String = "atti"
-                static let fileExtension: String = "atti"
-            }
-            
-            struct Gravity {
-                static let type: String = "grav"
-                static let fileExtension: String = "grav"
-            }
-            
-            static let frequency = 60
-            
-            // ??
-            // I think it doesn't make too much sense to include 'encoding' as a config param
-            // because we will not be able to change the encoding by just changing this param here
-//            static let encoding = "bin"
-        }
-        
-        struct Camera {
-            static let type = "color_camera"
-            static let fileExtension: String = "mp4"
-            static let frequency = 30
-//            static let encoding = "h264"
-        }
-    }
-    
     struct Server {
         
         static let chuckSize = 4096
@@ -109,10 +45,5 @@ struct Constants {
 
         static let defaultHost: String = "aspis.cmpt.sfu.ca:80/multiscan"
     }
-    
-    struct Tag {
-        static let firstNameTag = 100
-        static let lastNameTag = 200
-        static let descriptionTag = 300
-    }
+
 }

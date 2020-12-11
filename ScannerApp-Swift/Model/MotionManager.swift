@@ -20,6 +20,8 @@ class MotionManager {
     private var numberOfMeasurements: Int = 0
     private var isDebugMode: Bool = false
     
+    private let imuUpdateFrequency:Int = 60
+    
     private var rotationRateBinaryFileUrl: URL? = nil
     private var userAccelerationBinaryFileUrl: URL? = nil
     private var magneticFieldBinaryFileUrl: URL? = nil
@@ -45,7 +47,7 @@ class MotionManager {
     private var gravityAsciiFileHandle: FileHandle? = nil
     
     init() {
-        motionManager.deviceMotionUpdateInterval = 1.0 / Double(Constants.Sensor.Imu.frequency)
+        motionManager.deviceMotionUpdateInterval = 1.0 / Double(imuUpdateFrequency)
         motionQueue.maxConcurrentOperationCount = 1
         
         // we can use this if we want the real time instead of system up time
@@ -97,23 +99,23 @@ class MotionManager {
     }
     
     private func initFiles(dataPathString: String, recordingId: String) {
-        let rotationRatePath = (dataPathString as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension(Constants.Sensor.Imu.RotationRate.fileExtension)!)
+        let rotationRatePath = (dataPathString as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("rot")!)
         rotationRateBinaryFileUrl = URL(fileURLWithPath: rotationRatePath)
         FileManager.default.createFile(atPath: rotationRateBinaryFileUrl!.path, contents: nil, attributes: nil)
 
-        let userAccelerationPath = (dataPathString as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension(Constants.Sensor.Imu.UserAcceleration.fileExtension)!)
+        let userAccelerationPath = (dataPathString as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("acce")!)
         userAccelerationBinaryFileUrl = URL(fileURLWithPath: userAccelerationPath)
         FileManager.default.createFile(atPath: userAccelerationBinaryFileUrl!.path, contents: nil, attributes: nil)
 
-        let magneticFieldPath = (dataPathString as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension(Constants.Sensor.Imu.MagneticField.fileExtension)!)
+        let magneticFieldPath = (dataPathString as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("mag")!)
         magneticFieldBinaryFileUrl = URL(fileURLWithPath: magneticFieldPath)
         FileManager.default.createFile(atPath: magneticFieldBinaryFileUrl!.path, contents: nil, attributes: nil)
 
-        let attitudePath = (dataPathString as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension(Constants.Sensor.Imu.Attitude.fileExtension)!)
+        let attitudePath = (dataPathString as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("atti")!)
         attitudeBinaryFileUrl = URL(fileURLWithPath: attitudePath)
         FileManager.default.createFile(atPath: attitudeBinaryFileUrl!.path, contents: nil, attributes: nil)
 
-        let gravityPath = (dataPathString as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension(Constants.Sensor.Imu.Gravity.fileExtension)!)
+        let gravityPath = (dataPathString as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("grav")!)
         gravityBinaryFileUrl = URL(fileURLWithPath: gravityPath)
         FileManager.default.createFile(atPath: gravityBinaryFileUrl!.path, contents: nil, attributes: nil)
 
@@ -196,20 +198,18 @@ class MotionManager {
     }
     
     private func addHeaders() {
-        let binEncoding = Constants.EncodingCode.binary
-        addHeaderToFile(fileUrl: rotationRateBinaryFileUrl!, encoding: binEncoding, sensorType: Constants.Sensor.Imu.RotationRate.type, numOfFrames: numberOfMeasurements)
-        addHeaderToFile(fileUrl: userAccelerationBinaryFileUrl!, encoding: binEncoding, sensorType: Constants.Sensor.Imu.UserAcceleration.type, numOfFrames: numberOfMeasurements)
-        addHeaderToFile(fileUrl: magneticFieldBinaryFileUrl!, encoding: binEncoding, sensorType: Constants.Sensor.Imu.MagneticField.type, numOfFrames: numberOfMeasurements)
-        addHeaderToFile(fileUrl: attitudeBinaryFileUrl!, encoding: binEncoding, sensorType: Constants.Sensor.Imu.Attitude.type, numOfFrames: numberOfMeasurements)
-        addHeaderToFile(fileUrl: gravityBinaryFileUrl!, encoding: binEncoding, sensorType: Constants.Sensor.Imu.Gravity.type, numOfFrames: numberOfMeasurements)
+        addHeaderToFile(fileUrl: rotationRateBinaryFileUrl!, encoding: "bin", sensorType: "rot", numOfFrames: numberOfMeasurements)
+        addHeaderToFile(fileUrl: userAccelerationBinaryFileUrl!, encoding: "bin", sensorType: "acce", numOfFrames: numberOfMeasurements)
+        addHeaderToFile(fileUrl: magneticFieldBinaryFileUrl!, encoding: "bin", sensorType: "mag", numOfFrames: numberOfMeasurements)
+        addHeaderToFile(fileUrl: attitudeBinaryFileUrl!, encoding: "bin", sensorType: "atti", numOfFrames: numberOfMeasurements)
+        addHeaderToFile(fileUrl: gravityBinaryFileUrl!, encoding: "bin", sensorType: "gray", numOfFrames: numberOfMeasurements)
         
         if isDebugMode {
-            let asciiEncoding = Constants.EncodingCode.ascii
-            addHeaderToFile(fileUrl: rotationRateAsciiFileUrl!, encoding: asciiEncoding, sensorType: Constants.Sensor.Imu.RotationRate.type, numOfFrames: numberOfMeasurements)
-            addHeaderToFile(fileUrl: userAccelerationAsciiFileUrl!, encoding: asciiEncoding, sensorType: Constants.Sensor.Imu.UserAcceleration.type, numOfFrames: numberOfMeasurements)
-            addHeaderToFile(fileUrl: magneticFieldAsciiFileUrl!, encoding: asciiEncoding, sensorType: Constants.Sensor.Imu.MagneticField.type, numOfFrames: numberOfMeasurements)
-            addHeaderToFile(fileUrl: attitudeAsciiFileUrl!, encoding: asciiEncoding, sensorType: Constants.Sensor.Imu.Attitude.type, numOfFrames: numberOfMeasurements)
-            addHeaderToFile(fileUrl: gravityAsciiFileUrl!, encoding: asciiEncoding, sensorType: Constants.Sensor.Imu.Gravity.type, numOfFrames: numberOfMeasurements)
+            addHeaderToFile(fileUrl: rotationRateAsciiFileUrl!, encoding: "ascii", sensorType: "rot", numOfFrames: numberOfMeasurements)
+            addHeaderToFile(fileUrl: userAccelerationAsciiFileUrl!, encoding: "ascii", sensorType: "acce", numOfFrames: numberOfMeasurements)
+            addHeaderToFile(fileUrl: magneticFieldAsciiFileUrl!, encoding: "ascii", sensorType: "mag", numOfFrames: numberOfMeasurements)
+            addHeaderToFile(fileUrl: attitudeAsciiFileUrl!, encoding: "ascii", sensorType: "atti", numOfFrames: numberOfMeasurements)
+            addHeaderToFile(fileUrl: gravityAsciiFileUrl!, encoding: "ascii", sensorType: "gray", numOfFrames: numberOfMeasurements)
         }
     }
     
@@ -256,9 +256,9 @@ class MotionManager {
         var header: String = "ply\n"
 
         switch encoding {
-        case Constants.EncodingCode.binary:
+        case "bin":
             header += "format binary_little_endian 1.0\n"
-        case Constants.EncodingCode.ascii:
+        case "ascii":
             header += "format ascii 1.0\n"
         default:
             print("Invalid encoding")
@@ -268,15 +268,12 @@ class MotionManager {
         header += "comment\n"
         
         switch sensorType {
-        case Constants.Sensor.Imu.RotationRate.type,
-             Constants.Sensor.Imu.UserAcceleration.type,
-             Constants.Sensor.Imu.MagneticField.type,
-             Constants.Sensor.Imu.Gravity.type:
+        case "rot", "acce", "mag", "grav":
             header += "property int64 timestamp\n"
             header += "property double x\n"
             header += "property double y\n"
             header += "property double z\n"
-        case Constants.Sensor.Imu.Attitude.type:
+        case "atti":
             header += "property int64 timestamp\n"
             header += "property double roll\n"
             header += "property double pitch\n"
@@ -304,13 +301,11 @@ class MotionManager {
     }
     
     private func generateStreamInfo() -> [ImuStreamInfo] {
-        let imuFrequency = Constants.Sensor.Imu.frequency
-        let imuFileEncoding = Constants.EncodingCode.binary
-        let rotationRateStreamInfo = ImuStreamInfo(id: "rot_1", type: Constants.Sensor.Imu.RotationRate.type, encoding: imuFileEncoding, frequency: imuFrequency, numberOfFrames: numberOfMeasurements, fileExtension: Constants.Sensor.Imu.RotationRate.fileExtension)
-        let userAccelerationStreamInfo = ImuStreamInfo(id: "acce_1", type: Constants.Sensor.Imu.UserAcceleration.type, encoding: imuFileEncoding, frequency: imuFrequency, numberOfFrames: numberOfMeasurements, fileExtension: Constants.Sensor.Imu.UserAcceleration.fileExtension)
-        let magneticFieldStreamInfo = ImuStreamInfo(id: "mag_1", type: Constants.Sensor.Imu.MagneticField.type, encoding: imuFileEncoding, frequency: imuFrequency, numberOfFrames: numberOfMeasurements, fileExtension: Constants.Sensor.Imu.MagneticField.fileExtension)
-        let attitudeStreamInfo = ImuStreamInfo(id: "atti_1", type: Constants.Sensor.Imu.Attitude.type, encoding: imuFileEncoding, frequency: imuFrequency, numberOfFrames: numberOfMeasurements, fileExtension: Constants.Sensor.Imu.Attitude.fileExtension)
-        let gravityStreamInfo = ImuStreamInfo(id: "grav_1", type: Constants.Sensor.Imu.Gravity.type, encoding: imuFileEncoding, frequency: imuFrequency, numberOfFrames: numberOfMeasurements, fileExtension: Constants.Sensor.Imu.Gravity.fileExtension)
+        let rotationRateStreamInfo = ImuStreamInfo(id: "rot_1", type: "rot", encoding: "bin", frequency: imuUpdateFrequency, numberOfFrames: numberOfMeasurements, fileExtension: "rot")
+        let userAccelerationStreamInfo = ImuStreamInfo(id: "acce_1", type: "acce", encoding: "bin", frequency: imuUpdateFrequency, numberOfFrames: numberOfMeasurements, fileExtension: "acce")
+        let magneticFieldStreamInfo = ImuStreamInfo(id: "mag_1", type: "mag", encoding: "bin", frequency: imuUpdateFrequency, numberOfFrames: numberOfMeasurements, fileExtension: "mag")
+        let attitudeStreamInfo = ImuStreamInfo(id: "atti_1", type: "atti", encoding: "bin", frequency: imuUpdateFrequency, numberOfFrames: numberOfMeasurements, fileExtension: "atti")
+        let gravityStreamInfo = ImuStreamInfo(id: "grav_1", type: "gray", encoding: "bin", frequency: imuUpdateFrequency, numberOfFrames: numberOfMeasurements, fileExtension: "gray")
 
         return [rotationRateStreamInfo, userAccelerationStreamInfo, magneticFieldStreamInfo, attitudeStreamInfo, gravityStreamInfo]
     }
