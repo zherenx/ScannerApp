@@ -182,60 +182,6 @@
             </objects>
             <point key="canvasLocation" x="1047.8260869565217" y="116.51785714285714"/>
         </scene>
-        <!--Dual Camera-->
-        <scene sceneID="8Oo-lX-QQw">
-            <objects>
-                <viewController id="hbE-un-H6B" customClass="DualCameraViewController" customModule="ScannerApp_Swift" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="g7U-dC-Uu8">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Oes-xv-Faf">
-                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
-                                <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LzI-Xo-0h7" customClass="PreviewView" customModule="ScannerApp_Swift" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="405"/>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                    </view>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="lZy-yN-Bd6" customClass="PreviewView" customModule="ScannerApp_Swift" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="413" width="414" height="405"/>
-                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                    </view>
-                                </subviews>
-                            </stackView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uWv-7G-hYQ">
-                                <rect key="frame" x="179.5" y="809" width="55" height="33"/>
-                                <color key="backgroundColor" systemColor="systemBlueColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="tintColor" systemColor="groupTableViewBackgroundColor"/>
-                                <state key="normal" title="Record"/>
-                                <connections>
-                                    <action selector="recordButtonTapped:" destination="hbE-un-H6B" eventType="touchUpInside" id="Fvo-m5-qUR"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="qTb-Lo-Lel"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="uWv-7G-hYQ" firstAttribute="centerX" secondItem="g7U-dC-Uu8" secondAttribute="centerX" id="0Ii-Qb-LyX"/>
-                            <constraint firstItem="qTb-Lo-Lel" firstAttribute="trailing" secondItem="Oes-xv-Faf" secondAttribute="trailing" id="8RS-8R-KMh"/>
-                            <constraint firstItem="qTb-Lo-Lel" firstAttribute="bottom" secondItem="uWv-7G-hYQ" secondAttribute="bottom" constant="20" id="FKu-Dw-M6W"/>
-                            <constraint firstItem="Oes-xv-Faf" firstAttribute="top" secondItem="qTb-Lo-Lel" secondAttribute="top" id="pCw-v4-qiL"/>
-                            <constraint firstItem="Oes-xv-Faf" firstAttribute="leading" secondItem="qTb-Lo-Lel" secondAttribute="leading" id="sca-Pv-1qq"/>
-                            <constraint firstItem="qTb-Lo-Lel" firstAttribute="bottom" secondItem="Oes-xv-Faf" secondAttribute="bottom" id="urQ-2S-XQn"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" title="Dual Camera" id="P1h-g5-MKQ"/>
-                    <connections>
-                        <outlet property="mainCameraPreviewView" destination="LzI-Xo-0h7" id="TBy-1K-LKR"/>
-                        <outlet property="recordButton" destination="uWv-7G-hYQ" id="faw-6R-jrb"/>
-                        <outlet property="secondaryCameraPreviewView" destination="lZy-yN-Bd6" id="un3-dc-LvE"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ho4-KC-jbu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="609" y="992"/>
-        </scene>
         <!--Library-->
         <scene sceneID="CUe-ah-38R">
             <objects>
@@ -455,7 +401,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5qG-ED-1a2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1423" y="992"/>
+            <point key="canvasLocation" x="1048" y="964"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Sg1-fR-fC3">
@@ -477,14 +423,8 @@
         </scene>
     </scenes>
     <resources>
-        <systemColor name="groupTableViewBackgroundColor">
-            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemBlueColor">
-            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
