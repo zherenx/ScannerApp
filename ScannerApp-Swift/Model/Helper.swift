@@ -68,6 +68,7 @@ struct Helper {
         }
     }
     
+    // https://www.tutorialspoint.com/how-to-determine-device-type-iphone-ipod-touch-with-iphone-sdk
     static func getDeviceModelCode() -> String {
         var systemInfo = utsname()
         uname(&systemInfo)
@@ -94,7 +95,6 @@ struct Helper {
         return gpsLocation
     }
     
-    // TODO: include this function in doc
     static func getRecordingId() -> String {
         let dateFormatter = DateFormatter()
 //        dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ssZ"
