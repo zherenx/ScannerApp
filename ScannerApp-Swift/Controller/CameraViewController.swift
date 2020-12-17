@@ -101,12 +101,6 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
                 let secondaryPreviewView = PreviewView()
                 secondaryPreviewView.videoPreviewLayer.setSessionWithNoConnection(session)
                 
-                // TODO: tmp solution
-                while session.inputs.count == 0 {
-                    print("...")
-                    usleep(1000)
-                }
-                
                 // main camera preview
                 let mainCameraInput = session.inputs[0] as! AVCaptureDeviceInput
                 guard let mainCameraPort = mainCameraInput.ports(for: .video,

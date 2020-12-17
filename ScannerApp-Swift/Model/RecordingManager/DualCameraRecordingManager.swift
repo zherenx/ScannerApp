@@ -233,6 +233,12 @@ extension DualCameraRecordingManager: RecordingManager {
     }
     
     func getSession() -> NSObject {
+        
+        while session.inputs.count < 2 {
+            print("...")
+            usleep(1000)
+        }
+
         return session
     }
     
