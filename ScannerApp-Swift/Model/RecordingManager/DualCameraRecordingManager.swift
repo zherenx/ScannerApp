@@ -570,7 +570,7 @@ extension DualCameraRecordingManager: AVCaptureFileOutputRecordingDelegate {
                 let secondaryCameraStreamInfo = CameraStreamInfo(id: "color_back_2", type: "color_camera", encoding: "h264", frequency: secondaryCameraFramerate, numberOfFrames: secondaryVideoNumberOfFrames, fileExtension: "mp4", resolution: secondaryCameraResolution, intrinsics: secondaryCameraIntrinsicArray, extrinsics: nil)
                 streamInfo.append(secondaryCameraStreamInfo)
 
-                let metadata = Metadata(username: username ?? "", userInputDescription: sceneDescription ?? "", sceneType: sceneType ?? "", gpsLocation: gpsLocation, streams: streamInfo, numberOfFiles: 7)
+                let metadata = Metadata(username: username ?? "", userInputDescription: sceneDescription ?? "", sceneType: sceneType ?? "", gpsLocation: gpsLocation, streams: streamInfo, numberOfFiles: 8)
 
                 let metadataPath = (dirUrl.path as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("json")!)
 
