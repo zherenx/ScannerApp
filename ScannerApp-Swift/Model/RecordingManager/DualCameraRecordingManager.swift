@@ -299,9 +299,28 @@ class DualCameraRecordingManager: NSObject {
         if activeWidthMain > activeWidthSecondary || activeHeightMain > activeHeightSecondary {
             print("reducing main resolution")
             reduceResolution(device: mainCameraInput!.device)
+            
+            do {
+                try secondaryCameraInput!.device.lockForConfiguration()
+                secondaryCameraInput!.videoMinFrameDurationOverride = CMTimeMake(value: 1, timescale: 60)
+                secondaryCameraInput!.device.unlockForConfiguration()
+                print("secondary, framerate reset to 60")
+            } catch {
+                print("Could not lock secondary camera device for configuration: \(error)")
+            }
+            
         } else {
             print("reducing secondary resolution")
             reduceResolution(device: secondaryCameraInput!.device)
+            
+            do {
+                try mainCameraInput!.device.lockForConfiguration()
+                mainCameraInput!.videoMinFrameDurationOverride = CMTimeMake(value: 1, timescale: 60)
+                mainCameraInput!.device.unlockForConfiguration()
+                print("main, framerate reset to 60")
+            } catch {
+                print("Could not lock main camera device for configuration: \(error)")
+            }
         }
 
     }
