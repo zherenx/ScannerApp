@@ -206,7 +206,193 @@ class DualCameraRecordingManager: NSObject {
 //        }
 //        session.addConnection(secondaryCameraPreviewLayerConnection)
         
+        configureVideoQuality()
+        
     }
+    
+    private func configureVideoQuality() {
+        
+        // Set to highest first
+        for format in mainCameraInput!.device.formats.reversed() {
+            if format.isMultiCamSupported {
+
+                let dims = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+//                print("main, width: \(dims.width), height: \(dims.height)")
+                
+                let framerate = format.videoSupportedFrameRateRanges[0]
+//                print("main, width: \(dims.width), height: \(dims.height), framerate: \(framerate.maxFrameRate)")
+                
+                if framerate.maxFrameRate < 60.0 {
+                    continue
+                }
+
+                do {
+                    try mainCameraInput?.device.lockForConfiguration()
+                    mainCameraInput?.device.activeFormat = format
+                    mainCameraInput?.device.unlockForConfiguration()
+                } catch {
+                    print("Could not lock main camera device for configuration: \(error)")
+                }
+                
+                print("main, width: \(dims.width), height: \(dims.height), framerate: \(framerate.maxFrameRate)")
+
+                break
+            }
+        }
+
+        for format in secondaryCameraInput!.device.formats.reversed() {
+            if format.isMultiCamSupported {
+
+                let dims = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+//                print("secondary, width: \(dims.width), height: \(dims.height)")
+                
+                let framerate = format.videoSupportedFrameRateRanges[0]
+//                print("secondary, width: \(dims.width), height: \(dims.height), framerate: \(framerate.maxFrameRate)")
+
+                if framerate.maxFrameRate < 60.0 {
+                    continue
+                }
+                
+                do {
+                    try secondaryCameraInput?.device.lockForConfiguration()
+                    secondaryCameraInput?.device.activeFormat = format
+                    secondaryCameraInput?.device.unlockForConfiguration()
+                } catch {
+                    print("Could not lock main camera device for configuration: \(error)")
+                }
+
+                print("secondary, width: \(dims.width), height: \(dims.height), framerate: \(framerate.maxFrameRate)")
+                
+                break
+            }
+        }
+        
+        // reduce video quality if needed
+        while true {
+
+            if session.hardwareCost <= 1.0 && session.systemPressureCost <= 1.0 {
+                break
+            }
+
+            reduceResolution()
+            
+            if session.hardwareCost <= 1.0 && session.systemPressureCost <= 1.0 {
+                break
+            }
+            
+            reduceFramerate()
+            
+        }
+        
+    }
+
+    private func reduceResolution() {
+
+        let mainCameraDims = CMVideoFormatDescriptionGetDimensions(mainCameraInput!.device.activeFormat.formatDescription)
+        let activeWidthMain = mainCameraDims.width
+        let activeHeightMain = mainCameraDims.height
+        
+        let secondaryCameraDims = CMVideoFormatDescriptionGetDimensions(secondaryCameraInput!.device.activeFormat.formatDescription)
+        let activeWidthSecondary = secondaryCameraDims.width
+        let activeHeightSecondary = secondaryCameraDims.height
+        
+        if activeWidthMain > activeWidthSecondary || activeHeightMain > activeHeightSecondary {
+            print("reducing main resolution")
+            reduceResolution(device: mainCameraInput!.device)
+        } else {
+            print("reducing secondary resolution")
+            reduceResolution(device: secondaryCameraInput!.device)
+        }
+
+    }
+    
+    private func reduceResolution(device: AVCaptureDevice) {
+        
+        let activeFormat = device.activeFormat
+        
+        let activeDims = CMVideoFormatDescriptionGetDimensions(activeFormat.formatDescription)
+        let activeWidth = activeDims.width
+        let activeHeight = activeDims.height
+        
+        let formats = device.formats
+        if let formatIndex = formats.firstIndex(of: activeFormat) {
+            
+            for index in (0..<formatIndex).reversed() {
+                
+                let format = device.formats[index]
+                
+                let framerate = format.videoSupportedFrameRateRanges[0]
+                
+                if format.isMultiCamSupported && framerate.maxFrameRate >= 60.0 {
+                    
+                    let dims = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+                    let width = dims.width
+                    let height = dims.height
+                    
+                    if width < activeWidth || height < activeHeight {
+                        do {
+                            try device.lockForConfiguration()
+                            device.activeFormat = format
+                            device.unlockForConfiguration()
+                            
+                            print("width \(activeWidth) -> \(width), height \(activeHeight) -> \(height)")
+                            
+                        } catch {
+                            print("Could not lock device for configuration: \(error)")
+                        }
+                        
+                    }
+                }
+            }
+        }
+        
+    }
+    
+    private func reduceFramerate() {
+        
+        print("reducing framerate")
+        
+        let mainCameraMinFrameDuration = mainCameraInput!.device.activeVideoMinFrameDuration
+        let mainCameraActiveMaxFramerate: Double = Double(mainCameraMinFrameDuration.timescale) / Double(mainCameraMinFrameDuration.value)
+        
+        let secondaryCameraMinFrameDuration = secondaryCameraInput!.device.activeVideoMinFrameDuration
+        let secondaryCameraActiveMaxFramerate: Double = Double(secondaryCameraMinFrameDuration.timescale) / Double(secondaryCameraMinFrameDuration.value)
+        
+        var targetFramerate = mainCameraActiveMaxFramerate
+        if mainCameraActiveMaxFramerate > 60.0 || secondaryCameraActiveMaxFramerate > 60.0 {
+            targetFramerate = 60.0
+        } else if mainCameraActiveMaxFramerate > 45.0 || secondaryCameraActiveMaxFramerate > 45.0 {
+            targetFramerate = 45.0
+        } else if mainCameraActiveMaxFramerate > 30.0 || secondaryCameraActiveMaxFramerate > 30.0 {
+            targetFramerate = 30.0
+        } else {
+            return
+        }
+        
+        do {
+            try mainCameraInput!.device.lockForConfiguration()
+            mainCameraInput!.videoMinFrameDurationOverride = CMTimeMake(value: 1, timescale: Int32(targetFramerate))
+            mainCameraInput!.device.unlockForConfiguration()
+            
+            print("main, framerate \(mainCameraActiveMaxFramerate) -> \(targetFramerate)")
+            
+        } catch {
+            print("Could not lock main camera device for configuration: \(error)")
+        }
+        
+        do {
+            try secondaryCameraInput!.device.lockForConfiguration()
+            secondaryCameraInput!.videoMinFrameDurationOverride = CMTimeMake(value: 1, timescale: Int32(targetFramerate))
+            secondaryCameraInput!.device.unlockForConfiguration()
+            
+            print("secondary, framerate \(secondaryCameraActiveMaxFramerate) -> \(targetFramerate)")
+            
+        } catch {
+            print("Could not lock secondary camera device for configuration: \(error)")
+        }
+        
+    }
+    
 }
 
 @available(iOS 13.0, *)
