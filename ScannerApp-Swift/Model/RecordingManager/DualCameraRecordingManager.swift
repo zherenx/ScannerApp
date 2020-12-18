@@ -30,8 +30,6 @@ class DualCameraRecordingManager: NSObject {
     private let locationManager = CLLocationManager()
     private var gpsLocation: [Double] = []
     
-    private var extrinsics: Data?
-    
     private var mainCameraInput: AVCaptureDeviceInput?
     private let mainCameraOutput = AVCaptureMovieFileOutput()
     
@@ -52,6 +50,8 @@ class DualCameraRecordingManager: NSObject {
     private var secondaryCameraResolution: [Int] = []
     private var secondaryCameraIntrinsicArray: [Float] = []
     private var secondaryCameraFramerate: Int = -1
+    
+    private var extrinsicsMainToSecondary: [Float] = []
     
     override init() {
         super.init()
@@ -94,15 +94,6 @@ class DualCameraRecordingManager: NSObject {
             print("Could not find either ultrawide or telephone camera")
             return
         }
-        
-//        if let wide = AVCaptureDevice.default(.builtInWideAngleCamera, for: nil, position: .back), let tele = AVCaptureDevice.default(.builtInTelephotoCamera, for: nil, position: .back) {
-//            self.extrinsics = AVCaptureDevice.extrinsicMatrix(from: tele, to: wide)
-//
-//            let matrix: matrix_float4x3 = self.extrinsics!.withUnsafeBytes { $0.pointee }
-//
-//            print(matrix)
-//        }
-        
         
         // Add input
         do {
@@ -409,6 +400,8 @@ class DualCameraRecordingManager: NSObject {
         updateMainCameraInfo()
         updateSecondaryCameraInfo()
         
+        updateExtrinsics()
+        
     }
     
     private func updateMainCameraInfo() {
@@ -451,6 +444,19 @@ class DualCameraRecordingManager: NSObject {
         let my = (height - 1.0) / 2.0
         
         return [fx, 0.0, 0.0, 0.0, fy, 0.0, mx, my, 1.0]
+        
+    }
+    
+    private func updateExtrinsics() {
+        
+        let extrinsics = AVCaptureDevice.extrinsicMatrix(from: mainCameraInput!.device, to: secondaryCameraInput!.device)
+        
+        let pointer = UnsafeMutableBufferPointer<simd_float4x3>.allocate(capacity: MemoryLayout<simd_float4x3>.size)
+        _ = extrinsics?.copyBytes(to: pointer)
+        
+        let extrinsicsMatrix = pointer.first
+        
+        extrinsicsMainToSecondary = extrinsicsMatrix?.arrayRepresentation ?? []
         
     }
     
@@ -557,7 +563,7 @@ extension DualCameraRecordingManager: AVCaptureFileOutputRecordingDelegate {
                 var streamInfo: [StreamInfo] = motionManager.stopRecordingAndReturnStreamInfo()
 
                 let mainVideoNumberOfFrames = VideoHelper.getNumberOfFrames(videoUrl: URL(fileURLWithPath: mainVideoFilePath))
-                let mainCameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: "color_camera", encoding: "h264", frequency: mainCameraFramerate, numberOfFrames: mainVideoNumberOfFrames, fileExtension: "mp4", resolution: mainCameraResolution, intrinsics: mainCameraIntrinsicArray, extrinsics: nil)
+                let mainCameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: "color_camera", encoding: "h264", frequency: mainCameraFramerate, numberOfFrames: mainVideoNumberOfFrames, fileExtension: "mp4", resolution: mainCameraResolution, intrinsics: mainCameraIntrinsicArray, extrinsics: extrinsicsMainToSecondary)
                 streamInfo.append(mainCameraStreamInfo)
                 
                 let secondaryVideoNumberOfFrames = VideoHelper.getNumberOfFrames(videoUrl: URL(fileURLWithPath: secondaryVideoFilePath))
