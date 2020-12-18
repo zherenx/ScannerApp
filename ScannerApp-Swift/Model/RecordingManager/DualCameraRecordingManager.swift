@@ -18,10 +18,6 @@ class DualCameraRecordingManager: NSObject {
     
     private let motionManager = MotionManager()
     
-//    private let dataOutputQueue = DispatchQueue(label: "data output queue")
-
-//    private var isRecording = false
-    
     private var dirUrl: URL!
     private var recordingId: String!
     private var mainVideoFilePath: String!
@@ -200,10 +196,8 @@ class DualCameraRecordingManager: NSObject {
             if format.isMultiCamSupported {
 
                 let dims = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
-//                print("main, width: \(dims.width), height: \(dims.height)")
                 
                 let framerate = format.videoSupportedFrameRateRanges[0]
-//                print("main, width: \(dims.width), height: \(dims.height), framerate: \(framerate.maxFrameRate)")
                 
                 if framerate.maxFrameRate < 60.0 {
                     continue
@@ -227,10 +221,8 @@ class DualCameraRecordingManager: NSObject {
             if format.isMultiCamSupported {
 
                 let dims = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
-//                print("secondary, width: \(dims.width), height: \(dims.height)")
                 
                 let framerate = format.videoSupportedFrameRateRanges[0]
-//                print("secondary, width: \(dims.width), height: \(dims.height), framerate: \(framerate.maxFrameRate)")
 
                 if framerate.maxFrameRate < 60.0 {
                     continue
