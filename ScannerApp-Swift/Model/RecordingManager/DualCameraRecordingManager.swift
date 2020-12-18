@@ -185,27 +185,6 @@ class DualCameraRecordingManager: NSObject {
             mainCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.h264], for: mainCameraConnection)
         }
         
-        // Setup input/preview connection
-//        guard let mainCameraPreviewLayer = mainCameraPreviewLayer else {
-//            return
-//        }
-//        let mainCameraPreviewLayerConnection = AVCaptureConnection(inputPort: mainCameraPort, videoPreviewLayer: mainCameraPreviewLayer)
-//        guard session.canAddConnection(mainCameraPreviewLayerConnection) else {
-//            print("Could not add a connection to the wide-angle camera video preview layer")
-//            return
-//        }
-//        session.addConnection(mainCameraPreviewLayerConnection)
-//
-//        guard let secondaryCameraPreviewLayer = secondaryCameraPreviewLayer else {
-//            return
-//        }
-//        let secondaryCameraPreviewLayerConnection = AVCaptureConnection(inputPort: secondaryCameraPort, videoPreviewLayer: secondaryCameraPreviewLayer)
-//        guard session.canAddConnection(secondaryCameraPreviewLayerConnection) else {
-//            print("Could not add a connection to the secondary camera video preview layer")
-//            return
-//        }
-//        session.addConnection(secondaryCameraPreviewLayerConnection)
-        
         configureVideoQuality()
         
     }
