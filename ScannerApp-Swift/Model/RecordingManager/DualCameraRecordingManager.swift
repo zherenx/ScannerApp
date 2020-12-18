@@ -42,6 +42,17 @@ class DualCameraRecordingManager: NSObject {
     private var sceneDescription: String?
     private var sceneType: String?
     
+    private var mainVideoRecordingFinished = false
+    private var secondaryVideoRecordingFinished = false
+    
+    private var mainCameraResolution: [Int] = []
+    private var mainCameraIntrinsicArray: [Float] = []
+    private var mainCameraFramerate: Int = -1
+    
+    private var secondaryCameraResolution: [Int] = []
+    private var secondaryCameraIntrinsicArray: [Float] = []
+    private var secondaryCameraFramerate: Int = -1
+    
     override init() {
         super.init()
         
@@ -183,7 +194,7 @@ class DualCameraRecordingManager: NSObject {
         let secondaryCameraAvailableVideoCodecTypes = secondaryCameraOutput.availableVideoCodecTypes
         if secondaryCameraAvailableVideoCodecTypes.contains(.h264) {
             secondaryCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.h264], for: secondaryCameraConnection)
-        } 
+        }
         
         configureVideoQuality()
         
@@ -434,6 +445,9 @@ extension DualCameraRecordingManager: RecordingManager {
             self.sceneDescription = sceneDescription
             self.sceneType = sceneType
             
+            mainVideoRecordingFinished = false
+            secondaryVideoRecordingFinished = false
+            
             gpsLocation = Helper.getGpsLocation(locationManager: locationManager)
             
             recordingId = Helper.getRecordingId()
@@ -461,9 +475,6 @@ extension DualCameraRecordingManager: RecordingManager {
         sessionQueue.async {
             self.mainCameraOutput.stopRecording()
             self.secondaryCameraOutput.stopRecording()
-            
-            // TODO: temporarily put here
-            self.motionManager.stopRecordingAndReturnStreamInfo()
         }
         
     }
@@ -475,38 +486,45 @@ extension DualCameraRecordingManager: AVCaptureFileOutputRecordingDelegate {
     
     func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
         
-        if outputFileURL.path == mainVideoFilePath {
-            print("main video ready")
-        } else if outputFileURL.path == secondaryVideoFilePath {
-            print("secondary video ready")
+        if error != nil {
+            print("Movie file finishing error: \(String(describing: error))")
         }
-        
-//        if error != nil {
-//            print("Movie file finishing error: \(String(describing: error))")
-//        }
-//
-//        sessionQueue.async { [self] in
-//
-//            var streamInfo: [StreamInfo] = motionManager.stopRecordingAndReturnStreamInfo()
-//
-//            let numColorFrames = VideoHelper.getNumberOfFrames(videoUrl: outputFileURL)
-//
-//            let cameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: Constants.Sensor.Camera.type, encoding: Constants.EncodingCode.h264, frequency: 60, numberOfFrames: numColorFrames, fileExtension: "mp4", resolution: colorResolution, intrinsics: cameraIntrinsicArray, extrinsics: nil)
-//
-//            streamInfo.append(cameraStreamInfo)
-//
-//            let metadata = Metadata(username: username ?? "", userInputDescription: sceneDescription ?? "", sceneType: sceneType ?? "", gpsLocation: gpsLocation, streams: streamInfo, numberOfFiles: 7)
-//
-//            let metadataPath = (dirUrl.path as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("json")!)
-//
-//            metadata.display()
-//            metadata.writeToFile(filepath: metadataPath)
-//
-//            username = nil
-//            sceneDescription = nil
-//            sceneType = nil
-//
-//        }
+
+        sessionQueue.async { [self] in
+            
+            if outputFileURL.path == mainVideoFilePath {
+                mainVideoRecordingFinished = true
+                print("main video ready")
+            } else if outputFileURL.path == secondaryVideoFilePath {
+                secondaryVideoRecordingFinished = true
+                print("secondary video ready")
+            }
+            
+            if mainVideoRecordingFinished && secondaryVideoRecordingFinished {
+                
+                var streamInfo: [StreamInfo] = motionManager.stopRecordingAndReturnStreamInfo()
+
+                let mainVideoNumberOfFrames = VideoHelper.getNumberOfFrames(videoUrl: URL(fileURLWithPath: mainVideoFilePath))
+                let mainCameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: "color_camera", encoding: "h264", frequency: mainCameraFramerate, numberOfFrames: mainVideoNumberOfFrames, fileExtension: "mp4", resolution: mainCameraResolution, intrinsics: mainCameraIntrinsicArray, extrinsics: nil)
+                streamInfo.append(mainCameraStreamInfo)
+                
+                let secondaryVideoNumberOfFrames = VideoHelper.getNumberOfFrames(videoUrl: URL(fileURLWithPath: secondaryVideoFilePath))
+                let secondaryCameraStreamInfo = CameraStreamInfo(id: "color_back_2", type: "color_camera", encoding: "h264", frequency: secondaryCameraFramerate, numberOfFrames: secondaryVideoNumberOfFrames, fileExtension: "mp4", resolution: secondaryCameraResolution, intrinsics: secondaryCameraIntrinsicArray, extrinsics: nil)
+                streamInfo.append(secondaryCameraStreamInfo)
+
+                let metadata = Metadata(username: username ?? "", userInputDescription: sceneDescription ?? "", sceneType: sceneType ?? "", gpsLocation: gpsLocation, streams: streamInfo, numberOfFiles: 7)
+
+                let metadataPath = (dirUrl.path as NSString).appendingPathComponent((recordingId as NSString).appendingPathExtension("json")!)
+
+                metadata.display()
+                metadata.writeToFile(filepath: metadataPath)
+
+                username = nil
+                sceneDescription = nil
+                sceneType = nil
+            }
+
+        }
     }
     
     
