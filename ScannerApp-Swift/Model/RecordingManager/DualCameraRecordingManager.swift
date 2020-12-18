@@ -180,10 +180,10 @@ class DualCameraRecordingManager: NSObject {
         session.addConnection(secondaryCameraConnection)
         secondaryCameraConnection.videoOrientation = .landscapeRight
         
-        let secondaryCameraAvailableVideoCodecTypes = mainCameraOutput.availableVideoCodecTypes
+        let secondaryCameraAvailableVideoCodecTypes = secondaryCameraOutput.availableVideoCodecTypes
         if secondaryCameraAvailableVideoCodecTypes.contains(.h264) {
-            mainCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.h264], for: mainCameraConnection)
-        }
+            secondaryCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.h264], for: secondaryCameraConnection)
+        } 
         
         configureVideoQuality()
         
