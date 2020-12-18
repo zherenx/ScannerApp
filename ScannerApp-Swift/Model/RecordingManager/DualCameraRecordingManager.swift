@@ -198,6 +198,8 @@ class DualCameraRecordingManager: NSObject {
         
         configureVideoQuality()
         
+        updateCameraInfo()
+        
     }
     
     private func configureVideoQuality() {
@@ -399,6 +401,56 @@ class DualCameraRecordingManager: NSObject {
         } catch {
             print("Could not lock secondary camera device for configuration: \(error)")
         }
+        
+    }
+    
+    private func updateCameraInfo() {
+        
+        updateMainCameraInfo()
+        updateSecondaryCameraInfo()
+        
+    }
+    
+    private func updateMainCameraInfo() {
+        
+        let format = mainCameraInput!.device.activeFormat
+        let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+        
+        let width = Int(dimensions.width)
+        let height = Int(dimensions.height)
+        mainCameraResolution = [height, width]
+        mainCameraIntrinsicArray = calculateIntrinsics(width: Float(width), height: Float(height), fov: format.videoFieldOfView)
+        
+        let minFrameDuration = mainCameraInput!.device.activeVideoMinFrameDuration
+        mainCameraFramerate = Int(Double(minFrameDuration.timescale) / Double(minFrameDuration.value))
+        
+    }
+    
+    private func updateSecondaryCameraInfo() {
+        
+        let format = secondaryCameraInput!.device.activeFormat
+        let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
+        
+        let width = Int(dimensions.width)
+        let height = Int(dimensions.height)
+        secondaryCameraResolution = [height, width]
+        secondaryCameraIntrinsicArray = calculateIntrinsics(width: Float(width), height: Float(height), fov: format.videoFieldOfView)
+        
+        let minFrameDuration = secondaryCameraInput!.device.activeVideoMinFrameDuration
+        secondaryCameraFramerate = Int(Double(minFrameDuration.timescale) / Double(minFrameDuration.value))
+        
+    }
+    
+    private func calculateIntrinsics(width: Float, height: Float, fov: Float) -> [Float] {
+
+        let t = tan((0.5 * fov) * Float.pi / 180)
+        let fx = 0.5 * width / t
+        let fy = fx
+        
+        let mx = (width - 1.0) / 2.0
+        let my = (height - 1.0) / 2.0
+        
+        return [fx, 0.0, 0.0, 0.0, fy, 0.0, mx, my, 1.0]
         
     }
     
