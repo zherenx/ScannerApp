@@ -15,7 +15,7 @@ import Foundation
 class DepthRecorder: Recorder {
     typealias T = CVPixelBuffer
     
-    private let depthQueue = DispatchQueue(label: "depth queue")
+    private let depthRecorderQueue = DispatchQueue(label: "depth recorder queue")
     
     private var fileHandle: FileHandle? = nil
     private var fileUrl: URL? = nil
@@ -25,7 +25,7 @@ class DepthRecorder: Recorder {
     
     func prepareForRecording(dirPath: String, filename: String, fileExtension: String = "depth") {
         
-        depthQueue.async {
+        depthRecorderQueue.async {
             
             self.count = 0
             
@@ -46,7 +46,7 @@ class DepthRecorder: Recorder {
     
     func update(_ buffer: CVPixelBuffer, timestamp: CMTime? = nil) {
         
-        depthQueue.async {
+        depthRecorderQueue.async {
             
             print("Saving frame \(self.count) ...")
             
@@ -61,7 +61,7 @@ class DepthRecorder: Recorder {
     
     func finishRecording() {
         
-        depthQueue.async {
+        depthRecorderQueue.async {
             if self.fileHandle != nil {
                 self.fileHandle!.closeFile()
                 self.fileHandle = nil
@@ -78,7 +78,7 @@ class DepthRecorder: Recorder {
     
     func displayBufferInfo(buffer: CVPixelBuffer) {
         
-        depthQueue.async {
+        depthRecorderQueue.async {
             let type = CVPixelBufferGetPixelFormatType(buffer)
             
             let size = CVPixelBufferGetDataSize(buffer)

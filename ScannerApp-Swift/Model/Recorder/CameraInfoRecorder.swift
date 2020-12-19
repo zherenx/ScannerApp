@@ -39,7 +39,7 @@ class CameraInfo: Encodable {
 class CameraInfoRecorder: Recorder {
     typealias T = CameraInfo
     
-    private let cameraInfoQueue = DispatchQueue(label: "camera info queue")
+    private let cameraInfoRecorderQueue = DispatchQueue(label: "camera info recorder queue")
     
     private var fileHandle: FileHandle? = nil
     private var fileUrl: URL? = nil
@@ -48,7 +48,7 @@ class CameraInfoRecorder: Recorder {
     
     func prepareForRecording(dirPath: String, filename: String, fileExtension: String = "jsonl") {
         
-        cameraInfoQueue.async {
+        cameraInfoRecorderQueue.async {
             
             self.count = 0
             
@@ -66,7 +66,7 @@ class CameraInfoRecorder: Recorder {
     }
     
     func update(_ cameraInfo: CameraInfo, timestamp: CMTime? = nil) {
-        cameraInfoQueue.async {
+        cameraInfoRecorderQueue.async {
             print("Saving camera info \(self.count) ...")
             
 //            print(cameraInfo.getJsonEncoding())
@@ -77,7 +77,7 @@ class CameraInfoRecorder: Recorder {
     }
     
     func finishRecording() {
-        cameraInfoQueue.async {
+        cameraInfoRecorderQueue.async {
             if self.fileHandle != nil {
                 self.fileHandle!.closeFile()
                 self.fileHandle = nil

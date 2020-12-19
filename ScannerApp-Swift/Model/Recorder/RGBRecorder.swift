@@ -14,7 +14,7 @@ import Foundation
 class RGBRecorder: Recorder {
     typealias T = CVPixelBuffer
     
-    private let movieQueue = DispatchQueue(label: "movie queue")
+    private let rgbRecorderQueue = DispatchQueue(label: "rgb recorder queue")
     
     private var assetWriter: AVAssetWriter?
     private var assetWriterVideoInput: AVAssetWriterInput?
@@ -29,7 +29,7 @@ class RGBRecorder: Recorder {
     
     func prepareForRecording(dirPath: String, filename: String, fileExtension: String = "mp4") {
         
-        movieQueue.async {
+        rgbRecorderQueue.async {
             
             self.count = 0
             
@@ -61,7 +61,7 @@ class RGBRecorder: Recorder {
             return
         }
         
-        movieQueue.async {
+        rgbRecorderQueue.async {
             
             guard let assetWriter = self.assetWriter else {
                 print("Error! assetWriter not initialized.")
@@ -101,7 +101,7 @@ class RGBRecorder: Recorder {
     
     func update(buffer: CMSampleBuffer) {
         
-        movieQueue.async {
+        rgbRecorderQueue.async {
             
             guard let assetWriter = self.assetWriter else {
                 print("Error! assetWriter not initialized.")
@@ -121,7 +121,7 @@ class RGBRecorder: Recorder {
     
     func finishRecording() {
         
-        movieQueue.async {
+        rgbRecorderQueue.async {
             
             guard let assetWriter = self.assetWriter else {
                 print("Error!")

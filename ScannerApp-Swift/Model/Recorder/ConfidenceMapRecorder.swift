@@ -15,7 +15,7 @@ import Foundation
 class ConfidenceMapRecorder: Recorder {
     typealias T = CVPixelBuffer
     
-    private let confidenceMapQueue = DispatchQueue(label: "confidence map queue")
+    private let confidenceMapRecorderQueue = DispatchQueue(label: "confidence map recorder queue")
     
     private var fileHandle: FileHandle? = nil
     private var fileUrl: URL? = nil
@@ -25,7 +25,7 @@ class ConfidenceMapRecorder: Recorder {
     
     func prepareForRecording(dirPath: String, filename: String, fileExtension: String = "confidence") {
         
-        confidenceMapQueue.async {
+        confidenceMapRecorderQueue.async {
             
             self.count = 0
             
@@ -46,7 +46,7 @@ class ConfidenceMapRecorder: Recorder {
     
     func update(_ buffer: CVPixelBuffer, timestamp: CMTime? = nil) {
         
-        confidenceMapQueue.async {
+        confidenceMapRecorderQueue.async {
             
             print("Saving confidence map \(self.count) ...")
             
@@ -66,7 +66,7 @@ class ConfidenceMapRecorder: Recorder {
     
     func finishRecording() {
         
-        confidenceMapQueue.async {
+        confidenceMapRecorderQueue.async {
             if self.fileHandle != nil {
                 self.fileHandle!.closeFile()
                 self.fileHandle = nil
