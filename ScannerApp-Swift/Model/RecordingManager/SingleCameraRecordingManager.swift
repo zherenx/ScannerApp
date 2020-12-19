@@ -175,10 +175,7 @@ extension SingleCameraRecordingManager: RecordingManager {
             
             recordingId = Helper.getRecordingId()
             dirUrl = URL(fileURLWithPath: Helper.getRecordingDataDirectoryPath(recordingId: recordingId))
-            
-            // TODO:
-            // Camera data
-            
+
             // Motion data
             motionManager.startRecording(dataPathString: dirUrl.path, recordingId: recordingId)
             

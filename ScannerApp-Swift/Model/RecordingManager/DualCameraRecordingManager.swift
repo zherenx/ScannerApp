@@ -459,7 +459,6 @@ extension DualCameraRecordingManager: RecordingManager {
     
     var isRecording: Bool {
         
-        // TODO: Should these be check in the session queue??
         if primaryCameraOutput.isRecording && secondaryCameraOutput.isRecording {
             return true
         } else if !primaryCameraOutput.isRecording && !secondaryCameraOutput.isRecording {

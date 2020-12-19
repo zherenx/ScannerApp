@@ -141,23 +141,15 @@ class DepthRecorder: Recorder {
         let height = CVPixelBufferGetHeight(buffer)
         let width = CVPixelBufferGetWidth(buffer)
         let numPixel = height * width
-        
-//        var data = Data()
+
         let f16Pointer = UnsafeMutableRawPointer.allocate(byteCount: numPixel*2, alignment: 1)
         
         for i in 0..<numPixel {
             let f32 = baseAddress.load(fromByteOffset: i*4, as: Float32.self)
-//            print("32-bit depth[\(i)] in meter: \(f32)")
-//            var f16 = Float16(f32)
-//            print("16-bit depth[\(i)] in meter: \(f16)")
-//            self.fileHandle?.write(Data(bytes: &f16, count: 2))
-            
-//            data.append(Data(bytes: &f16, count: 2))
             f16Pointer.storeBytes(of: Float16(f32), toByteOffset: i*2, as: Float16.self)
             
         }
-        
-//        self.fileHandle?.write(data)
+
         self.fileHandle?.write(Data(bytes: f16Pointer, count: numPixel*2))
         
         f16Pointer.deallocate()

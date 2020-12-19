@@ -14,16 +14,12 @@ import Foundation
 class RGBRecorder: Recorder {
     typealias T = CVPixelBuffer
     
-    // I'm not sure if a separate queue is necessary
     private let movieQueue = DispatchQueue(label: "movie queue")
     
     private var assetWriter: AVAssetWriter?
     private var assetWriterVideoInput: AVAssetWriterInput?
     private var assetWriterInputPixelBufferAdaptor: AVAssetWriterInputPixelBufferAdaptor?
-    //    private var videoTransform: CGAffineTransform
     private var videoSettings: [String: Any]
-    
-    //    private(set) var isRecording = false
     
     private var count: Int32 = 0
     

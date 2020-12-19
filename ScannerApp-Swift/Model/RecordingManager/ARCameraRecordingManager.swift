@@ -89,7 +89,6 @@ extension ARCameraRecordingManager: RecordingManager {
             
             numFrames = 0
             
-            // TODO: consider an if check here to avoid doing this for every recording?
             if let currentFrame = session.currentFrame {
                 cameraIntrinsic = currentFrame.camera.intrinsics
                 

@@ -147,7 +147,7 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
                 navigationItem.title = "Dual Camera"
                 
             } else {
-                // Fallback on earlier versions
+                print("Dual camera mode only available for iOS 13.0 or newer.")
             }
         
         case .arCamera:
@@ -164,12 +164,8 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
                 
             } else {
                 print("AR camera only available for iOS 14.0 or newer.")
-                // TODO: do something
             }
-        
-//        default:
-//            print("Unexpected, this line of should be unreachable.")
-//            // TODO: do something
+
         }
         
     }
