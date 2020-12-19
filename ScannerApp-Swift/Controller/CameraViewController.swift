@@ -79,6 +79,7 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
         
         switch mode {
         case .singleCamera:
+            
             recordingManager = SingleCameraRecordingManager()
             let previewView = PreviewView()
             previewView.videoPreviewLayer.session = recordingManager.getSession() as? AVCaptureSession
@@ -87,11 +88,70 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
             navigationItem.title = "Single Camera"
         
         case .dualCamera:
-            print("Dual camera mode not supported yet.")
-            navigationItem.title = "Dual Camera"
-            // TODO: do something
+            
+            if #available(iOS 13.0, *) {
+                
+                recordingManager = DualCameraRecordingManager()
+                let session = recordingManager.getSession() as! AVCaptureMultiCamSession
+                
+                // setup dual cam preview
+                let primaryCameraPreviewView = PreviewView()
+                primaryCameraPreviewView.videoPreviewLayer.setSessionWithNoConnection(session)
+                
+                let secondaryPreviewView = PreviewView()
+                secondaryPreviewView.videoPreviewLayer.setSessionWithNoConnection(session)
+                
+                // primary camera preview
+                let primaryCameraInput = session.inputs[0] as! AVCaptureDeviceInput
+                guard let primaryCameraPort = primaryCameraInput.ports(for: .video,
+                                                                 sourceDeviceType: .builtInWideAngleCamera,
+                                                                 sourceDevicePosition: primaryCameraInput.device.position).first
+                else {
+                    print("Could not obtain wide angle camera input ports")
+                    return
+                }
+                let primaryCameraPreviewLayerConnection = AVCaptureConnection(inputPort: primaryCameraPort, videoPreviewLayer: primaryCameraPreviewView.videoPreviewLayer)
+                guard session.canAddConnection(primaryCameraPreviewLayerConnection) else {
+                    print("Could not add a connection to the wide-angle camera video preview layer")
+                    return
+                }
+                session.addConnection(primaryCameraPreviewLayerConnection)
+                
+                // secondary camera preview
+                let secondaryCameraInput = session.inputs[1] as! AVCaptureDeviceInput
+                
+                var secondaryCameraPort: AVCaptureInput.Port
+                
+                if secondaryCameraInput.device.deviceType == .builtInUltraWideCamera {
+                    secondaryCameraPort = secondaryCameraInput.ports(for: .video,
+                                                                     sourceDeviceType: .builtInUltraWideCamera,
+                                                                     sourceDevicePosition: secondaryCameraInput.device.position).first!
+                } else if secondaryCameraInput.device.deviceType == .builtInTelephotoCamera {
+                    secondaryCameraPort = secondaryCameraInput.ports(for: .video,
+                                                                     sourceDeviceType: .builtInTelephotoCamera,
+                                                                     sourceDevicePosition: secondaryCameraInput.device.position).first!
+                } else {
+                    print("Could not obtain secondary camera input ports")
+                    return
+                }
+                
+                let secondaryCameraPreviewLayerConnection = AVCaptureConnection(inputPort: secondaryCameraPort, videoPreviewLayer: secondaryPreviewView.videoPreviewLayer)
+                guard session.canAddConnection(secondaryCameraPreviewLayerConnection) else {
+                    print("Could not add a connection to the secondary camera video preview layer")
+                    return
+                }
+                session.addConnection(secondaryCameraPreviewLayerConnection)
+                
+                setupDualPreview(pv1: primaryCameraPreviewView, pv2: secondaryPreviewView)
+                
+                navigationItem.title = "Dual Camera"
+                
+            } else {
+                // Fallback on earlier versions
+            }
         
         case .arCamera:
+            
             if #available(iOS 14.0, *) {
                 
                 recordingManager = ARCameraRecordingManager()
@@ -122,6 +182,24 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
         previewView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
         previewView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
         previewView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
+    
+    }
+    
+    private func setupDualPreview(pv1: UIView, pv2: UIView) {
+        
+        view.addSubview(pv1)
+        pv1.translatesAutoresizingMaskIntoConstraints = false
+        pv1.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        pv1.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor).isActive = true
+        pv1.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
+        pv1.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
+        
+        view.addSubview(pv2)
+        pv2.translatesAutoresizingMaskIntoConstraints = false
+        pv2.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor).isActive = true
+        pv2.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        pv2.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor).isActive = true
+        pv2.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor).isActive = true
     
     }
 
