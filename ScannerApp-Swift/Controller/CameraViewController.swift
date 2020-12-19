@@ -95,27 +95,27 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
                 let session = recordingManager.getSession() as! AVCaptureMultiCamSession
                 
                 // setup dual cam preview
-                let mainCameraPreviewView = PreviewView()
-                mainCameraPreviewView.videoPreviewLayer.setSessionWithNoConnection(session)
+                let primaryCameraPreviewView = PreviewView()
+                primaryCameraPreviewView.videoPreviewLayer.setSessionWithNoConnection(session)
                 
                 let secondaryPreviewView = PreviewView()
                 secondaryPreviewView.videoPreviewLayer.setSessionWithNoConnection(session)
                 
-                // main camera preview
-                let mainCameraInput = session.inputs[0] as! AVCaptureDeviceInput
-                guard let mainCameraPort = mainCameraInput.ports(for: .video,
+                // primary camera preview
+                let primaryCameraInput = session.inputs[0] as! AVCaptureDeviceInput
+                guard let primaryCameraPort = primaryCameraInput.ports(for: .video,
                                                                  sourceDeviceType: .builtInWideAngleCamera,
-                                                                 sourceDevicePosition: mainCameraInput.device.position).first
+                                                                 sourceDevicePosition: primaryCameraInput.device.position).first
                 else {
                     print("Could not obtain wide angle camera input ports")
                     return
                 }
-                let mainCameraPreviewLayerConnection = AVCaptureConnection(inputPort: mainCameraPort, videoPreviewLayer: mainCameraPreviewView.videoPreviewLayer)
-                guard session.canAddConnection(mainCameraPreviewLayerConnection) else {
+                let primaryCameraPreviewLayerConnection = AVCaptureConnection(inputPort: primaryCameraPort, videoPreviewLayer: primaryCameraPreviewView.videoPreviewLayer)
+                guard session.canAddConnection(primaryCameraPreviewLayerConnection) else {
                     print("Could not add a connection to the wide-angle camera video preview layer")
                     return
                 }
-                session.addConnection(mainCameraPreviewLayerConnection)
+                session.addConnection(primaryCameraPreviewLayerConnection)
                 
                 // secondary camera preview
                 let secondaryCameraInput = session.inputs[1] as! AVCaptureDeviceInput
@@ -142,7 +142,7 @@ class CameraViewController: UIViewController, CameraViewControllerPopUpViewDeleg
                 }
                 session.addConnection(secondaryCameraPreviewLayerConnection)
                 
-                setupDualPreview(pv1: mainCameraPreviewView, pv2: secondaryPreviewView)
+                setupDualPreview(pv1: primaryCameraPreviewView, pv2: secondaryPreviewView)
                 
                 navigationItem.title = "Dual Camera"
                 

@@ -20,14 +20,14 @@ class DualCameraRecordingManager: NSObject {
     
     private var dirUrl: URL!
     private var recordingId: String!
-    private var mainVideoFilePath: String!
+    private var primaryVideoFilePath: String!
     private var secondaryVideoFilePath: String!
     
     private let locationManager = CLLocationManager()
     private var gpsLocation: [Double] = []
     
-    private var mainCameraInput: AVCaptureDeviceInput?
-    private let mainCameraOutput = AVCaptureMovieFileOutput()
+    private var primaryCameraInput: AVCaptureDeviceInput?
+    private let primaryCameraOutput = AVCaptureMovieFileOutput()
     
     private var secondaryCameraInput: AVCaptureDeviceInput?
     private let secondaryCameraOutput = AVCaptureMovieFileOutput()
@@ -36,18 +36,18 @@ class DualCameraRecordingManager: NSObject {
     private var sceneDescription: String?
     private var sceneType: String?
     
-    private var mainVideoRecordingFinished = false
+    private var primaryVideoRecordingFinished = false
     private var secondaryVideoRecordingFinished = false
     
-    private var mainCameraResolution: [Int] = []
-    private var mainCameraIntrinsicArray: [Float] = []
-    private var mainCameraFramerate: Int = -1
+    private var primaryCameraResolution: [Int] = []
+    private var primaryCameraIntrinsicArray: [Float] = []
+    private var primaryCameraFramerate: Int = -1
     
     private var secondaryCameraResolution: [Int] = []
     private var secondaryCameraIntrinsicArray: [Float] = []
     private var secondaryCameraFramerate: Int = -1
     
-    private var extrinsicsMainToSecondary: [Float] = []
+    private var extrinsicsPrimaryToSecondary: [Float] = []
     
     override init() {
         super.init()
@@ -75,7 +75,7 @@ class DualCameraRecordingManager: NSObject {
         }
         
         // Get devices
-        guard let mainCameraDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
+        guard let primaryCameraDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
             print("Could not find the wide angle camera")
             return
         }
@@ -93,14 +93,14 @@ class DualCameraRecordingManager: NSObject {
         
         // Add input
         do {
-            mainCameraInput = try AVCaptureDeviceInput(device: mainCameraDevice)
+            primaryCameraInput = try AVCaptureDeviceInput(device: primaryCameraDevice)
             
-            guard let mainCameraInput = mainCameraInput, session.canAddInput(mainCameraInput) else {
+            guard let primaryCameraInput = primaryCameraInput, session.canAddInput(primaryCameraInput) else {
                 print("Could not add wide angle camera device input")
                 return
             }
             
-            session.addInputWithNoConnections(mainCameraInput)
+            session.addInputWithNoConnections(primaryCameraInput)
         } catch {
             print("Couldn't create wide angle camera device input: \(error)")
             return
@@ -121,11 +121,11 @@ class DualCameraRecordingManager: NSObject {
         }
 
         // Add output
-        guard session.canAddOutput(mainCameraOutput) else {
+        guard session.canAddOutput(primaryCameraOutput) else {
             print("Could not add wide-angle camera output")
             return
         }
-        session.addOutputWithNoConnections(mainCameraOutput)
+        session.addOutputWithNoConnections(primaryCameraOutput)
         
         guard session.canAddOutput(secondaryCameraOutput) else {
             print("Could not add secondary camera output")
@@ -134,9 +134,9 @@ class DualCameraRecordingManager: NSObject {
         session.addOutputWithNoConnections(secondaryCameraOutput)
         
         // Setup input/output connection
-        guard let mainCameraPort = mainCameraInput!.ports(for: .video,
+        guard let primaryCameraPort = primaryCameraInput!.ports(for: .video,
                                                    sourceDeviceType: .builtInWideAngleCamera,
-                                                   sourceDevicePosition: mainCameraDevice.position).first
+                                                   sourceDevicePosition: primaryCameraDevice.position).first
         else {
                 print("Could not obtain wide angle camera input ports")
                 return
@@ -157,17 +157,17 @@ class DualCameraRecordingManager: NSObject {
             return
         }
         
-        let mainCameraConnection = AVCaptureConnection(inputPorts: [mainCameraPort], output: mainCameraOutput)
-        guard session.canAddConnection(mainCameraConnection) else {
+        let primaryCameraConnection = AVCaptureConnection(inputPorts: [primaryCameraPort], output: primaryCameraOutput)
+        guard session.canAddConnection(primaryCameraConnection) else {
             print("Cannot add wide-angle input to output")
             return
         }
-        session.addConnection(mainCameraConnection)
-        mainCameraConnection.videoOrientation = .landscapeRight
+        session.addConnection(primaryCameraConnection)
+        primaryCameraConnection.videoOrientation = .landscapeRight
         
-        let mainCameraAvailableVideoCodecTypes = mainCameraOutput.availableVideoCodecTypes
-        if mainCameraAvailableVideoCodecTypes.contains(.h264) {
-            mainCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.h264], for: mainCameraConnection)
+        let primaryCameraAvailableVideoCodecTypes = primaryCameraOutput.availableVideoCodecTypes
+        if primaryCameraAvailableVideoCodecTypes.contains(.h264) {
+            primaryCameraOutput.setOutputSettings([AVVideoCodecKey: AVVideoCodecType.h264], for: primaryCameraConnection)
         }
         
         let secondaryCameraConnection = AVCaptureConnection(inputPorts: [secondaryCameraPort], output: secondaryCameraOutput)
@@ -192,7 +192,7 @@ class DualCameraRecordingManager: NSObject {
     private func configureVideoQuality() {
         
         // Set to highest first
-        for format in mainCameraInput!.device.formats.reversed() {
+        for format in primaryCameraInput!.device.formats.reversed() {
             if format.isMultiCamSupported {
 
                 let dims = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
@@ -204,14 +204,14 @@ class DualCameraRecordingManager: NSObject {
                 }
 
                 do {
-                    try mainCameraInput?.device.lockForConfiguration()
-                    mainCameraInput?.device.activeFormat = format
-                    mainCameraInput?.device.unlockForConfiguration()
+                    try primaryCameraInput?.device.lockForConfiguration()
+                    primaryCameraInput?.device.activeFormat = format
+                    primaryCameraInput?.device.unlockForConfiguration()
                 } catch {
-                    print("Could not lock main camera device for configuration: \(error)")
+                    print("Could not lock primary camera device for configuration: \(error)")
                 }
                 
-                print("main, width: \(dims.width), height: \(dims.height), framerate: \(framerate.maxFrameRate)")
+                print("primary, width: \(dims.width), height: \(dims.height), framerate: \(framerate.maxFrameRate)")
 
                 break
             }
@@ -233,7 +233,7 @@ class DualCameraRecordingManager: NSObject {
                     secondaryCameraInput?.device.activeFormat = format
                     secondaryCameraInput?.device.unlockForConfiguration()
                 } catch {
-                    print("Could not lock main camera device for configuration: \(error)")
+                    print("Could not lock primary camera device for configuration: \(error)")
                 }
 
                 print("secondary, width: \(dims.width), height: \(dims.height), framerate: \(framerate.maxFrameRate)")
@@ -263,17 +263,17 @@ class DualCameraRecordingManager: NSObject {
 
     private func reduceResolution() {
 
-        let mainCameraDims = CMVideoFormatDescriptionGetDimensions(mainCameraInput!.device.activeFormat.formatDescription)
-        let activeWidthMain = mainCameraDims.width
-        let activeHeightMain = mainCameraDims.height
+        let primaryCameraDims = CMVideoFormatDescriptionGetDimensions(primaryCameraInput!.device.activeFormat.formatDescription)
+        let activeWidthPrimary = primaryCameraDims.width
+        let activeHeightPrimary = primaryCameraDims.height
         
         let secondaryCameraDims = CMVideoFormatDescriptionGetDimensions(secondaryCameraInput!.device.activeFormat.formatDescription)
         let activeWidthSecondary = secondaryCameraDims.width
         let activeHeightSecondary = secondaryCameraDims.height
         
-        if activeWidthMain > activeWidthSecondary || activeHeightMain > activeHeightSecondary {
-            print("reducing main resolution")
-            reduceResolution(device: mainCameraInput!.device)
+        if activeWidthPrimary > activeWidthSecondary || activeHeightPrimary > activeHeightSecondary {
+            print("reducing primary resolution")
+            reduceResolution(device: primaryCameraInput!.device)
             
             do {
                 try secondaryCameraInput!.device.lockForConfiguration()
@@ -289,12 +289,12 @@ class DualCameraRecordingManager: NSObject {
             reduceResolution(device: secondaryCameraInput!.device)
             
             do {
-                try mainCameraInput!.device.lockForConfiguration()
-                mainCameraInput!.videoMinFrameDurationOverride = CMTimeMake(value: 1, timescale: 60)
-                mainCameraInput!.device.unlockForConfiguration()
-                print("main, framerate reset to 60")
+                try primaryCameraInput!.device.lockForConfiguration()
+                primaryCameraInput!.videoMinFrameDurationOverride = CMTimeMake(value: 1, timescale: 60)
+                primaryCameraInput!.device.unlockForConfiguration()
+                print("primary, framerate reset to 60")
             } catch {
-                print("Could not lock main camera device for configuration: \(error)")
+                print("Could not lock primary camera device for configuration: \(error)")
             }
         }
 
@@ -346,32 +346,32 @@ class DualCameraRecordingManager: NSObject {
         
         print("reducing framerate")
         
-        let mainCameraMinFrameDuration = mainCameraInput!.device.activeVideoMinFrameDuration
-        let mainCameraActiveMaxFramerate: Double = Double(mainCameraMinFrameDuration.timescale) / Double(mainCameraMinFrameDuration.value)
+        let primaryCameraMinFrameDuration = primaryCameraInput!.device.activeVideoMinFrameDuration
+        let primaryCameraActiveMaxFramerate: Double = Double(primaryCameraMinFrameDuration.timescale) / Double(primaryCameraMinFrameDuration.value)
         
         let secondaryCameraMinFrameDuration = secondaryCameraInput!.device.activeVideoMinFrameDuration
         let secondaryCameraActiveMaxFramerate: Double = Double(secondaryCameraMinFrameDuration.timescale) / Double(secondaryCameraMinFrameDuration.value)
         
-        var targetFramerate = mainCameraActiveMaxFramerate
-        if mainCameraActiveMaxFramerate > 60.0 || secondaryCameraActiveMaxFramerate > 60.0 {
+        var targetFramerate = primaryCameraActiveMaxFramerate
+        if primaryCameraActiveMaxFramerate > 60.0 || secondaryCameraActiveMaxFramerate > 60.0 {
             targetFramerate = 60.0
-        } else if mainCameraActiveMaxFramerate > 45.0 || secondaryCameraActiveMaxFramerate > 45.0 {
+        } else if primaryCameraActiveMaxFramerate > 45.0 || secondaryCameraActiveMaxFramerate > 45.0 {
             targetFramerate = 45.0
-        } else if mainCameraActiveMaxFramerate > 30.0 || secondaryCameraActiveMaxFramerate > 30.0 {
+        } else if primaryCameraActiveMaxFramerate > 30.0 || secondaryCameraActiveMaxFramerate > 30.0 {
             targetFramerate = 30.0
         } else {
             return
         }
         
         do {
-            try mainCameraInput!.device.lockForConfiguration()
-            mainCameraInput!.videoMinFrameDurationOverride = CMTimeMake(value: 1, timescale: Int32(targetFramerate))
-            mainCameraInput!.device.unlockForConfiguration()
+            try primaryCameraInput!.device.lockForConfiguration()
+            primaryCameraInput!.videoMinFrameDurationOverride = CMTimeMake(value: 1, timescale: Int32(targetFramerate))
+            primaryCameraInput!.device.unlockForConfiguration()
             
-            print("main, framerate \(mainCameraActiveMaxFramerate) -> \(targetFramerate)")
+            print("primary, framerate \(primaryCameraActiveMaxFramerate) -> \(targetFramerate)")
             
         } catch {
-            print("Could not lock main camera device for configuration: \(error)")
+            print("Could not lock primary camera device for configuration: \(error)")
         }
         
         do {
@@ -389,25 +389,25 @@ class DualCameraRecordingManager: NSObject {
     
     private func updateCameraInfo() {
         
-        updateMainCameraInfo()
+        updatePrimaryCameraInfo()
         updateSecondaryCameraInfo()
         
         updateExtrinsics()
         
     }
     
-    private func updateMainCameraInfo() {
+    private func updatePrimaryCameraInfo() {
         
-        let format = mainCameraInput!.device.activeFormat
+        let format = primaryCameraInput!.device.activeFormat
         let dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription)
         
         let width = Int(dimensions.width)
         let height = Int(dimensions.height)
-        mainCameraResolution = [height, width]
-        mainCameraIntrinsicArray = calculateIntrinsics(width: Float(width), height: Float(height), fov: format.videoFieldOfView)
+        primaryCameraResolution = [height, width]
+        primaryCameraIntrinsicArray = calculateIntrinsics(width: Float(width), height: Float(height), fov: format.videoFieldOfView)
         
-        let minFrameDuration = mainCameraInput!.device.activeVideoMinFrameDuration
-        mainCameraFramerate = Int(Double(minFrameDuration.timescale) / Double(minFrameDuration.value))
+        let minFrameDuration = primaryCameraInput!.device.activeVideoMinFrameDuration
+        primaryCameraFramerate = Int(Double(minFrameDuration.timescale) / Double(minFrameDuration.value))
         
     }
     
@@ -441,14 +441,14 @@ class DualCameraRecordingManager: NSObject {
     
     private func updateExtrinsics() {
         
-        let extrinsics = AVCaptureDevice.extrinsicMatrix(from: mainCameraInput!.device, to: secondaryCameraInput!.device)
+        let extrinsics = AVCaptureDevice.extrinsicMatrix(from: primaryCameraInput!.device, to: secondaryCameraInput!.device)
         
         let pointer = UnsafeMutableBufferPointer<simd_float4x3>.allocate(capacity: MemoryLayout<simd_float4x3>.size)
         _ = extrinsics?.copyBytes(to: pointer)
         
         let extrinsicsMatrix = pointer.first
         
-        extrinsicsMainToSecondary = extrinsicsMatrix?.arrayRepresentation ?? []
+        extrinsicsPrimaryToSecondary = extrinsicsMatrix?.arrayRepresentation ?? []
         
     }
     
@@ -460,15 +460,15 @@ extension DualCameraRecordingManager: RecordingManager {
     var isRecording: Bool {
         
         // TODO: Should these be check in the session queue??
-        if mainCameraOutput.isRecording && secondaryCameraOutput.isRecording {
+        if primaryCameraOutput.isRecording && secondaryCameraOutput.isRecording {
             return true
-        } else if !mainCameraOutput.isRecording && !secondaryCameraOutput.isRecording {
+        } else if !primaryCameraOutput.isRecording && !secondaryCameraOutput.isRecording {
             return false
         } else {
             print("MultiCam session is at unexpected state")
             
-            if mainCameraOutput.isRecording {
-                mainCameraOutput.stopRecording()
+            if primaryCameraOutput.isRecording {
+                primaryCameraOutput.stopRecording()
             }
             if secondaryCameraOutput.isRecording {
                 secondaryCameraOutput.stopRecording()
@@ -495,7 +495,7 @@ extension DualCameraRecordingManager: RecordingManager {
             self.sceneDescription = sceneDescription
             self.sceneType = sceneType
             
-            mainVideoRecordingFinished = false
+            primaryVideoRecordingFinished = false
             secondaryVideoRecordingFinished = false
             
             gpsLocation = Helper.getGpsLocation(locationManager: locationManager)
@@ -507,13 +507,13 @@ extension DualCameraRecordingManager: RecordingManager {
             motionManager.startRecording(dataPathString: dirUrl.path, recordingId: recordingId)
             
             // Video
-            let mainVideoFilename = recordingId + "-main"
-            mainVideoFilePath = (dirUrl.path as NSString).appendingPathComponent((mainVideoFilename as NSString).appendingPathExtension("mp4")!)
+            let primaryVideoFilename = recordingId + "-primary"
+            primaryVideoFilePath = (dirUrl.path as NSString).appendingPathComponent((primaryVideoFilename as NSString).appendingPathExtension("mp4")!)
             
             let secondaryVideoFilename = recordingId + "-secondary"
             secondaryVideoFilePath = (dirUrl.path as NSString).appendingPathComponent((secondaryVideoFilename as NSString).appendingPathExtension("mp4")!)
             
-            self.mainCameraOutput.startRecording(to: URL(fileURLWithPath: mainVideoFilePath), recordingDelegate: self)
+            self.primaryCameraOutput.startRecording(to: URL(fileURLWithPath: primaryVideoFilePath), recordingDelegate: self)
             self.secondaryCameraOutput.startRecording(to: URL(fileURLWithPath: secondaryVideoFilePath), recordingDelegate: self)
     
         }
@@ -523,7 +523,7 @@ extension DualCameraRecordingManager: RecordingManager {
     func stopRecording() {
         
         sessionQueue.async {
-            self.mainCameraOutput.stopRecording()
+            self.primaryCameraOutput.stopRecording()
             self.secondaryCameraOutput.stopRecording()
         }
         
@@ -542,21 +542,21 @@ extension DualCameraRecordingManager: AVCaptureFileOutputRecordingDelegate {
 
         sessionQueue.async { [self] in
             
-            if outputFileURL.path == mainVideoFilePath {
-                mainVideoRecordingFinished = true
-                print("main video ready")
+            if outputFileURL.path == primaryVideoFilePath {
+                primaryVideoRecordingFinished = true
+                print("primary video ready")
             } else if outputFileURL.path == secondaryVideoFilePath {
                 secondaryVideoRecordingFinished = true
                 print("secondary video ready")
             }
             
-            if mainVideoRecordingFinished && secondaryVideoRecordingFinished {
+            if primaryVideoRecordingFinished && secondaryVideoRecordingFinished {
                 
                 var streamInfo: [StreamInfo] = motionManager.stopRecordingAndReturnStreamInfo()
 
-                let mainVideoNumberOfFrames = VideoHelper.getNumberOfFrames(videoUrl: URL(fileURLWithPath: mainVideoFilePath))
-                let mainCameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: "color_camera", encoding: "h264", frequency: mainCameraFramerate, numberOfFrames: mainVideoNumberOfFrames, fileExtension: "mp4", resolution: mainCameraResolution, intrinsics: mainCameraIntrinsicArray, extrinsics: extrinsicsMainToSecondary)
-                streamInfo.append(mainCameraStreamInfo)
+                let primaryVideoNumberOfFrames = VideoHelper.getNumberOfFrames(videoUrl: URL(fileURLWithPath: primaryVideoFilePath))
+                let primaryCameraStreamInfo = CameraStreamInfo(id: "color_back_1", type: "color_camera", encoding: "h264", frequency: primaryCameraFramerate, numberOfFrames: primaryVideoNumberOfFrames, fileExtension: "mp4", resolution: primaryCameraResolution, intrinsics: primaryCameraIntrinsicArray, extrinsics: extrinsicsPrimaryToSecondary)
+                streamInfo.append(primaryCameraStreamInfo)
                 
                 let secondaryVideoNumberOfFrames = VideoHelper.getNumberOfFrames(videoUrl: URL(fileURLWithPath: secondaryVideoFilePath))
                 let secondaryCameraStreamInfo = CameraStreamInfo(id: "color_back_2", type: "color_camera", encoding: "h264", frequency: secondaryCameraFramerate, numberOfFrames: secondaryVideoNumberOfFrames, fileExtension: "mp4", resolution: secondaryCameraResolution, intrinsics: secondaryCameraIntrinsicArray, extrinsics: nil)
