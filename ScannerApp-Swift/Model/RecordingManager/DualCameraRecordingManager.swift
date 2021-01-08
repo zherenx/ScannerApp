@@ -48,6 +48,7 @@ class DualCameraRecordingManager: NSObject {
     private var secondaryCameraFramerate: Int = -1
     
     private var extrinsicsPrimaryToSecondary: [Float] = []
+    private var extrinsicsSecondaryToPrimary: [Float] = []
     
     override init() {
         super.init()
@@ -441,14 +442,21 @@ class DualCameraRecordingManager: NSObject {
     
     private func updateExtrinsics() {
         
-        let extrinsics = AVCaptureDevice.extrinsicMatrix(from: primaryCameraInput!.device, to: secondaryCameraInput!.device)
+        extrinsicsPrimaryToSecondary = getExtrinsics(from: primaryCameraInput!.device, to: secondaryCameraInput!.device)
+        extrinsicsSecondaryToPrimary = getExtrinsics(from: secondaryCameraInput!.device, to: primaryCameraInput!.device)
         
-        let pointer = UnsafeMutableBufferPointer<simd_float4x3>.allocate(capacity: MemoryLayout<simd_float4x3>.size)
-        _ = extrinsics?.copyBytes(to: pointer)
+    }
+    
+    private func getExtrinsics(from fromDevice: AVCaptureDevice, to toDevice: AVCaptureDevice) -> [Float] {
         
-        let extrinsicsMatrix = pointer.first
+        let extrinsics = AVCaptureDevice.extrinsicMatrix(from: fromDevice, to: toDevice)
         
-        extrinsicsPrimaryToSecondary = extrinsicsMatrix?.arrayRepresentation ?? []
+        let extrinsicsPointer = UnsafeMutableBufferPointer<simd_float4x3>.allocate(capacity: MemoryLayout<simd_float4x3>.size)
+        _ = extrinsics?.copyBytes(to: extrinsicsPointer)
+        
+        let extrinsicsArray = extrinsicsPointer.first?.arrayRepresentation ?? []
+        
+        return extrinsicsArray
         
     }
     
@@ -558,7 +566,7 @@ extension DualCameraRecordingManager: AVCaptureFileOutputRecordingDelegate {
                 streamInfo.append(primaryCameraStreamInfo)
                 
                 let secondaryVideoNumberOfFrames = VideoHelper.getNumberOfFrames(videoUrl: URL(fileURLWithPath: secondaryVideoFilePath))
-                let secondaryCameraStreamInfo = CameraStreamInfo(id: "color_back_2", type: "color_camera", encoding: "h264", frequency: secondaryCameraFramerate, numberOfFrames: secondaryVideoNumberOfFrames, fileExtension: "mp4", resolution: secondaryCameraResolution, intrinsics: secondaryCameraIntrinsicArray, extrinsics: nil)
+                let secondaryCameraStreamInfo = CameraStreamInfo(id: "color_back_2", type: "color_camera", encoding: "h264", frequency: secondaryCameraFramerate, numberOfFrames: secondaryVideoNumberOfFrames, fileExtension: "mp4", resolution: secondaryCameraResolution, intrinsics: secondaryCameraIntrinsicArray, extrinsics: extrinsicsSecondaryToPrimary)
                 streamInfo.append(secondaryCameraStreamInfo)
 
                 let metadata = Metadata(username: username ?? "", userInputDescription: sceneDescription ?? "", sceneType: sceneType ?? "", gpsLocation: gpsLocation, streams: streamInfo, numberOfFiles: 8)
