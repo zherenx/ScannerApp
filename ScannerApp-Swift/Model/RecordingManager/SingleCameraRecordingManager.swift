@@ -100,15 +100,15 @@ class SingleCameraRecordingManager: NSObject {
         
         session.commitConfiguration()
 
-        // set video resulotion to 1920x1440 and framerate to 60 fps if possible
-        for format in videoDevice.formats {
+        for format in videoDevice.formats.reversed() {
 
-            let videoFormatDescription = format.formatDescription
-            let dimensions = CMVideoFormatDescriptionGetDimensions(videoFormatDescription)
+//            let videoFormatDescription = format.formatDescription
+//            let dimensions = CMVideoFormatDescriptionGetDimensions(videoFormatDescription)
+//            print("width: \(dimensions.width), height: \(dimensions.height)")
 
             let framerate = format.videoSupportedFrameRateRanges[0]
 
-            if framerate.maxFrameRate >= 60 && dimensions.width >= 1920 && dimensions.height >= 1440 {
+            if framerate.maxFrameRate >= 60 {
 
                 do {
                     try videoDevice.lockForConfiguration()
