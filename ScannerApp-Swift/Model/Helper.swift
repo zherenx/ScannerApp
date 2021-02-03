@@ -7,6 +7,7 @@
 //
 
 import CommonCrypto
+import CoreLocation
 import Foundation
 import UIKit
 
@@ -67,6 +68,7 @@ struct Helper {
         }
     }
     
+    // https://www.tutorialspoint.com/how-to-determine-device-type-iphone-ipod-touch-with-iphone-sdk
     static func getDeviceModelCode() -> String {
         var systemInfo = utsname()
         uname(&systemInfo)
@@ -78,7 +80,21 @@ struct Helper {
         return identifier
     }
     
-    // TODO: include this function in doc
+    // this assume gps authorization has been done previously
+    static func getGpsLocation(locationManager: CLLocationManager) -> [Double] {
+
+        var gpsLocation: [Double] = []
+        
+        if (CLLocationManager.authorizationStatus() == .authorizedWhenInUse ||
+            CLLocationManager.authorizationStatus() == .authorizedAlways) {
+            if let coordinate = locationManager.location?.coordinate {
+                gpsLocation = [coordinate.latitude, coordinate.longitude]
+            }
+        }
+        
+        return gpsLocation
+    }
+    
     static func getRecordingId() -> String {
         let dateFormatter = DateFormatter()
 //        dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ssZ"
